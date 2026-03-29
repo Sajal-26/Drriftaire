@@ -1,5 +1,35 @@
-.env
-.env.local
+# Node modules
 node_modules/
-dist/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Vite / React
+client/node_modules/
+client/dist/
+
+# Server
+server/node_modules/
+
+# Build
+dist/
+build/
+
+# Database (if local files)
+*.sqlite
+*.db
+
+# Misc
+.vscode/
+.idea/

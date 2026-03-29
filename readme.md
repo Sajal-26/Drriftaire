@@ -84,7 +84,7 @@ Total Cost: ~₹400–₹500 per month
 
 * [ ] JWT-based authentication
 * [ ] OTP verification (email/phone)
-* [ ] Google OAuth integration
+* [X] Google OAuth integration
 
 ---
 
