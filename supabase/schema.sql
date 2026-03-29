@@ -17,7 +17,7 @@ CREATE TABLE bookings (
   location TEXT NOT NULL,
   farm_size TEXT NOT NULL,
   booking_date DATE NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected', 'completed'
+  status TEXT NOT NULL DEFAULT 'pending', -- 'Pending', 'Approved', 'Rejected', 'Completed'
   amount NUMERIC,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
