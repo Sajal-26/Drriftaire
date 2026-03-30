@@ -1,9 +1,9 @@
 const { appendBooking } = require("../services/sheets.service");
-const nodemailer = require("nodemailer");
+const { sendBookingEmails } = require("../services/email.service");
 
 const createBooking = async (req, res) => {
   try {
-    const {name, email, phone, location, farmSize, date } = req.body;
+    const { name, email, phone, location, farmSize, date } = req.body;
 
     const bookingData = {
       Timestamp: new Date().toLocaleString(),
@@ -17,10 +17,11 @@ const createBooking = async (req, res) => {
     };
 
     await appendBooking(bookingData);
+    sendBookingEmails({ name, email, phone, location, farmSize, date });
 
-    res.status(201).json({ 
-      success: true, 
-      message: "Booking successful! Check your email for confirmation." 
+    res.status(201).json({
+      success: true,
+      message: "Booking successful!"
     });
   } catch (err) {
     console.error("Booking Error:", err);
