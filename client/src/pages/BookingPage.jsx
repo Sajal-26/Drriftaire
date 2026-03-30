@@ -6,8 +6,11 @@ const BookingPage = () => {
     name: "",
     email: "",
     phone: "",
-    location: "",
-    farmSize: "",
+    state: "",
+    district: "",
+    pinCode: "",
+    acres: "",
+    cropType: "",
     date: ""
   });
 
@@ -25,7 +28,7 @@ const BookingPage = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:3000/api/auth/book", formData);
+      await axios.post("http://localhost:3000/api/bookings/book", formData);
       alert("Booking successful 🚀");
 
       // reset form
@@ -33,8 +36,11 @@ const BookingPage = () => {
         name: "",
         email: "",
         phone: "",
-        location: "",
-        farmSize: "",
+        state: "",
+        district: "",
+        pinCode: "",
+        acres: "",
+        cropType: "",
         date: ""
       });
 
@@ -54,8 +60,11 @@ const BookingPage = () => {
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
         <input name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} required />
-        <input name="location" placeholder="Location" value={formData.location} onChange={handleChange} required />
-        <input name="farmSize" placeholder="Farm Size (e.g. 5 Acres)" value={formData.farmSize} onChange={handleChange} required />
+        <input name="state" placeholder="State" value={formData.state} onChange={handleChange} required />
+        <input name="district" placeholder="District" value={formData.district} onChange={handleChange} required />
+        <input name="pinCode" placeholder="Pin Code" value={formData.pinCode} onChange={handleChange} required />
+        <input name="acres" type="number" placeholder="Farm Size (Acres)" value={formData.acres} onChange={handleChange} required />
+        <input name="cropType" placeholder="Crop Type (e.g. Rice, Wheat)" value={formData.cropType} onChange={handleChange} required />
         <input name="date" type="date" value={formData.date} onChange={handleChange} required />
 
         <button type="submit" disabled={loading}>

@@ -47,29 +47,24 @@ Total Cost: ~₹400–₹500 per month
 
 ### User Side
 
-* [ ] Signup / Login
-* [ ] OTP Authentication
-* [X] Google Sign-In
-* [X] Book a service
+* [X] Book a service (No login required)
 * [X] Receive confirmation email
-* [ ] View booking history
 
 ---
 
 ### Admin Side
 
-* [ ] Admin login
-* [ ] View all bookings
-* [ ] Approve / Reject / Complete bookings
-* [ ] Basic analytics (total bookings, etc.)
-* [ ] Manage users (optional)
+* [X] Admin login
+* [X] View all bookings
+* [X] Approve / Reject / Complete bookings
+* [X] Basic analytics (total bookings, etc.)
 
 ---
 
 ## Booking System
 
 * [X] Booking form (name, phone, location, farm size, date)
-* [X] Store booking in database
+* [X] Store booking in Spreadsheet
 * [X] Send booking details to admin (email)
 * [X] Send confirmation email to user
 
@@ -77,9 +72,7 @@ Total Cost: ~₹400–₹500 per month
 
 ## Authentication
 
-* [X] JWT-based authentication
-* [ ] OTP verification (email/phone)
-* [X] Google OAuth integration
+* [X] JWT-based authentication for Admin Panel
 
 ---
 
@@ -95,10 +88,10 @@ Total Cost: ~₹400–₹500 per month
 
 ## MVP (Must Complete First)
 
-* [ ] Basic authentication (login/signup)
 * [X] Booking form
+* [ ] Admin login interface
 * [X] Email notifications
-* [ ] Admin booking management
+* [X] Admin booking management
 
 ---
 

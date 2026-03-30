@@ -13,4 +13,33 @@ const appendBooking = async (data) => {
     return await sheet.addRow(data);
 };
 
-module.exports = { appendBooking };
+const getAllBookings = async () => {
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    return rows.map(row => ({
+        id: row.rowNumber, // Use the row number as a unique ID for updates
+        ...row.toObject()
+    }));
+};
+
+const updateBookingStatus = async (rowId, newStatus, remarks) => {
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+    
+    // Find the exact row by its rowNumber
+    const rowToUpdate = rows.find(r => r.rowNumber === parseInt(rowId));
+    
+    if (rowToUpdate) {
+        rowToUpdate.assign({ 
+            Status: newStatus, 
+            ...(remarks !== undefined && { Remarks: remarks }) 
+        });
+        await rowToUpdate.save();
+        return rowToUpdate.toObject();
+    }
+    return null;
+};
+
+module.exports = { appendBooking, getAllBookings, updateBookingStatus };
