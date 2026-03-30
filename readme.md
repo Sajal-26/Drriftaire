@@ -49,11 +49,10 @@ Total Cost: ~₹400–₹500 per month
 
 * [ ] Signup / Login
 * [ ] OTP Authentication
-* [ ] Google Sign-In
-* [ ] Book a service
+* [X] Google Sign-In
+* [X] Book a service
 * [ ] Receive confirmation email
 * [ ] View booking history
-* [ ] Edit profile
 
 ---
 
@@ -69,8 +68,8 @@ Total Cost: ~₹400–₹500 per month
 
 ## Booking System
 
-* [ ] Booking form (name, phone, location, farm size, date)
-* [ ] Store booking in database
+* [X] Booking form (name, phone, location, farm size, date)
+* [X] Store booking in database
 * [ ] Send booking details to admin (email)
 * [ ] Send confirmation email to user
 
@@ -78,7 +77,7 @@ Total Cost: ~₹400–₹500 per month
 
 ## Authentication
 
-* [ ] JWT-based authentication
+* [X] JWT-based authentication
 * [ ] OTP verification (email/phone)
 * [X] Google OAuth integration
 
@@ -97,7 +96,7 @@ Total Cost: ~₹400–₹500 per month
 ## MVP (Must Complete First)
 
 * [ ] Basic authentication (login/signup)
-* [ ] Booking form
+* [X] Booking form
 * [ ] Email notifications
 * [ ] Admin booking management
 

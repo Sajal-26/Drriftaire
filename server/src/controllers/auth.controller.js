@@ -1,17 +1,14 @@
 const jwt = require("jsonwebtoken");
 const { verifyGoogleToken } = require("../services/googleAuth.service");
 
-// TEMP: replace with DB later
 const users = [];
 
 const googleAuth = async (req, res) => {
   try {
     const { token } = req.body;
-
+    console.log("TOKEN RECEIVED FROM FRONTEND:", token);
     const payload = await verifyGoogleToken(token);
-
     const { sub, email, name, picture } = payload;
-
     let user = users.find((u) => u.googleId === sub);
 
     if (!user) {

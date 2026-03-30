@@ -1,7 +1,7 @@
-import GoogleLoginButton from "./components/GoogleLoginButton";
+import BookingPage from "./pages/BookingPage";
 
 function App() {
-  return <GoogleLoginButton />;
+  return <BookingPage />;
 }
 
 export default App;
