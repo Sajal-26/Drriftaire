@@ -51,7 +51,7 @@ Total Cost: ~₹400–₹500 per month
 * [ ] OTP Authentication
 * [X] Google Sign-In
 * [X] Book a service
-* [ ] Receive confirmation email
+* [X] Receive confirmation email
 * [ ] View booking history
 
 ---
@@ -70,8 +70,8 @@ Total Cost: ~₹400–₹500 per month
 
 * [X] Booking form (name, phone, location, farm size, date)
 * [X] Store booking in database
-* [ ] Send booking details to admin (email)
-* [ ] Send confirmation email to user
+* [X] Send booking details to admin (email)
+* [X] Send confirmation email to user
 
 ---
 
@@ -97,7 +97,7 @@ Total Cost: ~₹400–₹500 per month
 
 * [ ] Basic authentication (login/signup)
 * [X] Booking form
-* [ ] Email notifications
+* [X] Email notifications
 * [ ] Admin booking management
 
 ---
