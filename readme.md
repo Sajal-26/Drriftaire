@@ -14,7 +14,6 @@ Build a simple and clean platform where users can book drone spraying services, 
 
 * Frontend: React + Tailwind (Hosted on Vercel)
 * Backend: Node.js + Express (Hosted on Railway)
-* Database: Supabase (PostgreSQL)
 * Auth: JWT + OTP + Google Sign-In
 * Email: EmailJS / Nodemailer
 
@@ -28,8 +27,6 @@ User (Browser)
 Frontend (Vercel)
    ↓ API calls
 Backend (Railway)
-   ↓
-Database (Supabase)
 ```
 
 ---
@@ -40,7 +37,6 @@ Database (Supabase)
 | ---------------- | -------------------- | ---------------------- |
 | Frontend Hosting | Vercel               | Free                   |
 | Backend Hosting  | Railway (Hobby Plan) | ~$5/month (~₹400–₹500) |
-| Database         | Supabase (Free Tier) | Free                   |
 | Domain           | Custom Domain        | Already owned          |
 
 Total Cost: ~₹400–₹500 per month
