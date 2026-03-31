@@ -5,7 +5,7 @@ let transporter;
 const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "gmail", 
       auth: {
         type: "OAuth2",
         user: process.env.EMAIL_USER,
@@ -13,6 +13,8 @@ const getTransporter = () => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
     });
   }
   return transporter;
