@@ -19,7 +19,7 @@ const Navbar = () => {
 
       {/* Right Links */}
       <ul className={styles.rightLinks}>
-        <li><Link to="/about" className={styles.navItem}>Why us</Link></li>
+        <li><Link to="/why-us" className={styles.navItem}>Why us</Link></li>
         <li><Link to="/about" className={styles.navItem}>About</Link></li>
         <li><Link to="/contact" className={styles.navItem}>Contact us</Link></li>
       </ul>

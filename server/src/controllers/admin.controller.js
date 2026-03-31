@@ -1,15 +1,56 @@
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { getAllBookings, updateBookingStatus } = require("../services/sheets.service");
 const { sendStatusChangeEmail } = require("../services/email.service");
+
+const verifyPassword = (password) => {
+  const rawPassword = typeof password === "string" ? password : "";
+  const hashedSecret = process.env.ADMIN_PASSWORD_HASH;
+
+  if (hashedSecret) {
+    const [salt, storedHash] = hashedSecret.split(":");
+
+    if (!salt || !storedHash) {
+      throw new Error("ADMIN_PASSWORD_HASH must use the format salt:hash");
+    }
+
+    const derivedKey = crypto.scryptSync(rawPassword, salt, 64).toString("hex");
+    const derivedBuffer = Buffer.from(derivedKey, "hex");
+    const storedBuffer = Buffer.from(storedHash, "hex");
+
+    if (derivedBuffer.length !== storedBuffer.length) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(derivedBuffer, storedBuffer);
+  }
+
+  const legacyPassword = process.env.ADMIN_PASSWORD || "";
+  const passwordBuffer = Buffer.from(rawPassword);
+  const legacyBuffer = Buffer.from(legacyPassword);
+
+  if (passwordBuffer.length !== legacyBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(passwordBuffer, legacyBuffer);
+};
 
 const adminLogin = (req, res) => {
   const { email, password } = req.body;
 
-  if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required." });
+  }
+
+  const isAdminEmail = email.trim().toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
+  const isValidPassword = verifyPassword(password);
+
+  if (isAdminEmail && isValidPassword) {
     const token = jwt.sign(
-      { email, role: "admin" },
+      { email: process.env.ADMIN_EMAIL, role: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "12h" }
     );
     res.json({ token, message: "Admin login successful" });
   } else {
@@ -37,7 +78,8 @@ const changeBookingStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    const updatedRow = await updateBookingStatus(id, status, remarks);
+    const sanitizedRemarks = typeof remarks === "string" ? remarks.trim().slice(0, 500) : undefined;
+    const updatedRow = await updateBookingStatus(id, status, sanitizedRemarks);
 
     if (updatedRow) {
       if (status !== "Pending") {

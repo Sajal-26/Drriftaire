@@ -103,9 +103,3 @@ Total Cost: ~₹400–₹500 per month
 * [ ] Advanced analytics dashboard
 
 ---
-
-## Notes
-
-* Keep UI minimal and clean
-* Focus on core functionality first
-* Scale infrastructure only when required

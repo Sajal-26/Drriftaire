@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { adminLogin, getBookings, changeBookingStatus, getAnalytics } = require("../controllers/admin.controller");
 const { authenticateToken } = require("../middleware/auth.middleware");
+const { adminLoginRateLimiter } = require("../middleware/security.middleware");
 
-router.post("/login", adminLogin);
+router.post("/login", adminLoginRateLimiter, adminLogin);
 
 // Protect all admin routes with this common middleware check
 const verifyAdmin = (req, res, next) => {
