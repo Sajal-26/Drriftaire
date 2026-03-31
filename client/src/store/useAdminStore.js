@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import axios from 'axios';
-
-// Ensure it points to your local backend. Adjust based on Vite env variables later.
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import API_URL from '../config/api';
 
 const useAdminStore = create(
   persist(

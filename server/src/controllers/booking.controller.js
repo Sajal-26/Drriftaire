@@ -3,6 +3,13 @@ const { appendBooking, getAllBookings } = require("../services/sheets.service");
 const { sendBookingEmails, sendDuplicateBookingEmail } = require("../services/email.service");
 
 const activeBookingLocks = new Set();
+const fireAndForget = (label, task) => {
+  Promise.resolve()
+    .then(task)
+    .catch((error) => {
+      console.error(`${label}:`, error);
+    });
+};
 
 const createBooking = async (req, res) => {
   let lockKey;
@@ -29,7 +36,9 @@ const createBooking = async (req, res) => {
     );
 
     if (existingPending) {
-      await sendDuplicateBookingEmail({ name: existingPending.Name || name, email });
+      fireAndForget("Duplicate Email Background Error", () =>
+        sendDuplicateBookingEmail({ name: existingPending.Name || name, email })
+      );
 
       return res.status(409).json({
         success: false,
@@ -54,12 +63,15 @@ const createBooking = async (req, res) => {
     };
 
     await appendBooking(bookingData);
-    await sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date });
 
     res.status(201).json({
       success: true,
       message: "Booking successful!"
     });
+
+    fireAndForget("Booking Email Background Error", () =>
+      sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date })
+    );
   } catch (err) {
     console.error("Booking Error:", err);
     res.status(500).json({ message: "Failed to process booking." });

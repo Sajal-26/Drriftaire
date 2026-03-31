@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import API_URL from "../config/api";
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const BookingPage = () => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:3000/api/bookings/book", formData);
+      await axios.post(`${API_URL}/bookings/book`, formData);
       alert("Booking successful 🚀");
 
       // reset form
