@@ -1,32 +1,49 @@
 const nodemailer = require("nodemailer");
 
-let transporter;
-
-transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
-  family: 4, // 🔥 FORCE IPv4
+  family: 4,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // (use app password if possible)
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-const escapeHtml = (value) => String(value)
-  .replace(/&/g, "&amp;")
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;")
-  .replace(/"/g, "&quot;")
-  .replace(/'/g, "&#39;");
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("Transporter Error:", err);
+  } else {
+    console.log("✅ Email server ready");
+  }
+});
 
-const formatFromAddress = () => `"Drriftaire" <${process.env.EMAIL_USER}>`;
+const escapeHtml = (value) =>
+  String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
-const sendBookingEmails = async ({ name, email, phone, state, district, pinCode, acres, cropType, date }) => {
+const formatFromAddress = () =>
+  `"Drriftaire" <${process.env.EMAIL_USER}>`;
+
+const sendBookingEmails = async ({
+  name,
+  email,
+  phone,
+  state,
+  district,
+  pinCode,
+  acres,
+  cropType,
+  date,
+}) => {
   try {
-    const mailer = getTransporter();
     const results = await Promise.allSettled([
-      mailer.sendMail({
+      transporter.sendMail({
         from: formatFromAddress(),
         to: email,
         subject: "Booking Confirmation",
@@ -44,7 +61,8 @@ const sendBookingEmails = async ({ name, email, phone, state, district, pinCode,
           <p>We'll contact you soon.</p>
         `,
       }),
-      mailer.sendMail({
+
+      transporter.sendMail({
         from: formatFromAddress(),
         to: process.env.ADMIN_EMAIL,
         subject: "New Booking Received",
@@ -64,10 +82,12 @@ const sendBookingEmails = async ({ name, email, phone, state, district, pinCode,
     ]);
 
     results
-      .filter((result) => result.status === "rejected")
-      .forEach((result) => console.error("Email delivery failure:", result.reason));
+      .filter((r) => r.status === "rejected")
+      .forEach((r) =>
+        console.error("❌ Email delivery failure:", r.reason)
+      );
   } catch (err) {
-    console.error("Email Error:", err);
+    console.error("❌ Email Error:", err);
   }
 };
 
@@ -78,18 +98,20 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
 
     if (status === "Accept") {
       subject = "Booking Accepted!";
-      message = "Great news! We have accepted your drone service booking and will be in touch shortly to finalize the details.";
+      message =
+        "Great news! We have accepted your drone service booking and will contact you shortly.";
     } else if (status === "Reject") {
-      subject = "Booking Update";
-      message = "Unfortunately, we are unable to fulfill your drone service booking at this time. Please contact us if you have any questions.";
+      message =
+        "Unfortunately, we cannot fulfill your booking at this time.";
     } else if (status === "Completed") {
       subject = "Service Completed!";
-      message = "Your drone service has been marked as completed. Thank you for choosing Drriftaire!";
+      message =
+        "Your drone service has been completed. Thank you for choosing Drriftaire!";
     } else {
       return;
     }
 
-    await getTransporter().sendMail({
+    await transporter.sendMail({
       from: formatFromAddress(),
       to: email,
       subject,
@@ -103,29 +125,33 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
       `,
     });
   } catch (err) {
-    console.error("Status Email Error:", err);
+    console.error("❌ Status Email Error:", err);
   }
 };
 
 const sendDuplicateBookingEmail = async ({ name, email }) => {
   try {
-    await getTransporter().sendMail({
+    await transporter.sendMail({
       from: formatFromAddress(),
       to: email,
       subject: "Booking Already Pending",
       html: `
         <h2>Hang tight!</h2>
         <p>Hi ${escapeHtml(name)},</p>
-        <p>We noticed you tried to make another booking, but your previous drone service slot is currently still <b>Pending</b>.</p>
-        <p>Our team will contact you very soon to finalize the details of your original request!</p>
+        <p>You already have a booking marked as <b>Pending</b>.</p>
+        <p>Our team will contact you soon!</p>
         <br/>
         <p>Best Regards,</p>
         <p>The Drriftaire Team</p>
       `,
     });
   } catch (err) {
-    console.error("Duplicate Email Error:", err);
+    console.error("❌ Duplicate Email Error:", err);
   }
 };
 
-module.exports = { sendBookingEmails, sendStatusChangeEmail, sendDuplicateBookingEmail };
+module.exports = {
+  sendBookingEmails,
+  sendStatusChangeEmail,
+  sendDuplicateBookingEmail,
+};
