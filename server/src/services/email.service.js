@@ -5,27 +5,14 @@ let transporter;
 const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      requireTLS: true,
-      family: 4,
-      dnsTimeout: 5000, 
-      pool: true,
-      maxConnections: 3,
-      maxMessages: 50,
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 20000,
-      tls: {
-        servername: "smtp.gmail.com",
-        rejectUnauthorized: true, 
-      },
+      service: "gmail",
       auth: {
+        type: "OAuth2",
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
       },
-      connectionTimeout: 5000,
     });
   }
   return transporter;
