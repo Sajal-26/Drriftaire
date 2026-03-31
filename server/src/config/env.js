@@ -4,6 +4,7 @@ const requiredEnv = [
   "GOOGLE_SERVICE_ACCOUNT_EMAIL",
   "GOOGLE_PRIVATE_KEY",
   "EMAIL_USER",
+  "EMAIL_PASS",
   "ADMIN_EMAIL",
 ];
 
