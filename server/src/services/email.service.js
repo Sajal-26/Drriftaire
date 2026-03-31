@@ -13,8 +13,6 @@ const getTransporter = () => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
     });
   }
   return transporter;
