@@ -5,13 +5,19 @@ let transporter;
 const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      requireTLS: true,
       pool: true,
       maxConnections: 3,
       maxMessages: 50,
       connectionTimeout: 10000,
       greetingTimeout: 10000,
       socketTimeout: 20000,
+      tls: {
+        servername: "smtp.gmail.com",
+      },
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
