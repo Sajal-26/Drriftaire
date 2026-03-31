@@ -9,6 +9,8 @@ const getTransporter = () => {
       port: 587,
       secure: false,
       requireTLS: true,
+      family: 4,
+      dnsTimeout: 5000, 
       pool: true,
       maxConnections: 3,
       maxMessages: 50,
@@ -17,6 +19,7 @@ const getTransporter = () => {
       socketTimeout: 20000,
       tls: {
         servername: "smtp.gmail.com",
+        rejectUnauthorized: true, 
       },
       auth: {
         user: process.env.EMAIL_USER,
@@ -24,7 +27,6 @@ const getTransporter = () => {
       },
     });
   }
-
   return transporter;
 };
 
