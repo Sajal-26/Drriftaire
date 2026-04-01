@@ -1,26 +1,49 @@
 const nodemailer = require("nodemailer");
 
+const serializeError = (error) => {
+  if (!error) {
+    return null;
+  }
+
+  return {
+    message: error.message,
+    code: error.code,
+    command: error.command,
+    response: error.response,
+    responseCode: error.responseCode,
+    errno: error.errno,
+    syscall: error.syscall,
+    address: error.address,
+    port: error.port,
+    stack: error.stack,
+  };
+};
+
+const logEmail = (step, details = {}) => {
+  console.log(`[email] ${step}`, details);
+};
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for 465, false for other ports
-  family: 4, // Force IPv4 to avoid IPv6 connectivity issues
+  secure: false,
+  family: 4,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // Helps with some cloud network restrictions
+    rejectUnauthorized: false,
   },
-  connectionTimeout: 10000, // 10 seconds
+  connectionTimeout: 10000,
   greetingTimeout: 10000,
 });
 
 transporter.verify((err, success) => {
   if (err) {
-    console.error("Transporter Error:", err);
+    console.error("[email] transporter.verify failed", serializeError(err));
   } else {
-    console.log("✅ Email server ready");
+    logEmail("transporter.verify success", { success: Boolean(success) });
   }
 });
 
@@ -35,6 +58,33 @@ const escapeHtml = (value) =>
 const formatFromAddress = () =>
   `"Drriftaire" <${process.env.EMAIL_USER}>`;
 
+const sendMailWithLogging = async ({ label, to, subject, html }) => {
+  logEmail(`${label} queued`, { to, subject });
+
+  try {
+    const result = await transporter.sendMail({
+      from: formatFromAddress(),
+      to,
+      subject,
+      html,
+    });
+
+    logEmail(`${label} sent`, {
+      to,
+      subject,
+      messageId: result.messageId,
+      accepted: result.accepted,
+      rejected: result.rejected,
+      response: result.response,
+    });
+
+    return result;
+  } catch (error) {
+    console.error(`[email] ${label} failed`, serializeError(error));
+    throw error;
+  }
+};
+
 const sendBookingEmails = async ({
   name,
   email,
@@ -46,10 +96,18 @@ const sendBookingEmails = async ({
   cropType,
   date,
 }) => {
+  logEmail("sendBookingEmails start", {
+    email,
+    adminEmail: process.env.ADMIN_EMAIL,
+    date,
+    district,
+    state,
+  });
+
   try {
     const results = await Promise.allSettled([
-      transporter.sendMail({
-        from: formatFromAddress(),
+      sendMailWithLogging({
+        label: "booking confirmation",
         to: email,
         subject: "Booking Confirmation",
         html: `
@@ -66,9 +124,8 @@ const sendBookingEmails = async ({
           <p>We'll contact you soon.</p>
         `,
       }),
-
-      transporter.sendMail({
-        from: formatFromAddress(),
+      sendMailWithLogging({
+        label: "admin booking notification",
         to: process.env.ADMIN_EMAIL,
         subject: "New Booking Received",
         html: `
@@ -86,17 +143,21 @@ const sendBookingEmails = async ({
       }),
     ]);
 
-    results
-      .filter((r) => r.status === "rejected")
-      .forEach((r) =>
-        console.error("❌ Email delivery failure:", r.reason)
-      );
+    logEmail("sendBookingEmails settled", {
+      results: results.map((result, index) => ({
+        target: index === 0 ? "customer" : "admin",
+        status: result.status,
+        reason: result.status === "rejected" ? serializeError(result.reason) : null,
+      })),
+    });
   } catch (err) {
-    console.error("❌ Email Error:", err);
+    console.error("[email] sendBookingEmails crashed", serializeError(err));
   }
 };
 
 const sendStatusChangeEmail = async ({ name, email, status }) => {
+  logEmail("sendStatusChangeEmail start", { email, status });
+
   try {
     let subject = "Drone Service Update";
     let message = "";
@@ -113,11 +174,12 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
       message =
         "Your drone service has been completed. Thank you for choosing Drriftaire!";
     } else {
+      logEmail("sendStatusChangeEmail skipped", { email, status });
       return;
     }
 
-    await transporter.sendMail({
-      from: formatFromAddress(),
+    await sendMailWithLogging({
+      label: `status change ${status.toLowerCase()}`,
       to: email,
       subject,
       html: `
@@ -130,14 +192,16 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
       `,
     });
   } catch (err) {
-    console.error("❌ Status Email Error:", err);
+    console.error("[email] sendStatusChangeEmail crashed", serializeError(err));
   }
 };
 
 const sendDuplicateBookingEmail = async ({ name, email }) => {
+  logEmail("sendDuplicateBookingEmail start", { email });
+
   try {
-    await transporter.sendMail({
-      from: formatFromAddress(),
+    await sendMailWithLogging({
+      label: "duplicate booking reminder",
       to: email,
       subject: "Booking Already Pending",
       html: `
@@ -151,7 +215,7 @@ const sendDuplicateBookingEmail = async ({ name, email }) => {
       `,
     });
   } catch (err) {
-    console.error("❌ Duplicate Email Error:", err);
+    console.error("[email] sendDuplicateBookingEmail crashed", serializeError(err));
   }
 };
 
