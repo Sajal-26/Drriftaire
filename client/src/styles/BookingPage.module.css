@@ -1,0 +1,734 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: #f6f4ee;
+  color: #243328;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.fxLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.fxTop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 4%, rgba(79, 123, 63, 0.14), transparent 40%),
+    radial-gradient(circle at 88% 8%, rgba(67, 136, 76, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(79, 123, 63, 0.08) 0%, rgba(79, 123, 63, 0.04) 28%, rgba(79, 123, 63, 0) 72%);
+}
+
+.fxPointer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.35s ease;
+}
+
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: popDown 0.3s ease;
+}
+
+.toastSuccess {
+  background: #059669;
+}
+
+.toastError {
+  background: #dc2626;
+}
+
+@keyframes popDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 1rem 0.75rem 4rem;
+  display: grid;
+  gap: 3.5rem;
+  grid-template-columns: 1fr;
+}
+
+.leftPanel {
+  display: grid;
+  gap: 1.7rem;
+}
+
+.pill {
+  display: inline-block;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.38rem 0.9rem;
+  background: #e7f2e5;
+  color: #2e6a47;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-weight: 800;
+  font-size: 0.66rem;
+}
+
+.title {
+  margin: 0.65rem 0 0;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-weight: 900;
+  color: #163c2f;
+}
+
+.titleAccent {
+  color: #2f7c52;
+}
+
+.lead {
+  margin: 1.25rem 0 0;
+  max-width: 42rem;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #547063;
+}
+
+.stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  border-radius: 2rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px -2px rgba(22, 60, 47, 0.08);
+  transition: all 0.3s ease;
+}
+
+.statValue {
+  margin: 0;
+  font-size: 2.25rem;
+  line-height: 1;
+  font-weight: 900;
+  color: #2e6a47;
+}
+
+.statLabel {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #60796d;
+  font-weight: 800;
+}
+
+.guideCard {
+  background: #163c2f;
+  color: #edf7ef;
+  border-radius: 2.5rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.guideTitle {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  color: #8ec38f;
+  font-weight: 800;
+}
+
+.guideList {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.guideItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.guideIndex {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: #2b6f4e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  color: #a7f3d0;
+}
+
+.guideText {
+  margin: 0;
+  color: #cee7d2;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.formPanel {
+  border-radius: 3.5rem;
+  padding: 0;
+  overflow: visible;
+}
+
+.formShell {
+  border: 1px solid rgba(47, 98, 67, 0.12);
+  border-radius: 3rem;
+  background: #fff;
+  padding: 3rem 1.5rem;
+  overflow: visible;
+  box-shadow: 0 30px 60px -15px rgba(22, 60, 47, 0.12);
+}
+
+.formHeader {
+  margin-bottom: 2rem;
+}
+
+.formTitle {
+  margin: 0;
+  font-size: 2.75rem;
+  font-weight: 950;
+  color: #1b4a36;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.formHint {
+  margin: 0.5rem 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.form {
+  display: grid;
+  gap: 2.25rem;
+  isolation: isolate;
+}
+
+.row1,
+.row2,
+.row3 {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.label {
+  margin: 0;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #64748b;
+  font-weight: 800;
+  padding-left: 0.25rem;
+}
+
+.input {
+  width: 100%;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #1e293b;
+  font-size: 1.125rem;
+  padding: 0 1.25rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.phoneWrap {
+  display: flex;
+  align-items: center;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 0.25rem;
+  transition: all 0.2s;
+}
+
+.phoneWrap:focus-within {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.phonePrefix {
+  border-radius: 0.75rem 0 0 0.75rem;
+  background: #f8fafc;
+  border-right: 1px solid #f1f5f9;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  height: calc(100% - 2px);
+  margin: 1px;
+}
+
+.phoneCode {
+  font-weight: 800;
+  color: #064e3b;
+}
+
+.phoneInput {
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 0 1.25rem;
+}
+
+.flagIndia {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.flagBandSaffron {
+  height: 33%;
+  background: #ff9933;
+  top: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.flagBandWhite {
+  height: 34%;
+  background: #fff;
+  top: 33%;
+  position: absolute;
+  width: 100%;
+}
+
+.flagBandGreen {
+  height: 33%;
+  background: #138808;
+  top: 67%;
+  position: absolute;
+  width: 100%;
+}
+
+.flagChakra {
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  border: 1.5px solid #000080;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.selectWrap {
+  position: relative;
+  z-index: 20;
+}
+
+.selectWrapOpen {
+  z-index: 300;
+}
+
+.selectButton {
+  width: 100%;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.selectButtonOpen {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.selectPlaceholder {
+  color: #94a3b8;
+}
+
+.selectArrow {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid #10b981;
+  border-bottom: 2px solid #10b981;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+  margin-bottom: 3px;
+}
+
+.selectArrowOpen {
+  transform: rotate(-135deg);
+  margin-bottom: -3px;
+}
+
+.selectMenu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid #f1f5f9;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  z-index: 350;
+  animation: scaleIn 0.2s ease;
+  scrollbar-width: none;
+}
+
+.selectMenuUp {
+  top: auto;
+  bottom: calc(100% + 0.5rem);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.selectOption {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  color: #475569;
+}
+
+.selectMenu::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.selectMenu::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.selectOption:hover {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.selectOptionActive {
+  background: #dcfce7;
+  color: #166534;
+  font-weight: 700;
+}
+
+.dateWrap {
+  position: relative;
+  z-index: 120;
+}
+
+.dateButton {
+  width: 100%;
+  height: 4rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.dateButtonOpen {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.calendarIcon {
+  width: 1.72rem;
+  height: 1.72rem;
+  border-radius: 0.62rem;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.calendarIconTop {
+  width: 0.64rem;
+  height: 0.14rem;
+  background: #059669;
+  border-radius: 999px;
+  position: absolute;
+  top: 0.3rem;
+}
+
+.calendarIconBody {
+  width: 0.74rem;
+  height: 0.66rem;
+  border: 1.7px solid #059669;
+  border-top-width: 0.2rem;
+  border-radius: 3px;
+}
+
+.calendarPopover {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.5rem);
+  width: min(100%, 20rem);
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 2rem;
+  padding: 1.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  animation: scaleIn 0.3s ease;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendarNav {
+  border: 0;
+  background: #f8fafc;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calendarMonth {
+  margin: 0;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: #1e293b;
+}
+
+.calendarWeekdays,
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendarWeekday {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.calendarDay {
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  color: #475569;
+}
+
+.calendarDay:hover:not(:disabled) {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.calendarDaySelected {
+  background: #059669 !important;
+  color: #fff !important;
+}
+
+.calendarDayToday {
+  color: #059669;
+  font-weight: 900;
+  box-shadow: inset 0 0 0 2px #d1fae5;
+}
+
+.calendarDayOutside {
+  opacity: 0.2;
+}
+
+.calendarDay:disabled {
+  opacity: 0.1;
+  cursor: not-allowed;
+}
+
+.submitRow {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  align-items: end;
+}
+
+.submitButton {
+  height: 4rem;
+  border: 0;
+  border-radius: 1rem;
+  background: #065f46;
+  color: #fff;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 10px 20px -3px rgba(6, 95, 70, 0.35);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #064e3b;
+  transform: translateY(-2px);
+}
+
+.submitButton:active {
+  transform: scale(0.95);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 6rem;
+    padding: 8rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .leftPanel {
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .lead {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 54rem;
+  }
+
+  .stats {
+    justify-content: flex-start;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 100%;
+  }
+
+  .guideCard {
+    text-align: left;
+    max-width: 100%;
+    margin: 3rem 0 0;
+    padding: 4rem;
+  }
+
+  .formShell {
+    padding: 6rem 7rem;
+  }
+
+  .formTitle {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .formHint {
+    font-size: 1.25rem;
+    margin-bottom: 3.5rem;
+    text-align: left;
+  }
+
+  .row2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .row3 {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .submitRow {
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+  }
+
+  .submitButton {
+    min-width: 18rem;
+  }
+}

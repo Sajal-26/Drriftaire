@@ -1,29 +1,125 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../styles/Navbar.module.css';
 
+const navSections = [
+  {
+    id: 'primary',
+    items: [
+      { to: '/', label: 'Home' },
+      { to: '/services', label: 'Services' },
+      { to: '/booking', label: 'Booking' },
+    ],
+  },
+  {
+    id: 'secondary',
+    items: [
+      { to: '/why-us', label: 'Why us' },
+      { to: '/about', label: 'About' },
+      { to: '/contact', label: 'Contact us' },
+    ],
+  },
+];
+
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.app-content');
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const currentScrollY = scrollContainer.scrollTop;
+      
+      // Always show at the very top
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+        setLastScrollY(currentScrollY);
+        return;
+      }
+
+      // Determine visibility based on direction
+      if (currentScrollY > lastScrollY && currentScrollY > 70) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  const renderNavItems = (items) =>
+    items.map((item) => (
+      <li key={item.to}>
+        <NavLink
+          to={item.to}
+          end={item.to === '/'}
+          onClick={() => setIsMenuOpen(false)}
+          className={({ isActive }) =>
+            `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`.trim()
+          }
+        >
+          {item.label}
+        </NavLink>
+      </li>
+    ));
+
   return (
-    <nav className={styles.navbar}>
-      {/* Left Links */}
-      <ul className={styles.leftLinks}>
-        <li><Link to="/" className={styles.navItem}>Home</Link></li>
-        <li><Link to="/services" className={styles.navItem}>Services</Link></li>
-        <li><Link to="/booking" className={styles.navItem}>Booking</Link></li>
-      </ul>
+    <motion.header 
+      className={styles.shell}
+      initial={{ y: 0 }}
+      animate={{ y: isVisible ? 0 : '-100%' }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <nav className={styles.navbar} aria-label="Primary navigation">
+        <ul className={`${styles.linkGroup} ${styles.leftLinks}`}>
+          {renderNavItems(navSections[0].items)}
+        </ul>
 
-      {/* Center Logo */}
-      <Link to="/" className={styles.logoContainer}>
-        <span className={styles.logoText}>Drriftaire</span>
-      </Link>
+        <Link to="/" className={styles.logoContainer} aria-label="Drriftaire home">
+          <span className={styles.logoText}>Drriftaire</span>
+        </Link>
 
-      {/* Right Links */}
-      <ul className={styles.rightLinks}>
-        <li><Link to="/why-us" className={styles.navItem}>Why us</Link></li>
-        <li><Link to="/about" className={styles.navItem}>About</Link></li>
-        <li><Link to="/contact" className={styles.navItem}>Contact us</Link></li>
-      </ul>
-    </nav>
+        <div className={styles.actions}>
+          <ul className={`${styles.linkGroup} ${styles.rightLinks}`}>
+            {renderNavItems(navSections[1].items)}
+          </ul>
+
+          <button
+            type="button"
+            className={styles.menuButton}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            <span className={styles.menuButtonLine} />
+            <span className={styles.menuButtonLine} />
+            <span className={styles.menuButtonLine} />
+          </button>
+        </div>
+      </nav>
+
+      <div
+        id="mobile-navigation"
+        className={`${styles.mobilePanel} ${isMenuOpen ? styles.mobilePanelOpen : ''}`}
+      >
+        <div className={styles.mobilePanelInner}>
+          {navSections.map((section) => (
+            <ul key={section.id} className={styles.mobileList}>
+              {renderNavItems(section.items)}
+            </ul>
+          ))}
+        </div>
+      </div>
+    </motion.header>
   );
 };
 

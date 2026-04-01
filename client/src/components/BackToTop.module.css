@@ -1,0 +1,28 @@
+.button {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: #163c2f;
+  color: #fff;
+  border: 4px solid #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(22, 60, 47, 0.25);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .button {
+    bottom: 2rem;
+    right: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+  }
+}

@@ -1,0 +1,135 @@
+.footer {
+  background:
+    linear-gradient(180deg, #f3f0e8 0%, #f8f6f0 30%, #ffffff 100%);
+  border-top: 1px solid rgba(40, 89, 59, 0.12);
+  color: #243328;
+}
+
+.inner {
+  width: min(100%, 120rem);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 4vw, 4rem);
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.brandBlock {
+  max-width: 40rem;
+}
+
+.brand {
+  background: linear-gradient(90deg, #2f5b34, #4f7b3f, #6f9a4d, #3f6b45);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.tagline {
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #5a6a5f;
+}
+
+.meta {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  font-size: 0.92rem;
+  color: #3f4f44;
+}
+
+.linkColumns {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.group {
+  padding: 0.25rem 0;
+}
+
+.groupTitle {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #28593b;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.link {
+  color: #334238;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: #4f7b3f;
+}
+
+.bottomBar {
+  border-top: 1px solid rgba(40, 89, 59, 0.1);
+  padding: 1rem clamp(1rem, 4vw, 4rem) 1.5rem;
+}
+
+.copyright {
+  width: min(100%, 120rem);
+  margin: 0 auto;
+  font-size: 0.86rem;
+  color: #66766b;
+}
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .linkColumns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding-top: 2.2rem;
+    padding-bottom: 2.2rem;
+  }
+
+  .linkColumns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .bottomBar {
+    padding-bottom: 1.2rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .linkColumns {
+    grid-template-columns: 1fr;
+  }
+}

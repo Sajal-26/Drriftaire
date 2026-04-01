@@ -1,28 +1,65 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import * as XLSX from 'xlsx';
+import { motion, AnimatePresence } from 'framer-motion';
 import useAdminStore from '../store/useAdminStore';
-import { 
-  LogOut, 
-  LayoutDashboard, 
-  Droplets, 
-  Users, 
-  CheckCircle2, 
-  Clock, 
-  XOctagon, 
-  Loader2, 
-  Wind 
+import {
+  CheckCircle2,
+  Clock,
+  Download,
+  Droplets,
+  ExternalLink,
+  LayoutDashboard,
+  Loader2,
+  LogOut,
+  Users,
+  Wind,
+  XOctagon,
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function AdminDashboard() {
-  // Grab all state and actions from our centralized Zustand brain
-  const { adminToken, login, logout, bookings, analytics, fetchBookings, fetchAnalytics, updateBookingStatus, isLoading, error, clearError } = useAdminStore();
+const ADMIN_EMAIL = 'drriftaire@gmail.com';
 
-  const [email, setEmail] = useState('');
+const formatDateTime = (value) => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value || '-';
+  return parsed.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
+export default function AdminDashboard() {
+  const {
+    adminToken,
+    login,
+    logout,
+    bookings,
+    analytics,
+    health,
+    fetchBookings,
+    fetchAnalytics,
+    updateBookingStatus,
+    checkHealth,
+    isLoading,
+    error,
+    clearError,
+  } = useAdminStore();
+
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [pendingRemarks, setPendingRemarks] = useState({});
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, status: null });
 
-  // Global Error Toaster
+  const GOOGLE_SHEET_URL =
+    import.meta.env.VITE_GOOGLE_SHEET_URL ||
+    (import.meta.env.VITE_GOOGLE_SHEET_ID
+      ? `https://docs.google.com/spreadsheets/d/${import.meta.env.VITE_GOOGLE_SHEET_ID}`
+      : '');
+
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -30,7 +67,10 @@ export default function AdminDashboard() {
     }
   }, [error, clearError]);
 
-  // Bootup Fetch (Only fires if we hold a valid token)
+  useEffect(() => {
+    checkHealth();
+  }, [checkHealth]);
+
   useEffect(() => {
     if (adminToken) {
       fetchBookings();
@@ -38,261 +78,540 @@ export default function AdminDashboard() {
     }
   }, [adminToken, fetchBookings, fetchAnalytics]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const exportRows = useMemo(
+    () =>
+      [...bookings].reverse().map((booking) => ({
+        bookingId: booking.id,
+        requestDate: formatDateTime(booking.Timestamp),
+        name: booking.Name || '',
+        email: booking.Email || '',
+        phone: booking.Phone || '',
+        state: booking.State || '',
+        district: booking.District || '',
+        pinCode: booking['Pin Code'] || '',
+        acres: booking.Acres || '',
+        cropType: booking['Crop Type'] || '',
+        preferredDate: booking.Date || '',
+        status: booking.Status || 'Pending',
+        remarks: booking.Remarks || '',
+      })),
+    [bookings]
+  );
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
     setIsLoggingIn(true);
-    const result = await login(email, password);
+    const result = await login(ADMIN_EMAIL, password);
     if (result.success) {
-      toast.success('Access Granted - Welcome back Commander');
+      toast.success('Welcome back');
     }
     setIsLoggingIn(false);
   };
 
   const handleRemarkChange = (id, text) => {
-    setPendingRemarks(prev => ({ ...prev, [id]: text }));
+    setPendingRemarks((prev) => ({ ...prev, [id]: text }));
   };
 
   const handleUpdateStatus = async (id, status) => {
-    const remarkToSend = pendingRemarks[id] || "";
+    setConfirmModal({ isOpen: true, id, status });
+  };
+
+  const executeUpdateStatus = async () => {
+    const { id, status } = confirmModal;
+    const remarkToSend = pendingRemarks[id] || '';
+    
+    setConfirmModal({ isOpen: false, id: null, status: null });
+    
     toast.promise(updateBookingStatus(id, status, remarkToSend), {
-      loading: 'Transmitting command...',
-      success: `Mission officially updated to ${status}! 🚁`,
-      error: 'Transmission failed',
+      loading: 'Updating record...',
+      success: `Record updated to ${status}`,
+      error: 'Update failed',
     });
   };
 
-  // ---------------------------------------------------------------------------
-  // VIEW: SECURE LOGIN TERMINAL
-  // ---------------------------------------------------------------------------
+  const handleDownloadCsv = () => {
+    if (!exportRows.length) {
+      toast.error('No bookings to export');
+      return;
+    }
+
+    const headers = [
+      'Booking ID',
+      'Request Date',
+      'Name',
+      'Email',
+      'Phone',
+      'State',
+      'District',
+      'Pin Code',
+      'Acres',
+      'Crop Type',
+      'Preferred Date',
+      'Status',
+      'Remarks',
+    ];
+    const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+
+    const lines = [
+      headers.join(','),
+      ...exportRows.map((row) =>
+        [
+          row.bookingId,
+          row.requestDate,
+          row.name,
+          row.email,
+          row.phone,
+          row.state,
+          row.district,
+          row.pinCode,
+          row.acres,
+          row.cropType,
+          row.preferredDate,
+          row.status,
+          row.remarks,
+        ]
+          .map(escapeCsv)
+          .join(',')
+      ),
+    ];
+
+    const blob = new Blob([`\uFEFF${lines.join('\n')}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `bookings-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadExcel = () => {
+    if (!exportRows.length) {
+      toast.error('No bookings to export');
+      return;
+    }
+
+    // Prepare data for XLSX
+    const wsData = [
+      [
+        'Booking ID',
+        'Request Date',
+        'Name',
+        'Email',
+        'Phone',
+        'State',
+        'District',
+        'Pin Code',
+        'Acres',
+        'Crop Type',
+        'Preferred Date',
+        'Status',
+        'Remarks',
+      ],
+      ...exportRows.map((row) => [
+        row.bookingId,
+        row.requestDate,
+        row.name,
+        row.email,
+        row.phone,
+        row.state,
+        row.district,
+        row.pinCode,
+        row.acres,
+        row.cropType,
+        row.preferredDate,
+        row.status,
+        row.remarks,
+      ]),
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Bookings');
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(wb, `bookings-${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
+  const handleOpenSheet = () => {
+    if (!GOOGLE_SHEET_URL) {
+      toast.error('Google Sheet URL is not configured');
+      return;
+    }
+    window.open(GOOGLE_SHEET_URL, '_blank', 'noopener,noreferrer');
+  };
+
   if (!adminToken) {
     return (
-      <div className="min-h-screen bg-[#060b13] flex items-center justify-center p-4 overflow-hidden relative selection:bg-blue-500/30">
-        {/* Background Ambient Glow Effects */}
-        <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-emerald-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#f6f4ee] p-4 selection:bg-green-200">
+        <div className="pointer-events-none absolute left-1/4 top-1/4 h-[30rem] w-[30rem] rounded-full bg-green-600/10 blur-[120px]" />
+        <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[30rem] w-[30rem] rounded-full bg-lime-600/10 blur-[120px]" />
 
-        {/* Glassmorphism Card */}
-        <div className="w-full max-w-md bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-3xl p-8 sm:p-10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] z-10 transition-all duration-500 hover:border-white/20">
-          <div className="flex flex-col items-center mb-8">
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 mb-5 inline-flex items-center justify-center ring-1 ring-inset ring-white/10 shadow-inner">
-              <Wind className="w-10 h-10 text-blue-400 drop-shadow-[0_0_15px_rgba(96,165,250,0.5)]" />
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent tracking-tight">Admin Terminal</h1>
-            <p className="text-slate-500 mt-2 text-sm uppercase tracking-widest font-semibold flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-              Secure Protocol Active
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="z-10 w-full max-w-md rounded-3xl border border-green-900/10 bg-white/60 p-8 shadow-[0_8px_32px_0_rgba(29,78,59,0.18)] backdrop-blur-3xl sm:p-10"
+        >
+          <div className="mb-8 flex flex-col items-center">
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="mb-5 inline-flex items-center justify-center rounded-2xl border border-green-900/10 bg-white/80 p-4 shadow-inner"
+            >
+              <Wind className="h-10 w-10 text-green-700" />
+            </motion.div>
+            <h1 className="text-3xl font-bold tracking-tight text-[#1b4a36]">Administrator Access</h1>
+            <p className="mt-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#5d7365]">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-600" />
+              Authorized Personnel Only
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <input 
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Terminal ID (Email)" 
-                required
-                className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-5 py-4 placeholder-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 backdrop-blur-sm"
-              />
-            </div>
-            <div>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Passcode" 
-                required
-                className="w-full bg-black/40 border border-white/10 text-white rounded-xl px-5 py-4 placeholder-white/20 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 backdrop-blur-sm"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Administrator Password"
+              required
+              className="w-full rounded-xl border border-green-900/10 bg-white px-5 py-4 text-sm text-[#1b4a36] placeholder-[#8aa095] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+            />
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
               disabled={isLoggingIn}
-              className="w-full mt-2 relative group overflow-hidden bg-blue-600 text-white font-semibold tracking-wide rounded-xl px-4 py-4 transition-all duration-300 hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/20"
+              className="relative mt-2 w-full overflow-hidden rounded-xl border border-green-900/10 bg-[#2f6a47] px-4 py-4 font-semibold tracking-wide text-white transition-all duration-300 hover:bg-[#245a3d] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-white/20 to-blue-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              {isLoggingIn ? <Loader2 className="w-5 h-5 mx-auto animate-spin" /> : 'AUTHENTICATE'}
-            </button>
+              {isLoggingIn ? <Loader2 className="mx-auto h-5 w-5 animate-spin" /> : 'SIGN IN'}
+            </motion.button>
           </form>
-        </div>
-        <Toaster position="bottom-center" toastOptions={{ style: { background: '#0f172a', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)' } }} />
+        </motion.div>
+
+        <Toaster
+          position="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#ffffff',
+              color: '#1b4a36',
+              border: '1px solid rgba(47,106,71,0.2)',
+            },
+          }}
+        />
       </div>
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // VIEW: DASHBOARD
-  // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-200 selection:bg-blue-500/30 pb-20 font-sans relative overflow-hidden">
-      {/* Background ambient light */}
-      <div className="absolute -top-60 -right-60 w-[50rem] h-[50rem] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+    <div className="relative min-h-screen overflow-hidden bg-[#f6f4ee] pb-20 font-sans text-[#243328] selection:bg-green-200">
+      <div className="pointer-events-none absolute -right-60 -top-60 h-[50rem] w-[50rem] rounded-full bg-green-500/10 blur-[100px]" />
 
-      <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)' } }} />
-      
-      {/* Premium Dark Top Navbar */}
-      <nav className="sticky top-0 z-50 bg-[#0B1120]/80 backdrop-blur-xl border-b border-white/5 px-8 py-5 flex items-center justify-between shadow-sm">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#ffffff',
+            color: '#1b4a36',
+            border: '1px solid rgba(47,106,71,0.2)',
+            boxShadow: '0 20px 40px -10px rgba(22,60,47,0.25)',
+          },
+        }}
+      />
+
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/10 bg-[#f6f4ee]/90 px-8 py-5 shadow-sm backdrop-blur-xl">
         <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-indigo-500/10 rounded-xl border border-blue-500/20 text-blue-400 shadow-inner">
-            <LayoutDashboard className="w-5 h-5" />
+          <div className="rounded-xl border border-green-700/20 bg-gradient-to-br from-green-500/20 to-lime-500/10 p-2.5 text-green-700 shadow-inner">
+            <LayoutDashboard className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent tracking-tight">Mission Control</span>
+          <div>
+            <span className="text-2xl font-bold tracking-tight text-[#1b4a36]">Management Console</span>
+            <div className="mt-1 flex items-center gap-2 text-xs text-[#60796d]">
+              <span
+                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                  health.status === 'ok'
+                    ? 'bg-emerald-400'
+                    : health.status === 'checking'
+                      ? 'animate-pulse bg-amber-400'
+                      : 'bg-red-400'
+                }`}
+              />
+              <span>
+                {health.status === 'ok'
+                  ? 'System Operational'
+                  : health.status === 'checking'
+                    ? 'Verifying Connection'
+                    : 'System Offline'}
+              </span>
+            </div>
+          </div>
         </div>
-        <button 
-          onClick={logout}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-all duration-300 border border-transparent hover:border-white/10 active:scale-95 group"
-        >
-          <span className="text-sm font-semibold tracking-wide">SHUT DOWN</span>
-          <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={checkHealth}
+            className="rounded-xl border border-green-900/10 bg-white px-4 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95"
+          >
+            VERIFY STATUS
+          </button>
+          <button
+            onClick={logout}
+            className="group flex items-center gap-2 rounded-xl border border-transparent px-5 py-2.5 text-[#60796d] transition-all duration-300 hover:border-green-900/10 hover:bg-white hover:text-[#1b4a36] active:scale-95"
+          >
+            <span className="text-sm font-semibold tracking-wide">LOG OUT</span>
+            <LogOut className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
       </nav>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 mt-10 space-y-10 relative z-10">
-        
-        {/* KPI Analytics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <main className="relative z-10 mx-auto mt-10 max-w-7xl space-y-10 px-6 lg:px-8">
+        <motion.div 
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.1 }
+            }
+          }}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {[
-            { label: 'Total Requests', value: analytics.total || 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/5', border: 'border-blue-400/20' },
-            { label: 'Pending Assessment', value: analytics.pending || 0, icon: Clock, color: 'text-amber-400', bg: 'bg-amber-400/5', border: 'border-amber-400/20' },
-            { label: 'Drones Deployed', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-400', bg: 'bg-emerald-400/5', border: 'border-emerald-400/20' },
-            { label: 'Missions Completed', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-indigo-400', bg: 'bg-indigo-400/5', border: 'border-indigo-400/20' }
-          ].map((stat, i) => (
-            <div key={i} className={`p-7 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-md relative overflow-hidden group hover:border-white/10 transition-all duration-300 hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)]`}>
-              {/* Decorative radial gradient corner */}
-              <div className={`absolute top-0 right-0 p-32 bg-gradient-to-br from-white/[0.03] to-transparent rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-110`} />
-              
-              <div className="flex items-start justify-between relative z-10">
+            { label: 'Total Inquiries', value: analytics.total || 0, icon: Users, color: 'text-[#2f6a47]', bg: 'bg-green-100/70', border: 'border-green-700/20' },
+            { label: 'Pending Review', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
+            { label: 'Confirmed Bookings', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
+            { label: 'Services Completed', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
+          ].map((stat) => (
+            <motion.div 
+              key={stat.label} 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 }
+              }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="group relative overflow-hidden rounded-3xl border border-green-900/10 bg-white/70 p-7 backdrop-blur-md transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_8px_40px_-12px_rgba(22,60,47,0.28)]"
+            >
+              <div className="absolute -mr-16 -mt-16 rounded-full bg-gradient-to-br from-green-200/30 to-transparent p-32 transition-transform duration-700 group-hover:scale-110" />
+              <div className="relative z-10 flex items-start justify-between">
                 <div>
-                  <p className="text-slate-400 text-sm font-medium tracking-wide">{stat.label}</p>
-                  <p className="text-4xl font-bold text-white mt-3 items-baseline flex gap-2">
-                    {stat.value}
-                  </p>
+                  <p className="text-sm font-medium tracking-wide text-[#60796d]">{stat.label}</p>
+                  <p className="mt-3 flex items-baseline gap-2 text-4xl font-bold text-[#1b4a36]">{stat.value}</p>
                 </div>
-                <div className={`p-4 rounded-2xl ${stat.bg} ${stat.border} border ring-1 ring-inset ring-white/5 shadow-inner`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color} drop-shadow-[0_0_8px_currentColor]`} />
+                <div className={`rounded-2xl border p-4 ring-1 ring-inset ring-white/70 shadow-inner ${stat.bg} ${stat.border}`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Live Dispatches Table Container */}
-        <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] overflow-hidden backdrop-blur-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
-          {/* Table Header block */}
-          <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-black/20">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/75 shadow-[0_20px_60px_-15px_rgba(22,60,47,0.28)] backdrop-blur-xl"
+        >
+          <div className="flex items-center justify-between border-b border-green-900/10 bg-white/60 px-8 py-6">
+            <h2 className="flex items-center gap-3 text-lg font-semibold text-[#1b4a36]">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
               </span>
-              Live Grid Feed
+              Recent Booking Records
             </h2>
-            <button onClick={fetchBookings} className="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-colors group flex items-center gap-2 active:scale-95 text-sm font-medium text-slate-300">
-              <Loader2 className={`w-4 h-4 text-blue-400 ${isLoading ? 'animate-spin cursor-not-allowed' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
-              SYNC FEED
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleDownloadCsv} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
+                <Download className="h-4 w-4" />
+                CSV
+              </button>
+              <button onClick={handleDownloadExcel} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
+                <Download className="h-4 w-4" />
+                EXCEL
+              </button>
+              <button onClick={handleOpenSheet} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
+                <ExternalLink className="h-4 w-4" />
+                SPREADSHEET
+              </button>
+              <button onClick={fetchBookings} className="group flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-4 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95">
+                <Loader2 className={`h-4 w-4 text-green-700 ${isLoading ? 'animate-spin cursor-not-allowed' : 'transition-transform duration-500 group-hover:rotate-180'}`} />
+                REFRESH DATA
+              </button>
+            </div>
           </div>
-          
+
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="bg-white/[0.01] border-b border-white/5 text-slate-400 text-xs uppercase tracking-widest font-semibold">
-                  <th className="px-8 py-5">Intel / Timestamp</th>
-                  <th className="px-8 py-5">Client Profile</th>
-                  <th className="px-8 py-5">Farm Telemetry</th>
-                  <th className="px-8 py-5">Status Plaque</th>
-                  <th className="px-8 py-5 text-right">Command Override</th>
+                <tr className="border-b border-green-900/10 bg-white/50 text-xs font-semibold uppercase tracking-widest text-[#60796d]">
+                  <th className="px-8 py-5">Reference No.</th>
+                  <th className="px-8 py-5">Customer Information</th>
+                  <th className="px-8 py-5">Service Requirements</th>
+                  <th className="px-8 py-5">Status</th>
+                  <th className="px-8 py-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
-                {[...bookings].reverse().map((booking) => (
-                  <tr key={booking.id} className="hover:bg-white/[0.03] transition-colors duration-300 group">
-                    <td className="px-8 py-6 whitespace-nowrap">
-                      <div className="text-cyan-400 font-mono text-xs mb-1">ID: {booking.id.toString().padStart(4, '0')}</div>
-                      <div className="text-sm text-slate-400">{booking.Timestamp?.split(',')[0]}</div>
+              <tbody className="divide-y divide-green-900/10">
+                <AnimatePresence initial={false}>
+                  {[...bookings].reverse().map((booking) => (
+                    <motion.tr 
+                      key={booking.id} 
+                      layout
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
+                      className="transition-colors duration-300 hover:bg-green-50/50"
+                    >
+                    <td className="whitespace-nowrap px-8 py-6">
+                      <div className="mb-1 font-mono text-xs text-green-700">ID: {booking.id.toString().padStart(4, '0')}</div>
+                      <div className="text-sm text-[#60796d]">Requested: {formatDateTime(booking.Timestamp)}</div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="font-semibold text-slate-200 text-base">{booking.Name}</div>
-                      <div className="text-sm text-slate-400 mt-1 flex items-center gap-2">
-                        {booking.Email}
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">{booking.Phone}</div>
+                      <div className="text-base font-semibold text-[#243328]">{booking.Name}</div>
+                      <div className="mt-1 text-sm text-[#60796d]">{booking.Email}</div>
+                      <div className="mt-0.5 text-xs text-[#76877d]">{booking.Phone}</div>
                     </td>
                     <td className="px-8 py-6 text-sm">
-                      <div className="text-slate-300 font-medium">{booking.State}, {booking.District}</div>
-                      <div className="text-slate-400 text-xs mt-0.5">PIN: {booking['Pin Code']}</div>
-                      <div className="text-xs text-blue-400 mt-2 font-mono bg-blue-500/10 inline-block px-2.5 py-1 rounded-md border border-blue-500/20">{booking.Acres} Acres</div>
-                      <div className="text-xs text-emerald-400 mt-1 font-medium bg-emerald-500/10 inline-block px-2.5 py-1 rounded-md border border-emerald-500/20 ml-2">{booking['Crop Type']}</div>
-                      <div className="text-xs text-slate-500 mt-2 flex items-center gap-1.5"><Clock className="w-3.5 h-3.5"/> For: {booking.Date}</div>
+                      <div className="font-medium text-[#355f48]">{booking.State}, {booking.District}</div>
+                      <div className="mt-0.5 text-xs text-[#60796d]">PIN: {booking['Pin Code']}</div>
+                      <div className="mt-2 inline-block rounded-md border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 font-mono text-xs text-blue-500">{booking.Acres} Acres</div>
+                      <div className="ml-2 mt-1 inline-block rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-500">{booking['Crop Type']}</div>
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-[#76877d]"><Clock className="h-3.5 w-3.5" /> For: {booking.Date}</div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border shadow-sm
-                        ${booking.Status === 'Completed' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 
-                          booking.Status === 'Accept' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                          booking.Status === 'Reject' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
-                          'bg-amber-500/10 text-amber-400 border-amber-500/20'} 
-                          ${(!booking.Status || booking.Status === 'Pending') && 'shadow-[0_0_15px_rgba(251,191,36,0.2)]'}`}>
-                        {booking.Status === 'Completed' && <CheckCircle2 className="w-3.5 h-3.5" />}
-                        {(!booking.Status || booking.Status === 'Pending') && <Clock className="w-3.5 h-3.5" />}
-                        {booking.Status === 'Accept' && <Wind className="w-3.5 h-3.5" />}
+                    <td className="whitespace-nowrap px-8 py-6">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm ${
+                          booking.Status === 'Completed'
+                            ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400'
+                            : booking.Status === 'Accept'
+                              ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                              : booking.Status === 'Reject'
+                                ? 'border-red-500/20 bg-red-500/10 text-red-400'
+                                : 'border-amber-500/20 bg-amber-500/10 text-amber-400'
+                        }`}
+                      >
+                        {booking.Status === 'Completed' && <CheckCircle2 className="h-3.5 w-3.5" />}
+                        {(!booking.Status || booking.Status === 'Pending') && <Clock className="h-3.5 w-3.5" />}
+                        {booking.Status === 'Accept' && <Wind className="h-3.5 w-3.5" />}
                         {booking.Status || 'Pending'}
                       </span>
                       {booking.Remarks && (
-                        <div className="mt-3 text-xs italic text-slate-400 border-l-2 border-slate-700 pl-3">
-                           "{booking.Remarks}"
+                        <div className="mt-3 border-l-2 border-green-900/20 pl-3 text-xs italic text-[#60796d]">
+                          "{booking.Remarks}"
                         </div>
                       )}
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-right">
-                      {/* Interactive Buttons trigger on row hover! */}
-                      {(!booking.Status || booking.Status === 'Pending') ? (
-                        <div className="flex flex-col items-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-                          <input 
-                            type="text" 
-                            placeholder="Add remarks..." 
-                            value={pendingRemarks[booking.id] || ""}
-                            onChange={(e) => handleRemarkChange(booking.id, e.target.value)}
-                            className="bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-white/40 focus:outline-none focus:ring-1 focus:ring-blue-500/50 w-full max-w-[150px] transition-all backdrop-blur-md"
+                    <td className="whitespace-nowrap px-8 py-6 text-right">
+                      {!booking.Status || booking.Status === 'Pending' ? (
+                        <div className="flex flex-col items-end gap-2">
+                          <input
+                            type="text"
+                            placeholder="Add remarks..."
+                            value={pendingRemarks[booking.id] || ''}
+                            onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
+                            className="w-full max-w-[170px] rounded-lg border border-green-900/10 bg-white px-3 py-1.5 text-xs text-[#243328] placeholder-[#8aa095] transition-all focus:outline-none focus:ring-1 focus:ring-green-700/40"
                           />
                           <div className="flex items-center gap-2">
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 rounded-xl transition-all shadow-sm font-semibold tracking-wide text-xs active:scale-95" title="Deploy Fleet">
-                              <Wind className="w-4 h-4" /> ACCEPT
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold tracking-wide text-emerald-400 shadow-sm transition-all hover:bg-emerald-500 hover:text-white active:scale-95" title="Confirm">
+                              <Wind className="h-4 w-4" /> CONFIRM
                             </button>
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="p-1.5 text-red-400 hover:bg-red-500 hover:text-white border border-transparent hover:border-red-500 rounded-xl transition-all active:scale-95" title="Abort Mission">
-                              <XOctagon className="w-4 h-4" />
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="rounded-xl border border-transparent p-1.5 text-red-400 transition-all hover:border-red-500 hover:bg-red-500 hover:text-white active:scale-95" title="Decline">
+                              <XOctagon className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
                       ) : booking.Status === 'Accept' ? (
-                        <div className="flex items-center justify-end opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-                           <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:bg-opacity-20 border border-indigo-500/20 hover:border-indigo-500/40 rounded-xl transition-all font-bold tracking-widest text-xs shadow-sm active:scale-95" title="Mark as Completed">
-                            <CheckCircle2 className="w-4 h-4" /> RECALL FLEET (COMPLETE)
+                        <div className="flex items-center justify-end">
+                          <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="flex items-center gap-2 rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-4 py-2 text-xs font-bold tracking-widest text-indigo-400 shadow-sm transition-all hover:border-indigo-500/40 hover:bg-indigo-500/20 active:scale-95" title="Mark as Finalized">
+                            <CheckCircle2 className="h-4 w-4" /> FINALIZE
                           </button>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-600 font-medium tracking-wider uppercase">Mission Locked</span>
+                        <span className="text-xs font-medium uppercase tracking-wider text-[#76877d]">Action Restricted</span>
                       )}
                     </td>
-                  </tr>
-                ))}
-                
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+
                 {(!bookings || bookings.length === 0) && !isLoading && (
                   <tr>
-                    <td colSpan="5" className="px-8 py-20 text-center text-slate-500">
-                      <Wind className="w-16 h-16 mx-auto mb-6 opacity-20" />
-                      <p className="text-lg">Radar clear. No pending structural assessments.</p>
-                      <button onClick={fetchBookings} className="mt-4 px-4 py-2 bg-white/5 rounded-lg text-sm hover:bg-white/10 transition-colors">Manual Sweep</button>
+                    <td colSpan="5" className="px-8 py-20 text-center text-[#76877d]">
+                      <Wind className="mx-auto mb-6 h-16 w-16 opacity-20" />
+                      <p className="text-lg">No active booking records found.</p>
+                      <button onClick={fetchBookings} className="mt-4 rounded-lg border border-green-900/10 bg-white px-4 py-2 text-sm transition-colors hover:bg-green-50">
+                        Refresh
+                      </button>
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </div>
-
+        </motion.div>
       </main>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {confirmModal.isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-[#1b4a36]/40 backdrop-blur-sm transition-opacity" 
+              onClick={() => setConfirmModal({ isOpen: false, id: null, status: null })}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative z-10 w-full max-w-sm rounded-[2rem] border border-green-900/10 bg-white p-8 shadow-2xl transition-all"
+            >
+              <div className="mb-6 flex flex-col items-center text-center">
+                <motion.div 
+                  initial={{ rotate: -20, scale: 0.5 }}
+                  animate={{ rotate: 0, scale: 1 }}
+                  transition={{ delay: 0.1, type: "spring" }}
+                  className={`mb-4 flex h-16 w-16 items-center justify-center rounded-2xl ${
+                  confirmModal.status === 'Accept' ? 'bg-emerald-100 text-emerald-600' :
+                  confirmModal.status === 'Reject' ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'
+                }`}>
+                  {confirmModal.status === 'Accept' && <Wind className="h-8 w-8" />}
+                  {confirmModal.status === 'Reject' && <XOctagon className="h-8 w-8" />}
+                  {confirmModal.status === 'Completed' && <CheckCircle2 className="h-8 w-8" />}
+                </motion.div>
+                <h3 className="text-xl font-bold text-[#1b4a36]">Confirm Action</h3>
+                <p className="mt-2 text-sm text-[#60796d]">
+                  Are you sure you want to <strong>{confirmModal.status === 'Accept' ? 'CONFIRM' : confirmModal.status === 'Reject' ? 'DECLINE' : 'FINALIZE'}</strong> this booking? This action will update the system and notify the client.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={executeUpdateStatus}
+                  className={`w-full rounded-xl py-3.5 text-sm font-bold tracking-wider text-white shadow-lg transition-all ${
+                    confirmModal.status === 'Accept' ? 'bg-emerald-600 hover:bg-emerald-700' :
+                    confirmModal.status === 'Reject' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'
+                  }`}
+                >
+                  PROCEED
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setConfirmModal({ isOpen: false, id: null, status: null })}
+                  className="w-full rounded-xl border border-green-900/10 bg-white py-3.5 text-sm font-bold tracking-wider text-[#60796d] transition-all hover:bg-green-50"
+                >
+                  CANCEL
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

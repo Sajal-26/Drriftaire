@@ -1,12 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import axios from 'axios';
-import API_URL from '../config/api';
+import API_URL, { HEALTHCHECK_URL } from '../config/api';
+
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+const getErrorMessage = (error, fallbackMessage) =>
+  error.response?.data?.message || fallbackMessage;
 
 const useAdminStore = create(
   persist(
     (set, get) => ({
-      // State Properties
       adminToken: null,
       bookings: [],
       analytics: {
@@ -18,97 +24,164 @@ const useAdminStore = create(
       },
       isLoading: false,
       error: null,
+      health: {
+        status: 'idle',
+        uptime: null,
+        checkedAt: null,
+        message: null,
+      },
 
-      // Actions
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
+      clearError: () => set({ error: null }),
+
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
-          const res = await axios.post(`${API_URL}/admin/login`, { email, password });
+          const res = await api.post('/admin/login', { email, password });
           set({ adminToken: res.data.token, isLoading: false, error: null });
           return { success: true };
         } catch (error) {
-          const message = error.response?.data?.message || 'Login failed';
+          const message = getErrorMessage(error, 'Login failed');
           set({ isLoading: false, error: message });
           return { success: false, message };
         }
       },
 
       logout: () => {
-        // Clears the token and resets the dashboard state locally
-        set({ adminToken: null, bookings: [], error: null });
+        set({
+          adminToken: null,
+          bookings: [],
+          analytics: {
+            total: 0,
+            pending: 0,
+            accept: 0,
+            reject: 0,
+            completed: 0,
+          },
+          isLoading: false,
+          error: null,
+        });
+      },
+
+      checkHealth: async () => {
+        set((state) => ({
+          health: {
+            ...state.health,
+            status: 'checking',
+            message: null,
+          },
+        }));
+
+        try {
+          const res = await axios.get(HEALTHCHECK_URL);
+          const checkedAt = new Date().toISOString();
+          const isHealthy = res.data?.status === 'ok';
+
+          set({
+            health: {
+              status: isHealthy ? 'ok' : 'error',
+              uptime: typeof res.data?.uptime === 'number' ? res.data.uptime : null,
+              checkedAt,
+              message: isHealthy ? 'Backend reachable' : 'Backend health check returned an unexpected response',
+            },
+          });
+
+          return { success: isHealthy, data: res.data };
+        } catch (error) {
+          const message = getErrorMessage(error, 'Backend health check failed');
+          set({
+            health: {
+              status: 'error',
+              uptime: null,
+              checkedAt: new Date().toISOString(),
+              message,
+            },
+          });
+          return { success: false, message };
+        }
+      },
+
+      getAuthConfig: () => {
+        const token = get().adminToken;
+        return token
+          ? { headers: { Authorization: `Bearer ${token}` } }
+          : null;
+      },
+
+      handleAuthFailure: (error, fallbackMessage) => {
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          get().logout();
+          return 'Session expired. Please log in again.';
+        }
+
+        return getErrorMessage(error, fallbackMessage);
       },
 
       fetchBookings: async () => {
-        const token = get().adminToken;
-        if (!token) return;
+        const authConfig = get().getAuthConfig();
+        if (!authConfig) return { success: false, message: 'Not authenticated' };
 
         set({ isLoading: true, error: null });
         try {
-          const res = await axios.get(`${API_URL}/admin/bookings`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const res = await api.get('/admin/bookings', authConfig);
           set({ bookings: res.data.bookings || [], isLoading: false });
+          return { success: true, bookings: res.data.bookings || [] };
         } catch (error) {
-          // If the JWT expired, automatically kick them out
-          if (error.response?.status === 401 || error.response?.status === 403) {
-            get().logout();
-          }
-          set({ isLoading: false, error: 'Failed to fetch bookings' });
-        }
-      },
-
-      fetchAnalytics: async () => {
-        const token = get().adminToken;
-        if (!token) return;
-
-        try {
-          const res = await axios.get(`${API_URL}/admin/analytics`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          set({ analytics: res.data });
-        } catch (error) {
-          console.error('Failed to fetch analytics', error);
-        }
-      },
-
-      updateBookingStatus: async (id, newStatus, remarks) => {
-        const token = get().adminToken;
-        if (!token) return { success: false, message: 'Not authenticated' };
-
-        set({ isLoading: true, error: null });
-        try {
-          await axios.patch(`${API_URL}/admin/bookings/${id}/status`,
-            { status: newStatus, remarks: remarks },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-
-          // Optimistically update the UI so it feels instantaneous
-          set((state) => ({
-            bookings: state.bookings.map(b =>
-              b.id === id ? { ...b, Status: newStatus, ...(remarks !== undefined && { Remarks: remarks }) } : b
-            ),
-            isLoading: false
-          }));
-
-          // Re-sync analytics counts immediately!
-          await get().fetchAnalytics();
-
-          return { success: true };
-        } catch (error) {
-          // If JWT error, handle log out
-          if (error.response?.status === 401 || error.response?.status === 403) {
-            get().logout();
-          }
-          const message = error.response?.data?.message || 'Failed to update status';
+          const message = get().handleAuthFailure(error, 'Failed to fetch bookings');
           set({ isLoading: false, error: message });
           return { success: false, message };
         }
       },
 
-      clearError: () => set({ error: null })
+      fetchAnalytics: async () => {
+        const authConfig = get().getAuthConfig();
+        if (!authConfig) return { success: false, message: 'Not authenticated' };
+
+        try {
+          const res = await api.get('/admin/analytics', authConfig);
+          set({ analytics: res.data });
+          return { success: true, analytics: res.data };
+        } catch (error) {
+          const message = get().handleAuthFailure(error, 'Failed to fetch analytics');
+          set({ error: message });
+          return { success: false, message };
+        }
+      },
+
+      updateBookingStatus: async (id, newStatus, remarks) => {
+        const authConfig = get().getAuthConfig();
+        if (!authConfig) return { success: false, message: 'Not authenticated' };
+
+        set({ isLoading: true, error: null });
+        try {
+          await api.patch(
+            `/admin/bookings/${id}/status`,
+            { status: newStatus, remarks },
+            authConfig
+          );
+
+          set((state) => ({
+            bookings: state.bookings.map((booking) =>
+              booking.id === id
+                ? { ...booking, Status: newStatus, ...(remarks !== undefined && { Remarks: remarks }) }
+                : booking
+            ),
+            isLoading: false,
+          }));
+
+          await get().fetchAnalytics();
+
+          return { success: true };
+        } catch (error) {
+          const message = get().handleAuthFailure(error, 'Failed to update status');
+          set({ isLoading: false, error: message });
+          return { success: false, message };
+        }
+      },
     }),
     {
-      name: 'drriftaire-admin-auth', // Key name in localStorage
+      name: 'drriftaire-admin-auth',
       partialize: (state) => ({ adminToken: state.adminToken }),
     }
   )

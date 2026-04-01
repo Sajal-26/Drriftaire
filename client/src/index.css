@@ -1,22 +1,70 @@
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
   font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.app-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f6f4ee;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 100px;
+  scrollbar-width: none;
+}
+
+.app-content::-webkit-scrollbar {
+  width: 14px;
+}
+
+.app-content::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #f5f2ea 0%, #ece7dc 100%);
+}
+
+.app-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2f5b34 0%, #4f7b3f 42%, #6f9a4d 72%, #3f6b45 100%);
+  border-radius: 999px;
+  border: 4px solid #f6f4ee;
+}
+
+.app-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #36663c 0%, #5b8a49 42%, #7eab58 72%, #49784f 100%);
+}
+
 #root {
   width: 100%;
+  height: 100%;
+}
+
+.app-shell {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
