@@ -1,10 +1,14 @@
-const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
 
 let doc;
+let GoogleSpreadsheet;
 
 const getDoc = async () => {
   if (!doc) {
+    if (!GoogleSpreadsheet) {
+      ({ GoogleSpreadsheet } = await import("google-spreadsheet"));
+    }
+
     doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, new JWT({
       email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
