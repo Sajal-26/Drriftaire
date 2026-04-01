@@ -3,7 +3,6 @@ const cors = require("cors");
 
 const bookingRoutes = require("./routes/booking.routes");
 const adminRoutes = require("./routes/admin.routes");
-const { getAllowedOrigins } = require("./config/env");
 const {
   requestIdMiddleware,
   securityHeadersMiddleware,
@@ -14,27 +13,14 @@ const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
-const allowedOrigins = getAllowedOrigins();
-
 app.use(requestIdMiddleware);
 app.use(securityHeadersMiddleware);
 app.use(cors({
-  origin(origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (process.env.NODE_ENV !== "production" && /localhost|127\.0\.0\.1/.test(origin)) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("CORS origin not allowed."));
-  },
+  origin: true,
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+app.options("*", cors());
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
@@ -51,10 +37,6 @@ app.use((req, res) => {
 
 app.use((err, req, res, _next) => {
   console.error(`[${req.requestId}]`, err);
-
-  if (err?.message === "CORS origin not allowed.") {
-    return res.status(403).json({ message: "Origin not allowed." });
-  }
 
   return res.status(500).json({ message: "Internal server error.", requestId: req.requestId });
 });
