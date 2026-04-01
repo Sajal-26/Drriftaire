@@ -63,15 +63,12 @@ const createBooking = async (req, res) => {
     };
 
     await appendBooking(bookingData);
+    await sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date });
 
     res.status(201).json({
       success: true,
       message: "Booking successful!"
     });
-
-    fireAndForget("Booking Email Background Error", () =>
-      sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date })
-    );
   } catch (err) {
     console.error("Booking Error:", err);
     res.status(500).json({ message: "Failed to process booking." });
