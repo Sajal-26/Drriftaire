@@ -644,16 +644,14 @@ export default function AdminDashboard() {
 
               {/* Actions: Clear & Date */}
               <div className="flex items-center gap-3">
-                {(searchTerm || statusFilter !== 'All' || dateRange.start || sortConfig.key !== 'Timestamp' || sortConfig.direction !== 'desc') && (
-                  <button
-                    onClick={handleClearFilters}
-                    title="Clear All Filters"
-                    className="flex items-center justify-center gap-2 rounded-xl border border-rose-900/10 bg-white px-3 py-2.5 text-[10px] font-bold tracking-wide text-rose-500 transition-colors hover:bg-rose-50 hover:border-rose-200 active:scale-95 shadow-sm"
-                  >
-                    <FilterX className="h-4 w-4" />
-                    <span className="hidden sm:inline">CLEAR</span>
-                  </button>
-                )}
+                <button
+                  onClick={handleClearFilters}
+                  title="Clear All Filters"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-rose-900/10 bg-white px-3 py-2.5 text-[10px] font-bold tracking-wide text-rose-500 transition-colors hover:bg-rose-50 hover:border-rose-200 active:scale-95 shadow-sm"
+                >
+                  <FilterX className="h-4 w-4" />
+                  <span className="hidden sm:inline">CLEAR</span>
+                </button>
 
                 {/* Date Filter & Calendar */}
                 <div className="relative z-30">
