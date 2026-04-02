@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Toaster, toast } from 'react-hot-toast';
 import useAdminStore from '../store/useAdminStore';
 import {
   CheckCircle2,
@@ -11,11 +13,12 @@ import {
   LayoutDashboard,
   Loader2,
   LogOut,
+  TrendingUp,
+  DollarSign,
   Users,
   Wind,
   XOctagon,
 } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
 
 const ADMIN_EMAIL = 'drriftaire@gmail.com';
 
@@ -52,6 +55,9 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [pendingRemarks, setPendingRemarks] = useState({});
+  const [pendingFinancials, setPendingFinancials] = useState({}); // { [id]: { sales: '', profit: '' } }
+  const [sortConfig, setSortConfig] = useState({ key: 'Timestamp', direction: 'desc' });
+  const [statusFilter, setStatusFilter] = useState('All');
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, status: null });
 
 
@@ -73,10 +79,38 @@ export default function AdminDashboard() {
     }
   }, [adminToken, fetchBookings, fetchAnalytics]);
 
+  const sortedBookings = useMemo(() => {
+    let list = [...bookings];
+
+    // 1. Filter by Status
+    if (statusFilter !== 'All') {
+      list = list.filter((b) => (b.Status || 'Pending') === statusFilter);
+    }
+
+    // 2. Sort
+    const { key, direction } = sortConfig;
+
+    return list.sort((a, b) => {
+      let valA = a[key];
+      let valB = b[key];
+
+      // Numeric parsing for financials
+      if (key === 'Sales' || key === 'Profit' || key === 'Acres') {
+        valA = Number(valA) || 0;
+        valB = Number(valB) || 0;
+      }
+
+      if (valA < valB) return direction === 'asc' ? -1 : 1;
+      if (valA > valB) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [bookings, sortConfig, statusFilter]);
+
   const exportRows = useMemo(
     () =>
-      [...bookings].reverse().map((booking) => ({
-        bookingId: booking.id,
+      sortedBookings.map((booking) => ({
+        id: booking.id,
+        bookingId: booking['Booking ID'] || booking.id,
         requestDate: formatDateTime(booking.Timestamp),
         name: booking.Name || '',
         email: booking.Email || '',
@@ -89,8 +123,10 @@ export default function AdminDashboard() {
         preferredDate: booking.Date || '',
         status: booking.Status || 'Pending',
         remarks: booking.Remarks || '',
+        sales: booking.Sales || 0,
+        profit: booking.Profit || 0,
       })),
-    [bookings]
+    [sortedBookings]
   );
 
   const handleLogin = async (event) => {
@@ -103,8 +139,22 @@ export default function AdminDashboard() {
     setIsLoggingIn(false);
   };
 
+  const toggleSort = (key) => {
+    setSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
+    }));
+  };
+
   const handleRemarkChange = (id, text) => {
     setPendingRemarks((prev) => ({ ...prev, [id]: text }));
+  };
+
+  const handleFinancialChange = (id, field, value) => {
+    setPendingFinancials((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] || { sales: '', profit: '' }), [field]: value },
+    }));
   };
 
   const handleUpdateStatus = async (id, status) => {
@@ -114,95 +164,95 @@ export default function AdminDashboard() {
   const executeUpdateStatus = async () => {
     const { id, status } = confirmModal;
     const remarkToSend = pendingRemarks[id] || '';
+    const financials = pendingFinancials[id] || {};
     
     setConfirmModal({ isOpen: false, id: null, status: null });
     
-    toast.promise(updateBookingStatus(id, status, remarkToSend), {
+    toast.promise(updateBookingStatus(id, status, remarkToSend, financials.sales, financials.profit), {
       loading: 'Updating record...',
       success: `Record updated to ${status}`,
       error: 'Update failed',
     });
   };
 
-  const handleDownloadCsv = () => {
+  const handleDownloadCsv = async () => {
     if (!exportRows.length) {
       toast.error('No bookings to export');
       return;
     }
 
-    const headers = [
-      'Booking ID',
-      'Request Date',
-      'Name',
-      'Email',
-      'Phone',
-      'State',
-      'District',
-      'Pin Code',
-      'Acres',
-      'Crop Type',
-      'Preferred Date',
-      'Status',
-      'Remarks',
-    ];
-    const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Bookings');
 
-    const lines = [
-      headers.join(','),
-      ...exportRows.map((row) =>
-        [
-          row.bookingId,
-          row.requestDate,
-          row.name,
-          row.email,
-          row.phone,
-          row.state,
-          row.district,
-          row.pinCode,
-          row.acres,
-          row.cropType,
-          row.preferredDate,
-          row.status,
-          row.remarks,
-        ]
-          .map(escapeCsv)
-          .join(',')
-      ),
+    const columns = [
+      { header: 'Booking ID', key: 'bookingId' },
+      { header: 'Request Date', key: 'requestDate' },
+      { header: 'Name', key: 'name' },
+      { header: 'Email', key: 'email' },
+      { header: 'Phone', key: 'phone' },
+      { header: 'State', key: 'state' },
+      { header: 'District', key: 'district' },
+      { header: 'Pin Code', key: 'pinCode' },
+      { header: 'Acres', key: 'acres' },
+      { header: 'Crop Type', key: 'cropType' },
+      { header: 'Preferred Date', key: 'preferredDate' },
+      { header: 'Status', key: 'status' },
+      { header: 'Remarks', key: 'remarks' },
+      { header: 'Sales (₹)', key: 'sales' },
+      { header: 'Profit (₹)', key: 'profit' },
     ];
 
-    const blob = new Blob([`\uFEFF${lines.join('\n')}`], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `bookings-${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    worksheet.columns = columns;
+    worksheet.addRows(exportRows);
+
+    // Generate CSV
+    const buffer = await workbook.csv.writeBuffer();
+    const blob = new Blob([buffer], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `bookings-report-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
-  const handleDownloadExcel = () => {
+  const handleDownloadExcel = async () => {
     if (!exportRows.length) {
       toast.error('No bookings to export');
       return;
     }
 
-    // Prepare data for XLSX
-    const wsData = [
-      [
-        'Booking ID',
-        'Request Date',
-        'Name',
-        'Email',
-        'Phone',
-        'State',
-        'District',
-        'Pin Code',
-        'Acres',
-        'Crop Type',
-        'Preferred Date',
-        'Status',
-        'Remarks',
-      ],
-      ...exportRows.map((row) => [
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Bookings');
+
+    // Define Columns
+    const columns = [
+      { header: 'Booking ID', key: 'bookingId', width: 25 },
+      { header: 'Request Date', key: 'requestDate', width: 20 },
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'State', key: 'state', width: 15 },
+      { header: 'District', key: 'district', width: 15 },
+      { header: 'Pin Code', key: 'pinCode', width: 10 },
+      { header: 'Acres', key: 'acres', width: 10 },
+      { header: 'Crop Type', key: 'cropType', width: 15 },
+      { header: 'Preferred Date', key: 'preferredDate', width: 15 },
+      { header: 'Status', key: 'status', width: 12 },
+      { header: 'Remarks', key: 'remarks', width: 30 },
+      { header: 'Sales (₹)', key: 'sales', width: 15 },
+      { header: 'Profit (₹)', key: 'profit', width: 15 },
+    ];
+
+    worksheet.columns = columns;
+
+    // Add Table
+    worksheet.addTable({
+      name: 'BookingsTable',
+      ref: 'A1',
+      headerRow: true,
+      totalsRow: false,
+      style: {
+        theme: 'TableStyleMedium2',
+        showRowStripes: true,
+      },
+      columns: columns.map(c => ({ name: c.header, filterButton: true })),
+      rows: exportRows.map(row => [
         row.bookingId,
         row.requestDate,
         row.name,
@@ -216,15 +266,47 @@ export default function AdminDashboard() {
         row.preferredDate,
         row.status,
         row.remarks,
+        row.sales,
+        row.profit,
       ]),
-    ];
+    });
 
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Bookings');
+    // Style the header row (Deep Green & White)
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF1B4A36' }, // Brand Deep Green
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+        size: 11,
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
 
-    // Generate Excel file and trigger download
-    XLSX.writeFile(wb, `bookings-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    // Style Status column based on content
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) { // Skip header
+        const statusCell = row.getCell(12); // L column
+        const status = statusCell.value;
+        
+        let color = 'FF60796D'; // Default Gray
+        if (status === 'Accept') color = 'FF10B981'; // Emerald
+        if (status === 'Completed') color = 'FF6366F1'; // Indigo
+        if (status === 'Reject') color = 'FFEF4444'; // Red
+        if (status === 'Pending') color = 'FFF59E0B'; // Amber
+
+        statusCell.font = { color: { argb: color }, bold: true };
+      }
+    });
+
+    // Write to buffer and trigger download
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `bookings-report-${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
 
@@ -307,13 +389,13 @@ export default function AdminDashboard() {
         }}
       />
 
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/10 bg-[#f6f4ee]/90 px-4 sm:px-8 py-3 sm:py-5 shadow-sm backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/5 sm:border-green-900/10 bg-[#f6f4ee]/90 px-4 sm:px-8 py-3 sm:py-5 shadow-sm backdrop-blur-xl">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="rounded-xl border border-green-700/20 bg-gradient-to-br from-green-500/20 to-lime-500/10 p-2 sm:p-2.5 text-green-700 shadow-inner">
+          <div className="rounded-xl border border-green-700/10 sm:border-green-700/20 bg-gradient-to-br from-green-500/10 to-lime-500/5 p-2 sm:p-2.5 text-green-700">
             <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div>
-            <span className="text-lg sm:text-2xl font-bold tracking-tight text-[#1b4a36]">Admin Panel</span>
+            <span className="text-base sm:text-2xl font-bold tracking-tight text-[#1b4a36]">Admin Panel</span>
             <div className="hidden sm:flex mt-1 items-center gap-2 text-xs text-[#60796d]">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${
@@ -354,7 +436,7 @@ export default function AdminDashboard() {
         </div>
       </nav>
 
-      <main className="relative z-10 mx-auto mt-10 max-w-7xl space-y-10 px-6 lg:px-8">
+      <main className="relative z-10 w-full mt-10 space-y-12 px-4 sm:px-10 lg:px-16">
         <motion.div 
           initial="hidden"
           animate="show"
@@ -365,13 +447,15 @@ export default function AdminDashboard() {
               transition: { staggerChildren: 0.1 }
             }
           }}
-          className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6"
         >
           {[
             { label: 'Inquiries', value: analytics.total || 0, icon: Users, color: 'text-[#2f6a47]', bg: 'bg-green-100/70', border: 'border-green-700/20' },
             { label: 'Pending', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
             { label: 'Accepted', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
             { label: 'Finished', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
+            { label: 'Total Sales', value: `₹${(analytics.totalSales || 0).toLocaleString('en-IN')}`, icon: DollarSign, color: 'text-blue-700', bg: 'bg-blue-100/70', border: 'border-blue-700/20' },
+            { label: 'Total Profit', value: `₹${(analytics.totalProfit || 0).toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-indigo-700', bg: 'bg-indigo-100/70', border: 'border-indigo-700/20' },
           ].map((stat) => (
             <motion.div 
               key={stat.label} 
@@ -380,16 +464,16 @@ export default function AdminDashboard() {
                 show: { opacity: 1, y: 0 }
               }}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-green-900/10 bg-white/70 p-4 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_8px_40px_-12px_rgba(22,60,47,0.28)]"
+              className="group relative overflow-hidden rounded-2xl border border-green-900/10 bg-white/70 p-4 sm:p-6 backdrop-blur-md transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_8px_40px_-12px_rgba(22,60,47,0.28)]"
             >
               <div className="absolute -mr-16 -mt-16 rounded-full bg-gradient-to-br from-green-200/30 to-transparent p-32 transition-transform duration-700 group-hover:scale-110" />
-              <div className="relative z-10 flex items-start justify-between">
-                <div>
-                  <p className="text-[10px] sm:text-sm font-medium tracking-wide text-[#60796d]">{stat.label}</p>
-                  <p className="mt-1 sm:mt-3 flex items-baseline gap-2 text-2xl sm:text-4xl font-bold text-[#1b4a36]">{stat.value}</p>
+              <div className="relative z-10 flex flex-col justify-between h-full">
+                <div className={`w-fit rounded-lg border p-2 mb-4 ring-1 ring-inset ring-white/70 shadow-inner ${stat.bg} ${stat.border}`}>
+                  <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} />
                 </div>
-                <div className={`rounded-lg sm:rounded-2xl border p-2 sm:p-4 ring-1 ring-inset ring-white/70 shadow-inner ${stat.bg} ${stat.border}`}>
-                  <stat.icon className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">{stat.label}</p>
+                  <p className="mt-1 flex items-baseline gap-2 text-xl sm:text-2xl font-bold text-[#1b4a36]">{stat.value}</p>
                 </div>
               </div>
             </motion.div>
@@ -400,7 +484,7 @@ export default function AdminDashboard() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/75 shadow-[0_20px_60px_-15px_rgba(22,60,47,0.28)] backdrop-blur-xl"
+          className="border-t border-green-900/10 bg-white/40"
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-green-900/10 bg-white/60 px-6 sm:px-8 py-5 sm:py-6 gap-4">
             <h2 className="flex items-center gap-3 text-base sm:text-lg font-semibold text-[#1b4a36]">
@@ -427,21 +511,74 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Advanced Controls Bar */}
+          <div className="flex flex-col gap-5 bg-white px-6 py-5 border-b border-green-900/10 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">Filter Status</span>
+              <div className="flex gap-1.5 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                {['All', 'Pending', 'Accept', 'Completed', 'Reject'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStatusFilter(s)}
+                    className={`whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[10px] font-bold tracking-wide transition-all ${
+                      statusFilter === s
+                        ? 'bg-[#1b4a36] text-white shadow-md'
+                        : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">Order Records</span>
+              <div className="flex gap-1.5 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                {[
+                  { label: 'Name', key: 'Name' },
+                  { label: 'Booking', key: 'Timestamp' },
+                  { label: 'Schedule', key: 'Date' },
+                  { label: 'Profit', key: 'Profit' },
+                  { label: 'Acres', key: 'Acres' },
+                ].map((sort) => (
+                  <button
+                    key={sort.key}
+                    onClick={() => toggleSort(sort.key)}
+                    className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[10px] font-bold tracking-wide transition-all ${
+                      sortConfig.key === sort.key
+                        ? 'bg-emerald-600 text-white shadow-md'
+                        : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
+                    }`}
+                  >
+                    {sort.label}
+                    {sortConfig.key === sort.key && (
+                      <span className="text-[8px] opacity-70">
+                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
             {/* Desktop Table */}
-            <table className="hidden md:table w-full border-collapse text-left">
+            <table className="hidden md:table w-full border-collapse text-left table-fixed">
               <thead>
-                <tr className="border-b border-green-900/10 bg-white/50 text-xs font-semibold uppercase tracking-widest text-[#60796d]">
-                  <th className="px-8 py-5">Reference No.</th>
-                  <th className="px-8 py-5">Customer Information</th>
-                  <th className="px-8 py-5">Service Requirements</th>
-                  <th className="px-8 py-5">Status</th>
-                  <th className="px-8 py-5 text-right">Actions</th>
+                <tr className="border-b border-green-900/10 bg-white/50 text-[11px] font-bold uppercase tracking-widest text-[#60796d]">
+                  <th className="px-6 py-5 w-[12%]">Ref No.</th>
+                  <th className="px-6 py-5 w-[20%]">Customer</th>
+                  <th className="px-6 py-5 w-[20%]">Details</th>
+                  <th className="px-6 py-5 text-center w-[12%]">Status</th>
+                  <th className="px-6 py-5 text-right w-[14%]">Finance</th>
+                  <th className="px-6 py-5 text-right w-[22%]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-green-900/10">
                 <AnimatePresence initial={false}>
-                  {[...bookings].reverse().map((booking) => (
+                  {sortedBookings.map((booking) => (
                     <motion.tr 
                       key={booking.id} 
                       layout
@@ -451,72 +588,96 @@ export default function AdminDashboard() {
                       transition={{ duration: 0.3 }}
                       className="transition-colors duration-300 hover:bg-green-50/50"
                     >
-                    <td className="whitespace-nowrap px-8 py-6">
-                      <div className="mb-1 font-mono text-xs text-green-700">Ref: {booking['Booking ID'] || booking.id.toString().slice(0, 8)}</div>
-                      <div className="text-sm text-[#60796d]">Requested: {formatDateTime(booking.Timestamp)}</div>
+                    <td className="whitespace-nowrap px-6 py-6">
+                      <div className="font-mono text-xs font-bold text-green-700/80">#{booking['Booking ID']?.split('-')[1] || booking.id.toString().slice(0, 5)}</div>
+                      <div className="mt-1 text-[10px] text-[#76877d]">Req: {formatDateTime(booking.Timestamp)}</div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="text-base font-semibold text-[#243328]">{booking.Name}</div>
-                      <div className="mt-1 text-sm text-[#60796d]">{booking.Email}</div>
-                      <div className="mt-0.5 text-xs text-[#76877d]">{booking.Phone}</div>
+                    <td className="px-6 py-6">
+                      <div className="font-bold text-[#243328] truncate">{booking.Name}</div>
+                      <div className="mt-1 text-[11px] text-[#60796d] truncate">{booking.Email}</div>
+                      <div className="mt-0.5 text-[10px] text-[#76877d]">{booking.Phone}</div>
                     </td>
-                    <td className="px-8 py-6 text-sm">
-                      <div className="font-medium text-[#355f48]">{booking.State}, {booking.District}</div>
-                      <div className="mt-0.5 text-xs text-[#60796d]">PIN: {booking['Pin Code']}</div>
-                      <div className="mt-2 inline-block rounded-md border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 font-mono text-xs text-blue-500">{booking.Acres} Acres</div>
-                      <div className="ml-2 mt-1 inline-block rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-500">{booking['Crop Type']}</div>
-                      <div className="mt-2 flex items-center gap-1.5 text-xs text-[#76877d]"><Clock className="h-3.5 w-3.5" /> For: {booking.Date}</div>
+                    <td className="px-6 py-6 text-sm">
+                      <div className="font-bold text-[#355f48] truncate">{booking.District}</div>
+                      <div className="text-[10px] text-[#76877d] truncate">{booking.State} • {booking['Pin Code']}</div>
+                      <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
+                        <span className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-[9px] font-bold text-blue-600 border border-blue-100">{booking.Acres} AC</span>
+                        <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600 border border-emerald-100 uppercase">{booking['Crop Type']}</span>
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap px-8 py-6">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm ${
-                          booking.Status === 'Completed'
-                            ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400'
-                            : booking.Status === 'Accept'
-                              ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
-                              : booking.Status === 'Reject'
-                                ? 'border-red-500/20 bg-red-500/10 text-red-400'
-                                : 'border-amber-500/20 bg-amber-500/10 text-amber-400'
-                        }`}
-                      >
-                        {booking.Status === 'Completed' && <CheckCircle2 className="h-3.5 w-3.5" />}
-                        {(!booking.Status || booking.Status === 'Pending') && <Clock className="h-3.5 w-3.5" />}
-                        {booking.Status === 'Accept' && <Wind className="h-3.5 w-3.5" />}
-                        {booking.Status || 'Pending'}
-                      </span>
-                      {booking.Remarks && (
-                        <div className="mt-3 border-l-2 border-green-900/20 pl-3 text-xs italic text-[#60796d]">
-                          "{booking.Remarks}"
+                    <td className="whitespace-nowrap px-6 py-6 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
+                            booking.Status === 'Completed'
+                              ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400'
+                              : booking.Status === 'Accept'
+                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                                : booking.Status === 'Reject'
+                                  ? 'border-red-500/20 bg-red-500/10 text-red-400'
+                                  : 'border-amber-500/20 bg-amber-500/10 text-amber-400'
+                          }`}
+                        >
+                          {booking.Status === 'Completed' && <CheckCircle2 className="h-3 w-3" />}
+                          {(!booking.Status || booking.Status === 'Pending') && <Clock className="h-3 w-3" />}
+                          {booking.Status === 'Accept' && <Wind className="h-3 w-3" />}
+                          {booking.Status || 'Pending'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-6 text-right">
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="text-[11px] font-bold text-[#1b4a36]">₹ {booking.Sales?.toLocaleString('en-IN') || 0}</div>
+                        <div className={`text-[9px] font-bold ${booking.Profit > 0 ? 'text-emerald-600' : 'text-red-400'}`}>
+                          P: ₹ {booking.Profit?.toLocaleString('en-IN') || 0}
                         </div>
-                      )}
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap px-8 py-6 text-right">
+                    <td className="whitespace-nowrap px-6 py-6 text-right">
                       {!booking.Status || booking.Status === 'Pending' ? (
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex flex-col items-end gap-2.5">
                           <input
                             type="text"
                             placeholder="Add remarks..."
                             value={pendingRemarks[booking.id] || ''}
                             onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
-                            className="w-full max-w-[170px] rounded-lg border border-green-900/10 bg-white px-3 py-1.5 text-xs text-[#243328] placeholder-[#8aa095] transition-all focus:outline-none focus:ring-1 focus:ring-green-700/40"
+                            className="w-full max-w-[160px] rounded-xl border border-green-900/10 bg-white px-3 py-2 text-[11px] text-[#243328] transition-all focus:ring-2 focus:ring-green-700/10"
                           />
                           <div className="flex items-center gap-2">
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold tracking-wide text-emerald-400 shadow-sm transition-all hover:bg-emerald-500 hover:text-white active:scale-95" title="Confirm">
-                              <Wind className="h-4 w-4" /> CONFIRM
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-[10px] font-bold tracking-wider text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 active:scale-95">
+                              <Wind className="h-3.5 w-3.5" /> ACCEPT
                             </button>
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="rounded-xl border border-transparent p-1.5 text-red-400 transition-all hover:border-red-500 hover:bg-red-500 hover:text-white active:scale-95" title="Decline">
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="group rounded-xl border border-red-100 bg-red-50 p-2 text-red-500 transition-all hover:bg-red-500 hover:text-white active:scale-95">
                               <XOctagon className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
                       ) : booking.Status === 'Accept' ? (
-                        <div className="flex items-center justify-end">
-                          <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="flex items-center gap-2 rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-4 py-2 text-xs font-bold tracking-widest text-indigo-400 shadow-sm transition-all hover:border-indigo-500/40 hover:bg-indigo-500/20 active:scale-95" title="Mark as Finalized">
-                            <CheckCircle2 className="h-4 w-4" /> FINALIZE
-                          </button>
+                        <div className="flex flex-col items-end gap-2.5">
+                           <div className="flex gap-1.5">
+                             <input
+                               type="number"
+                               placeholder="Sales"
+                               value={pendingFinancials[booking.id]?.sales || ''}
+                               onChange={(e) => handleFinancialChange(booking.id, 'sales', e.target.value)}
+                               className="w-20 rounded-lg border border-green-900/10 bg-white px-2.5 py-1.5 text-[10px] transition-all focus:ring-2 focus:ring-green-700/10"
+                             />
+                             <input
+                               type="number"
+                               placeholder="Profit"
+                               value={pendingFinancials[booking.id]?.profit || ''}
+                               onChange={(e) => handleFinancialChange(booking.id, 'profit', e.target.value)}
+                               className="w-20 rounded-lg border border-green-900/10 bg-white px-2.5 py-1.5 text-[10px] transition-all focus:ring-2 focus:ring-green-700/10"
+                             />
+                           </div>
+                           <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white shadow-lg shadow-indigo-600/20 transition-all hover:bg-indigo-700 active:scale-95">
+                             <CheckCircle2 className="h-3.5 w-3.5" /> FINISH
+                           </button>
                         </div>
                       ) : (
-                        <span className="text-xs font-medium uppercase tracking-wider text-[#76877d]">Action Restricted</span>
+                        <div className="flex flex-col items-end opacity-40">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#76877d]">Records Locked</span>
+                        </div>
                       )}
                     </td>
                     </motion.tr>
@@ -587,8 +748,21 @@ export default function AdminDashboard() {
                     </div>
 
                     {booking.Remarks && (
-                      <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-3 text-xs italic text-[#7e604d]">
+                      <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-3 text-xs italic text-[#76877d]">
                         "{booking.Remarks}"
+                      </div>
+                    )}
+
+                    {(booking.Sales > 0 || booking.Profit > 0) && (
+                      <div className="flex gap-4 p-3 bg-[#f6f4ee]/40 rounded-xl border border-green-900/5">
+                        <div className="flex-1">
+                          <div className="text-[10px] uppercase font-bold text-[#60796d]">Total Sales</div>
+                          <div className="text-sm font-bold text-[#1b4a36]">₹ {booking.Sales?.toLocaleString('en-IN') || 0}</div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-[10px] uppercase font-bold text-[#60796d]">Net Profit</div>
+                          <div className="text-sm font-bold text-emerald-600">₹ {booking.Profit?.toLocaleString('en-IN') || 0}</div>
+                        </div>
                       </div>
                     )}
 
@@ -600,7 +774,7 @@ export default function AdminDashboard() {
                             placeholder="Add remarks..."
                             value={pendingRemarks[booking.id] || ''}
                             onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
-                            className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-2.5 text-sm transition-all focus:ring-2 focus:ring-green-700/20"
+                            className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-2.5 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
                           />
                           <div className="flex gap-2">
                             <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 active:scale-95 transition-all">
@@ -612,9 +786,27 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       ) : booking.Status === 'Accept' ? (
-                        <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
-                          <CheckCircle2 className="h-4 w-4" /> MARK COMPLETED
-                        </button>
+                        <div className="space-y-3">
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              placeholder="Sales (₹)"
+                              value={pendingFinancials[booking.id]?.sales || ''}
+                              onChange={(e) => handleFinancialChange(booking.id, 'sales', e.target.value)}
+                              className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-3 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
+                            />
+                            <input
+                              type="number"
+                              placeholder="Profit (₹)"
+                              value={pendingFinancials[booking.id]?.profit || ''}
+                              onChange={(e) => handleFinancialChange(booking.id, 'profit', e.target.value)}
+                              className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-3 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
+                            />
+                          </div>
+                          <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                            <CheckCircle2 className="h-4 w-4" /> MARK COMPLETED
+                          </button>
+                        </div>
                       ) : (
                         <div className="text-center py-2 text-[10px] uppercase font-bold text-[#b0bcaf] tracking-widest bg-gray-50 rounded-lg border border-dashed border-gray-200">
                           Finalized / Closed

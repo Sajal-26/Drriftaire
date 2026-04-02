@@ -30,8 +30,20 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding-top: 100px;
+  padding-top: 72px;
   scrollbar-width: none;
+}
+
+@media (min-width: 640px) {
+  .app-content {
+    padding-top: 80px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-content {
+    padding-top: 100px;
+  }
 }
 
 .app-content::-webkit-scrollbar {
@@ -67,4 +79,13 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -24,6 +24,8 @@ const mapFromDb = (dbBooking) => ({
   Date: dbBooking.date,
   Status: dbBooking.status,
   Remarks: dbBooking.remarks,
+  Sales: dbBooking.sales || 0,
+  Profit: dbBooking.profit || 0,
 });
 
 const mapToDb = (appBooking) => ({
@@ -40,6 +42,8 @@ const mapToDb = (appBooking) => ({
   date: appBooking.Date,
   status: appBooking.Status,
   remarks: appBooking.Remarks,
+  sales: appBooking.Sales || 0,
+  profit: appBooking.Profit || 0,
 });
 
 const insertBooking = async (data) => {
@@ -64,10 +68,12 @@ const getAllBookings = async () => {
   return data.map(mapFromDb);
 };
 
-const updateBookingStatus = async (id, newStatus, remarks) => {
+const updateBookingStatus = async (id, newStatus, remarks, sales, profit) => {
   const updateData = {
     status: newStatus,
     ...(remarks !== undefined && { remarks }),
+    ...(sales !== undefined && { sales: Number(sales) }),
+    ...(profit !== undefined && { profit: Number(profit) }),
   };
 
   const { data, error } = await supabase

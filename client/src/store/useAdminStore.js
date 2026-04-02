@@ -149,7 +149,7 @@ const useAdminStore = create(
         }
       },
 
-      updateBookingStatus: async (id, newStatus, remarks) => {
+      updateBookingStatus: async (id, newStatus, remarks, sales, profit) => {
         const authConfig = get().getAuthConfig();
         if (!authConfig) return { success: false, message: 'Not authenticated' };
 
@@ -157,14 +157,20 @@ const useAdminStore = create(
         try {
           await api.patch(
             `/admin/bookings/${id}/status`,
-            { status: newStatus, remarks },
+            { status: newStatus, remarks, ...(sales !== undefined && { sales }), ...(profit !== undefined && { profit }) },
             authConfig
           );
 
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === id
-                ? { ...booking, Status: newStatus, ...(remarks !== undefined && { Remarks: remarks }) }
+                ? { 
+                    ...booking, 
+                    Status: newStatus, 
+                    ...(remarks !== undefined && { Remarks: remarks }),
+                    ...(sales !== undefined && { Sales: sales }),
+                    ...(profit !== undefined && { Profit: profit })
+                  }
                 : booking
             ),
             isLoading: false,
