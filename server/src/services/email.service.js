@@ -58,6 +58,14 @@ const escapeHtml = (value) =>
 const formatFromAddress = () =>
   `"Drriftaire" <${process.env.EMAIL_USER}>`;
 
+const formatPhoneNumber = (phone) => {
+  if (!phone) return "";
+  const cleaned = phone.toString().trim().replace(/\s+/g, '');
+  if (cleaned.startsWith("+91")) return cleaned;
+  if (cleaned.startsWith("91") && cleaned.length === 12) return `+${cleaned}`;
+  return `+91 ${cleaned}`;
+};
+
 const sendMailWithLogging = async ({ label, to, subject, html }) => {
   logEmail(`${label} queued`, { to, subject });
 
@@ -86,13 +94,11 @@ const sendMailWithLogging = async ({ label, to, subject, html }) => {
 };
 
 const THEME = {
-  bg: "#f6f4ee",
-  card: "#ffffff",
+  bg: "#ffffff",
   primary: "#1b4a36",
-  accent: "#2f6a47",
   text: "#243328",
-  muted: "#60796d",
-  border: "rgba(47, 106, 71, 0.1)",
+  muted: "#6b7280",
+  border: "#eeeeee",
 };
 
 const wrapTemplate = (title, preheader, content) => `
@@ -104,30 +110,30 @@ const wrapTemplate = (title, preheader, content) => `
   <title>${title}</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap');
-    body { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: ${THEME.bg}; color: ${THEME.text}; }
-    .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-    .card { background-color: ${THEME.card}; border-radius: 24px; padding: 40px; border: 1px solid ${THEME.border}; box-shadow: 0 10px 30px -10px rgba(27, 74, 54, 0.12); }
-    .header { margin-bottom: 32px; text-align: center; }
-    .logo-text { font-size: 24px; font-weight: 800; color: ${THEME.primary}; letter-spacing: -0.02em; }
-    .title { font-size: 28px; font-weight: 700; color: ${THEME.primary}; margin: 24px 0 16px; line-height: 1.2; text-align: center; }
-    .content { font-size: 16px; line-height: 1.6; color: ${THEME.text}; }
-    .data-grid { background-color: ${THEME.bg}; border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid ${THEME.border}; }
-    .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(27, 74, 54, 0.05); }
-    .data-row:last-child { border-bottom: none; }
-    .data-label { color: ${THEME.muted}; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-    .data-value { color: ${THEME.primary}; font-weight: 700; font-size: 15px; }
-    .footer { margin-top: 32px; text-align: center; color: ${THEME.muted}; font-size: 13px; line-height: 1.5; }
-    .btn { display: inline-block; padding: 14px 28px; background-color: ${THEME.accent}; color: #ffffff !important; border-radius: 99px; text-decoration: none; font-weight: 700; font-size: 14px; margin-top: 16px; }
-    .badge { display: inline-block; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    .badge-pending { background-color: #fef3c7; color: #92400e; }
-    .badge-accepted { background-color: #d1fae5; color: #065f46; }
-    .badge-completed { background-color: #e0e7ff; color: #3730a3; }
+    body { font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f6f7f6; color: #374151; }
+    .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 60px 20px; }
+    .header { margin-bottom: 40px; text-align: center; }
+    .logo-text { font-size: 32px; font-weight: 800; color: #1b4a36; letter-spacing: -0.02em; text-transform: uppercase; }
+    .card { background-color: #ffffff; border-radius: 40px; padding: 48px; border: 1px solid #e5e7eb; position: relative; }
+    .title { font-size: 32px; font-weight: 700; color: #1b4a36; margin: 0 0 24px; line-height: 1.2; text-align: center; }
+    .status-container { text-align: center; margin-bottom: 32px; }
+    .status-badge { display: inline-block; padding: 8px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+    .status-badge.accepted { background-color: #dcfce7; color: #1b4a36; }
+    .status-badge.pending { background-color: #fef3c7; color: #92400e; }
+    .status-badge.completed { background-color: #dbeafe; color: #1e40af; }
+    .status-badge.rejected { background-color: #fee2e2; color: #991b1b; }
+    .content { font-size: 17px; line-height: 1.7; color: #374151; text-align: left; }
+    .data-grid { background-color: #f9f9f9; border-radius: 16px; padding: 24px; margin: 24px 0; border: 1px solid #e5e7eb; }
+    .data-label { color: #6b7280; font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .data-value { color: #111827; font-weight: 700; font-size: 16px; }
+    .footer { margin-top: 48px; text-align: center; color: #6b7280; font-size: 13px; line-height: 1.8; }
+    .btn { display: inline-block; padding: 16px 32px; background-color: #1b4a36; color: #ffffff !important; border-radius: 16px; text-decoration: none; font-weight: 700; font-size: 15px; margin-top: 16px; transition: opacity 0.2s; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo-text">DRIFTAIRE</div>
+      <div class="logo-text">DRRIFTAIRE</div>
     </div>
     <div class="card">
       <div class="title">${title}</div>
@@ -136,7 +142,7 @@ const wrapTemplate = (title, preheader, content) => `
       </div>
     </div>
     <div class="footer">
-      &copy; ${new Date().getFullYear()} Drriftaire Drone Services.<br/>
+      &copy; ${new Date().getFullYear()} Drriftaire Drone Bookings.<br/>
       Technology-driven crop care for sustainable farming.
     </div>
   </div>
@@ -164,12 +170,18 @@ const sendBookingEmails = async ({
   });
 
   try {
+    const formattedPhone = formatPhoneNumber(phone);
     const dataItems = [
       { label: "Date", value: date },
       { label: "Location", value: `${district}, ${state}` },
       { label: "Pin Code", value: pinCode },
       { label: "Acreage", value: `${acres} Acres` },
       { label: "Crop Type", value: cropType },
+    ];
+
+    const customerItems = [
+      { label: "Customer", value: name },
+      { label: "Contact", value: `${email} | ${formattedPhone}` },
     ];
 
     const dataHtml = `
@@ -183,33 +195,44 @@ const sendBookingEmails = async ({
       </div>
     `;
 
+    const adminDataHtml = `
+      <div class="data-grid">
+        ${[...customerItems, ...dataItems].map(item => `
+          <div style="margin-bottom: 12px;">
+            <div class="data-label">${escapeHtml(item.label)}</div>
+            <div class="data-value">${escapeHtml(item.value)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    logEmail("sendBookingEmails building items", { email });
+
     const results = await Promise.allSettled([
       sendMailWithLogging({
         label: "booking confirmation",
         to: email,
-        subject: "Your Drone Spraying Request",
+        subject: "Your Drone Spraying Booking",
         html: wrapTemplate(
-          "Request Received",
-          "We've received your booking request.",
+          "Booking Received",
+          "We've received your booking.",
           `
             <p>Hi ${escapeHtml(name)},</p>
-            <p>Thank you for choosing Drriftaire. We have successfully received your service request for drone spraying.</p>
+            <p>Thank you for choosing Drriftaire. We have successfully received your booking request for drone spraying.</p>
             ${dataHtml}
-            <p>Our operational team will review the details and contact you shortly at <strong>${escapeHtml(phone)}</strong> to confirm scheduling. No further action is required from your side at this moment.</p>
+            <p>Our operational team will review the details and contact you shortly at <strong>${escapeHtml(formattedPhone)}</strong> to confirm scheduling. No further action is required from your side at this moment.</p>
           `
         ),
       }),
       sendMailWithLogging({
         label: "admin booking notification",
         to: process.env.ADMIN_EMAIL,
-        subject: `New Request from ${name}`,
+        subject: `New Booking from ${name}`,
         html: wrapTemplate(
-          "New Service Request",
+          "New Booking!",
           "A new customer has submitted an inquiry.",
           `
-            <p><strong>Customer:</strong> ${escapeHtml(name)}</p>
-            <p><strong>Contact:</strong> ${escapeHtml(email)} | ${escapeHtml(phone)}</p>
-            ${dataHtml}
+            ${adminDataHtml}
             <p style="text-align: center;">
               <a href="https://drriftaire.com/admin" class="btn">OPEN MANAGEMENT PANEL</a>
             </p>
@@ -234,24 +257,30 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
   logEmail("sendStatusChangeEmail start", { email, status });
 
   try {
-    let subject = "Status Update: Your Drone Service";
+    let subject = "Status Update: Your Drone Booking";
     let title = "Booking Update";
     let message = "";
-    let badgeClass = "badge-pending";
+    let statusClass = "pending";
+    let activeStatus = status;
 
     if (status === "Accept") {
       subject = "Booking Accepted - Drriftaire";
-      title = "Confirmed!";
-      message = "Your request has been officially <strong>Accepted</strong>. Our crew is now preparing for the operation on the scheduled date.";
-      badgeClass = "badge-accepted";
+      title = "Booking Confirmed!";
+      message = "Your booking has been officially <strong>Accepted</strong>. Our crew is now preparing for the operation on the scheduled date.";
+      statusClass = "accepted";
+      activeStatus = "Accepted";
     } else if (status === "Reject") {
-      title = "Update on Request";
+      subject = "Update on Booking!";
+      title = "Update on Booking!";
       message = "Thank you for reaching out. Unfortunately, we are unable to fulfill your specific booking request at this time.";
+      statusClass = "rejected";
+      activeStatus = "Rejected";
     } else if (status === "Completed") {
-      subject = "Service Finalized - Drriftaire";
-      title = "Mission Completed!";
-      message = "Your drone spraying service has been successfully <strong>Completed</strong>. We hope you are satisfied with the precision and results.";
-      badgeClass = "badge-completed";
+      subject = "Booking Completed - Drriftaire";
+      title = "Service Completed!";
+      message = "Your drone spraying booking has been successfully <strong>Completed</strong>. We hope you are satisfied with the precision and results.";
+      statusClass = "completed";
+      activeStatus = "Completed";
     } else {
       logEmail("sendStatusChangeEmail skipped", { email, status });
       return;
@@ -263,10 +292,10 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
       subject,
       html: wrapTemplate(
         title,
-        status,
+        activeStatus,
         `
-          <div style="text-align: center; margin-bottom: 24px;">
-            <span class="badge ${badgeClass}">${status}</span>
+          <div class="status-container">
+            <span class="status-badge ${statusClass}">${activeStatus}</span>
           </div>
           <p>Hi ${escapeHtml(name)},</p>
           <p>${message}</p>

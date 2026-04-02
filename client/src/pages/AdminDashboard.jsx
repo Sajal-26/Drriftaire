@@ -14,7 +14,7 @@ import {
   Loader2,
   LogOut,
   TrendingUp,
-  DollarSign,
+  IndianRupee,
   Users,
   Wind,
   XOctagon,
@@ -454,7 +454,7 @@ export default function AdminDashboard() {
             { label: 'Pending', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
             { label: 'Accepted', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
             { label: 'Finished', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
-            { label: 'Total Sales', value: `₹${(analytics.totalSales || 0).toLocaleString('en-IN')}`, icon: DollarSign, color: 'text-blue-700', bg: 'bg-blue-100/70', border: 'border-blue-700/20' },
+            { label: 'Total Sales', value: `₹${(analytics.totalSales || 0).toLocaleString('en-IN')}`, icon: IndianRupee, color: 'text-blue-700', bg: 'bg-blue-100/70', border: 'border-blue-700/20' },
             { label: 'Total Profit', value: `₹${(analytics.totalProfit || 0).toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-indigo-700', bg: 'bg-indigo-100/70', border: 'border-indigo-700/20' },
           ].map((stat) => (
             <motion.div 
@@ -484,7 +484,7 @@ export default function AdminDashboard() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="border-t border-green-900/10 bg-white/40"
+          className="overflow-hidden rounded-[3rem] border border-green-900/10 bg-white/40 shadow-xl shadow-green-900/5"
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-green-900/10 bg-white/60 px-6 sm:px-8 py-5 sm:py-6 gap-4">
             <h2 className="flex items-center gap-3 text-base sm:text-lg font-semibold text-[#1b4a36]">
@@ -563,258 +563,159 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="w-full">
-            {/* Desktop Table */}
-            <table className="hidden md:table w-full border-collapse text-left table-fixed">
-              <thead>
-                <tr className="border-b border-green-900/10 bg-white/50 text-[11px] font-bold uppercase tracking-widest text-[#60796d]">
-                  <th className="px-6 py-5 w-[12%]">Ref No.</th>
-                  <th className="px-6 py-5 w-[20%]">Customer</th>
-                  <th className="px-6 py-5 w-[20%]">Details</th>
-                  <th className="px-6 py-5 text-center w-[12%]">Status</th>
-                  <th className="px-6 py-5 text-right w-[14%]">Finance</th>
-                  <th className="px-6 py-5 text-right w-[22%]">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-green-900/10">
-                <AnimatePresence initial={false}>
-                  {sortedBookings.map((booking) => (
-                    <motion.tr 
-                      key={booking.id} 
-                      layout
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3 }}
-                      className="transition-colors duration-300 hover:bg-green-50/50"
-                    >
-                    <td className="whitespace-nowrap px-6 py-6">
-                      <div className="font-mono text-xs font-bold text-green-700/80">#{booking['Booking ID']?.split('-')[1] || booking.id.toString().slice(0, 5)}</div>
-                      <div className="mt-1 text-[10px] text-[#76877d]">Req: {formatDateTime(booking.Timestamp)}</div>
-                    </td>
-                    <td className="px-6 py-6">
-                      <div className="font-bold text-[#243328] truncate">{booking.Name}</div>
-                      <div className="mt-1 text-[11px] text-[#60796d] truncate">{booking.Email}</div>
-                      <div className="mt-0.5 text-[10px] text-[#76877d]">{booking.Phone}</div>
-                    </td>
-                    <td className="px-6 py-6 text-sm">
-                      <div className="font-bold text-[#355f48] truncate">{booking.District}</div>
-                      <div className="text-[10px] text-[#76877d] truncate">{booking.State} • {booking['Pin Code']}</div>
-                      <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
-                        <span className="rounded-md bg-blue-50 px-2 py-0.5 font-mono text-[9px] font-bold text-blue-600 border border-blue-100">{booking.Acres} AC</span>
-                        <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-600 border border-emerald-100 uppercase">{booking['Crop Type']}</span>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-6 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
-                            booking.Status === 'Completed'
-                              ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400'
-                              : booking.Status === 'Accept'
-                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
-                                : booking.Status === 'Reject'
-                                  ? 'border-red-500/20 bg-red-500/10 text-red-400'
-                                  : 'border-amber-500/20 bg-amber-500/10 text-amber-400'
-                          }`}
-                        >
-                          {booking.Status === 'Completed' && <CheckCircle2 className="h-3 w-3" />}
-                          {(!booking.Status || booking.Status === 'Pending') && <Clock className="h-3 w-3" />}
-                          {booking.Status === 'Accept' && <Wind className="h-3 w-3" />}
-                          {booking.Status || 'Pending'}
+          <div className="w-full lg:px-8 lg:py-8">
+            {/* Premium Horizontal List Layout */}
+            <div className="flex flex-col gap-5">
+              <AnimatePresence mode="popLayout">
+                {sortedBookings.map((booking) => (
+                  <motion.div
+                    key={booking.id}
+                    layout
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="group relative flex flex-col lg:flex-row items-stretch lg:items-center gap-6 overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/70 p-5 lg:p-4 backdrop-blur-3xl transition-all duration-500 hover:border-green-900/20 hover:shadow-[0_15px_40px_-10px_rgba(22,60,47,0.12)] hover:bg-white/90"
+                  >
+                    {/* ID & Status Section */}
+                    <div className="flex lg:flex-col items-center lg:items-start justify-between lg:justify-center gap-3 lg:w-[12%] lg:pl-4 border-b lg:border-b-0 lg:border-r border-green-900/5 pb-4 lg:pb-0">
+                      <div className="flex flex-col">
+                        <span className="font-mono text-[10px] font-bold text-green-700/60 uppercase tracking-tighter">
+                          Ref: {booking['Booking ID']?.split('-')[1] || booking.id.toString().slice(0, 5)}
                         </span>
+                        <span className="text-[10px] text-[#76877d] mt-0.5">{formatDateTime(booking.Timestamp)}</span>
                       </div>
-                    </td>
-                    <td className="px-6 py-6 text-right">
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="text-[11px] font-bold text-[#1b4a36]">₹ {booking.Sales?.toLocaleString('en-IN') || 0}</div>
-                        <div className={`text-[9px] font-bold ${booking.Profit > 0 ? 'text-emerald-600' : 'text-red-400'}`}>
-                          P: ₹ {booking.Profit?.toLocaleString('en-IN') || 0}
+                      <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.15em] shadow-sm bg-white ${
+                        booking.Status === 'Completed' ? 'border-indigo-500/20 text-indigo-500' :
+                        booking.Status === 'Accept' ? 'border-emerald-500/20 text-emerald-500' :
+                        booking.Status === 'Reject' ? 'border-red-500/20 text-red-500' :
+                        'border-amber-500/20 text-amber-500'
+                      }`}>
+                        {booking.Status || 'Pending'}
+                      </div>
+                    </div>
+
+                    {/* Customer Section */}
+                    <div className="flex items-center gap-4 lg:w-[22%] min-w-0">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-green-700 transition-colors group-hover:bg-[#1b4a36] group-hover:text-white">
+                        <Users className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="truncate text-base font-bold tracking-tight text-[#1b4a36]">{booking.Name}</h3>
+                        <p className="truncate text-[11px] text-[#60796d]">{booking.Email}</p>
+                        <a href={`tel:${booking.Phone}`} className="mt-1 block text-[10px] font-semibold text-[#76877d] hover:text-green-700">
+                          {booking.Phone}
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Mission Details */}
+                    <div className="lg:w-[25%] flex flex-col gap-2.5">
+                      <div className="flex items-center gap-2 text-[#355f48]">
+                        <Droplets className="h-4 w-4 opacity-50 shrink-0" />
+                        <span className="text-xs font-bold truncate">{booking.District}, {booking.State}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 rounded-lg bg-green-50/50 px-2.5 py-1 text-[10px] font-bold text-green-700 border border-green-900/5">
+                           {booking.Acres} AC
+                        </div>
+                        <div className="flex items-center gap-1.5 rounded-lg bg-[#f6f4ee] px-2.5 py-1 text-[10px] font-bold text-[#60796d] border border-green-900/5 uppercase">
+                           {booking['Crop Type']}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] text-[#8aa095] font-medium">
+                           <Clock className="h-3 w-3" /> {booking.Date || '-'}
                         </div>
                       </div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-6 text-right">
+                    </div>
+
+                    {/* Financials & Remarks */}
+                    <div className="lg:w-[18%] flex flex-col justify-center gap-2">
+                       {booking.Sales > 0 ? (
+                         <div className="space-y-1.5">
+                           <div className="flex justify-between items-center px-3 py-1.5 rounded-xl bg-[#1b4a36] text-[10px] font-bold text-white shadow-sm">
+                              <span>SALES</span>
+                              <span className="font-mono">₹{booking.Sales.toLocaleString('en-IN')}</span>
+                           </div>
+                           <div className="flex justify-between items-center px-3 py-1.5 rounded-xl bg-white border border-green-900/5 text-[10px] font-bold">
+                              <span className="text-[#60796d]">PROFIT</span>
+                              <span className="text-emerald-600 font-mono">₹{booking.Profit.toLocaleString('en-IN')}</span>
+                           </div>
+                         </div>
+                       ) : booking.Remarks ? (
+                         <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-2.5 italic text-[10px] text-[#76877d] line-clamp-2">
+                           "{booking.Remarks}"
+                         </div>
+                       ) : (
+                         <div className="text-[10px] text-[#b0bcaf] font-medium uppercase tracking-widest text-center">No Activity</div>
+                       )}
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="lg:w-[23%] lg:pl-4 border-t lg:border-t-0 lg:border-l border-green-900/5 pt-4 lg:pt-0">
                       {!booking.Status || booking.Status === 'Pending' ? (
-                        <div className="flex flex-col items-end gap-2.5">
+                        <div className="flex flex-col gap-2.5">
                           <input
                             type="text"
-                            placeholder="Add remarks..."
+                            placeholder="Brief remarks..."
                             value={pendingRemarks[booking.id] || ''}
                             onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
-                            className="w-full max-w-[160px] rounded-xl border border-green-900/10 bg-white px-3 py-2 text-[11px] text-[#243328] transition-all focus:ring-2 focus:ring-green-700/10"
+                            className="w-full rounded-xl border border-green-900/10 bg-white/80 px-3 py-2 text-[11px] transition-all focus:ring-4 focus:ring-green-700/5"
                           />
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-[10px] font-bold tracking-wider text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 active:scale-95">
-                              <Wind className="h-3.5 w-3.5" /> ACCEPT
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => handleUpdateStatus(booking.id, 'Accept')}
+                              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-[#2f6a47] py-2.5 text-[10px] font-bold tracking-widest text-white shadow-lg shadow-green-900/10 hover:bg-[#1b4a36] transition-all"
+                            >
+                              ACCEPT
                             </button>
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="group rounded-xl border border-red-100 bg-red-50 p-2 text-red-500 transition-all hover:bg-red-500 hover:text-white active:scale-95">
+                            <button 
+                              onClick={() => handleUpdateStatus(booking.id, 'Reject')}
+                              className="px-3 rounded-xl border border-red-50 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                            >
                               <XOctagon className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
                       ) : booking.Status === 'Accept' ? (
-                        <div className="flex flex-col items-end gap-2.5">
-                           <div className="flex gap-1.5">
-                             <input
-                               type="number"
-                               placeholder="Sales"
-                               value={pendingFinancials[booking.id]?.sales || ''}
-                               onChange={(e) => handleFinancialChange(booking.id, 'sales', e.target.value)}
-                               className="w-20 rounded-lg border border-green-900/10 bg-white px-2.5 py-1.5 text-[10px] transition-all focus:ring-2 focus:ring-green-700/10"
-                             />
-                             <input
-                               type="number"
-                               placeholder="Profit"
-                               value={pendingFinancials[booking.id]?.profit || ''}
-                               onChange={(e) => handleFinancialChange(booking.id, 'profit', e.target.value)}
-                               className="w-20 rounded-lg border border-green-900/10 bg-white px-2.5 py-1.5 text-[10px] transition-all focus:ring-2 focus:ring-green-700/10"
-                             />
-                           </div>
-                           <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white shadow-lg shadow-indigo-600/20 transition-all hover:bg-indigo-700 active:scale-95">
-                             <CheckCircle2 className="h-3.5 w-3.5" /> FINISH
-                           </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-end opacity-40">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#76877d]">Records Locked</span>
-                        </div>
-                      )}
-                    </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-
-                {(!bookings || bookings.length === 0) && !isLoading && (
-                  <tr>
-                    <td colSpan="5" className="px-8 py-20 text-center text-[#76877d]">
-                      <Wind className="mx-auto mb-6 h-16 w-16 opacity-20" />
-                      <p className="text-lg">No active booking records found.</p>
-                      <button onClick={fetchBookings} className="mt-4 rounded-lg border border-green-900/10 bg-white px-4 py-2 text-sm transition-colors hover:bg-green-50">
-                        Refresh
-                      </button>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-
-            {/* Mobile Card List */}
-            <div className="md:hidden divide-y divide-green-900/10">
-              {(!bookings || bookings.length === 0) && !isLoading ? (
-                <div className="px-6 py-20 text-center text-[#76877d]">
-                  <Wind className="mx-auto mb-6 h-16 w-16 opacity-20" />
-                  <p className="text-lg">No records found.</p>
-                </div>
-              ) : (
-                [...bookings].reverse().map((booking) => (
-                  <div key={booking.id} className="p-6 space-y-4 hover:bg-green-50/50 transition-colors">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="font-mono text-[10px] text-green-700">REF: {booking['Booking ID'] || booking.id.toString().slice(0, 8)}</div>
-                        <div className="text-xs text-[#60796d] mt-1">{formatDateTime(booking.Timestamp)}</div>
-                      </div>
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
-                          booking.Status === 'Completed' ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400' :
-                          booking.Status === 'Accept' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' :
-                          booking.Status === 'Reject' ? 'border-red-500/20 bg-red-500/10 text-red-400' :
-                          'border-amber-500/20 bg-amber-500/10 text-amber-400'
-                        }`}
-                      >
-                        {booking.Status || 'Pending'}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="text-lg font-bold text-[#243328]">{booking.Name}</div>
-                      <div className="text-sm text-[#60796d]">{booking.Email}</div>
-                      <div className="text-sm text-[#76877d]">{booking.Phone}</div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div className="p-3 bg-green-50/50 rounded-xl border border-green-900/5">
-                        <div className="text-[10px] uppercase tracking-wider text-[#60796d] mb-1">Coverage</div>
-                        <div className="font-mono text-sm font-bold text-[#28593b]">{booking.Acres} Acres</div>
-                      </div>
-                      <div className="p-3 bg-green-50/50 rounded-xl border border-green-900/5">
-                        <div className="text-[10px] uppercase tracking-wider text-[#60796d] mb-1">Crop Type</div>
-                        <div className="text-sm font-bold text-[#28593b]">{booking['Crop Type']}</div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-[#60796d]">
-                      <Clock className="h-4 w-4" />
-                      <span>{booking.State}, {booking.District}</span>
-                    </div>
-
-                    {booking.Remarks && (
-                      <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-3 text-xs italic text-[#76877d]">
-                        "{booking.Remarks}"
-                      </div>
-                    )}
-
-                    {(booking.Sales > 0 || booking.Profit > 0) && (
-                      <div className="flex gap-4 p-3 bg-[#f6f4ee]/40 rounded-xl border border-green-900/5">
-                        <div className="flex-1">
-                          <div className="text-[10px] uppercase font-bold text-[#60796d]">Total Sales</div>
-                          <div className="text-sm font-bold text-[#1b4a36]">₹ {booking.Sales?.toLocaleString('en-IN') || 0}</div>
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-[10px] uppercase font-bold text-[#60796d]">Net Profit</div>
-                          <div className="text-sm font-bold text-emerald-600">₹ {booking.Profit?.toLocaleString('en-IN') || 0}</div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="pt-2">
-                       {!booking.Status || booking.Status === 'Pending' ? (
-                        <div className="space-y-3">
-                          <input
-                            type="text"
-                            placeholder="Add remarks..."
-                            value={pendingRemarks[booking.id] || ''}
-                            onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
-                            className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-2.5 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
-                          />
-                          <div className="flex gap-2">
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 active:scale-95 transition-all">
-                              <Wind className="h-4 w-4" /> ACCEPT
-                            </button>
-                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 active:scale-95 transition-all">
-                               REJECT
-                            </button>
-                          </div>
-                        </div>
-                      ) : booking.Status === 'Accept' ? (
-                        <div className="space-y-3">
-                          <div className="flex gap-2">
+                        <div className="flex flex-col gap-2.5">
+                           <div className="flex gap-2">
                             <input
                               type="number"
-                              placeholder="Sales (₹)"
+                              placeholder="Sales"
                               value={pendingFinancials[booking.id]?.sales || ''}
                               onChange={(e) => handleFinancialChange(booking.id, 'sales', e.target.value)}
-                              className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-3 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
+                              className="flex-1 min-w-0 rounded-xl border border-green-900/10 bg-white px-2.5 py-2 text-[11px] focus:ring-4 focus:ring-indigo-700/5"
                             />
                             <input
                               type="number"
-                              placeholder="Profit (₹)"
+                              placeholder="Profit"
                               value={pendingFinancials[booking.id]?.profit || ''}
                               onChange={(e) => handleFinancialChange(booking.id, 'profit', e.target.value)}
-                              className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-3 text-sm transition-all focus:ring-2 focus:ring-green-700/10"
+                              className="flex-1 min-w-0 rounded-xl border border-green-900/10 bg-white px-2.5 py-2 text-[11px] focus:ring-4 focus:ring-indigo-700/5"
                             />
-                          </div>
-                          <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
-                            <CheckCircle2 className="h-4 w-4" /> MARK COMPLETED
+                           </div>
+                           <button 
+                            onClick={() => handleUpdateStatus(booking.id, 'Completed')}
+                            className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2.5 text-[10px] font-bold tracking-widest text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all"
+                          >
+                            FINALIZE
                           </button>
                         </div>
                       ) : (
-                        <div className="text-center py-2 text-[10px] uppercase font-bold text-[#b0bcaf] tracking-widest bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                          Finalized / Closed
+                        <div className="flex flex-col items-center justify-center py-2 opacity-50">
+                           <CheckCircle2 className="h-4 w-4 text-[#8aa095] mb-1" />
+                           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#8aa095]">Locked</span>
                         </div>
                       )}
                     </div>
-                  </div>
-                ))
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {(!bookings || bookings.length === 0) && !isLoading && (
+                <div className="flex flex-col items-center justify-center py-24 text-center">
+                  <Wind className="mb-6 h-12 w-12 text-green-700/10" />
+                  <p className="text-sm font-bold text-[#243328]/40">No records found.</p>
+                </div>
               )}
             </div>
           </div>
