@@ -22,6 +22,7 @@ import {
   Users,
   Wind,
   XOctagon,
+  FilterX,
 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'drriftaire@gmail.com';
@@ -192,6 +193,13 @@ export default function AdminDashboard() {
         setDateRange({ start: dateRange.start, end: dStr });
       }
     }
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('All');
+    setSortConfig({ key: 'Timestamp', direction: 'desc' });
+    setDateRange({ start: null, end: null });
   };
 
   const getCalendarDays = () => {
@@ -618,11 +626,12 @@ export default function AdminDashboard() {
           </div>
 
           {/* Advanced Controls Bar */}
-          <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:flex-row lg:items-center lg:justify-between lg:px-8 overflow-visible">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:items-center gap-6 w-full lg:w-auto">
+          <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:px-8 overflow-visible">
+            {/* Row 1: Search & Date */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
               
               {/* Search Bar */}
-              <div className="relative group min-w-0 lg:w-64">
+              <div className="relative group min-w-0 w-full md:w-96 flex-shrink-0">
                 <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#6b7c72] transition-colors group-focus-within:text-green-700" />
                 <input
                   type="text"
@@ -633,8 +642,21 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              {/* Date Filter & Calendar */}
-              <div className="relative z-30">
+              {/* Actions: Clear & Date */}
+              <div className="flex items-center gap-3">
+                {(searchTerm || statusFilter !== 'All' || dateRange.start || sortConfig.key !== 'Timestamp' || sortConfig.direction !== 'desc') && (
+                  <button
+                    onClick={handleClearFilters}
+                    title="Clear All Filters"
+                    className="flex items-center justify-center gap-2 rounded-xl border border-rose-900/10 bg-white px-3 py-2.5 text-[10px] font-bold tracking-wide text-rose-500 transition-colors hover:bg-rose-50 hover:border-rose-200 active:scale-95 shadow-sm"
+                  >
+                    <FilterX className="h-4 w-4" />
+                    <span className="hidden sm:inline">CLEAR</span>
+                  </button>
+                )}
+
+                {/* Date Filter & Calendar */}
+                <div className="relative z-30">
                 <button
                   onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                   className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-[10px] font-bold tracking-wide transition-all ${
@@ -663,10 +685,11 @@ export default function AdminDashboard() {
                   {isCalendarOpen && (
                     <motion.div
                       ref={calendarRef}
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      className="absolute left-0 bottom-full z-[100] mb-3 w-72 rounded-3xl border border-green-900/10 bg-white p-4 shadow-2xl backdrop-blur-3xl"
+                      initial={{ opacity: 0, y: 30, scale: 0.8, rotate: 2 }}
+                      animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                      exit={{ opacity: 0, y: 20, scale: 0.8, rotate: -2 }}
+                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                      className="absolute right-0 sm:-right-4 md:right-0 origin-bottom-right bottom-full z-[100] mb-3 w-72 rounded-3xl border border-green-900/10 bg-white/95 p-4 shadow-[0_20px_50px_-12px_rgba(27,74,54,0.25)] backdrop-blur-3xl"
                     >
                         <div className="flex items-center justify-between mb-3 px-1">
                           <button onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>
@@ -729,11 +752,15 @@ export default function AdminDashboard() {
                   )}
                 </AnimatePresence>
               </div>
+              </div>
+            </div>
 
+            {/* Row 2: Status & Sorting */}
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 w-full">
               {/* Status Filters */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 w-full xl:w-auto min-w-0 flex-1">
                 <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Status:</span>
-                <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
                   {['All', 'Pending', 'Accept', 'Completed', 'Reject'].map((s) => (
                     <button
                       key={s}
@@ -749,12 +776,11 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-            </div>
 
             {/* Sorting Controls */}
-            <div className="flex items-center gap-3 lg:justify-end">
+            <div className="flex items-center gap-3 w-full xl:w-auto xl:justify-end min-w-0">
               <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
-              <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+              <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
                 {[
                   { label: 'Name', key: 'Name' },
                   { label: 'Booking', key: 'Timestamp' },
@@ -780,6 +806,7 @@ export default function AdminDashboard() {
                   </button>
                 ))}
               </div>
+            </div>
             </div>
           </div>
 
