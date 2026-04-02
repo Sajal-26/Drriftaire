@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,6 +6,9 @@ import { Toaster, toast } from 'react-hot-toast';
 import useAdminStore from '../store/useAdminStore';
 import {
   CheckCircle2,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Download,
   Droplets,
@@ -13,6 +16,7 @@ import {
   LayoutDashboard,
   Loader2,
   LogOut,
+  Search,
   TrendingUp,
   IndianRupee,
   Users,
@@ -23,16 +27,27 @@ import {
 const ADMIN_EMAIL = 'drriftaire@gmail.com';
 
 const formatDateTime = (value) => {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value || '-';
-  return parsed.toLocaleString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-  });
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value || '-';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+};
+
+const formatDateOnly = (value) => {
+  if (!value) return '-';
+  // Handles both YYYY-MM-DD and ISO strings
+  const d = new Date(value.includes('T') ? value : `${value}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return value;
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
 };
 
 export default function AdminDashboard() {
@@ -58,6 +73,12 @@ export default function AdminDashboard() {
   const [pendingFinancials, setPendingFinancials] = useState({}); // { [id]: { sales: '', profit: '' } }
   const [sortConfig, setSortConfig] = useState({ key: 'Timestamp', direction: 'desc' });
   const [statusFilter, setStatusFilter] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [dateRange, setDateRange] = useState({ start: null, end: null });
+  const [dateFilterType, setDateFilterType] = useState('Scheduling'); // 'Scheduling' or 'Booking'
+  const calendarRef = useRef(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, status: null });
 
 
@@ -87,7 +108,44 @@ export default function AdminDashboard() {
       list = list.filter((b) => (b.Status || 'Pending') === statusFilter);
     }
 
-    // 2. Sort
+    // 2. Filter by Search Query
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter((b) => {
+        return (
+          (b.Name || '').toLowerCase().includes(q) ||
+          (b.Email || '').toLowerCase().includes(q) ||
+          (b.Phone || '').toLowerCase().includes(q) ||
+          (b.State || '').toLowerCase().includes(q) ||
+          (b.District || '').toLowerCase().includes(q) ||
+          (b['Crop Type'] || '').toLowerCase().includes(q) ||
+          (b.Remarks || '').toLowerCase().includes(q) ||
+          (b['Booking ID'] || '').toLowerCase().includes(q)
+        );
+      });
+    }
+
+    // 3. Filter by Date Range
+    if (dateRange.start) {
+      const start = new Date(dateRange.start);
+      start.setHours(0, 0, 0, 0);
+      const end = dateRange.end ? new Date(dateRange.end) : new Date(start);
+      end.setHours(23, 59, 59, 999);
+
+      list = list.filter((b) => {
+        let target;
+        if (dateFilterType === 'Scheduling') {
+          // booking.Date is YYYY-MM-DD
+          target = new Date(`${b.Date}T00:00:00`);
+        } else {
+          // booking.Timestamp is ISO
+          target = new Date(b.Timestamp);
+        }
+        return target >= start && target <= end;
+      });
+    }
+
+    // 4. Sort
     const { key, direction } = sortConfig;
 
     return list.sort((a, b) => {
@@ -104,7 +162,55 @@ export default function AdminDashboard() {
       if (valA > valB) return direction === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [bookings, sortConfig, statusFilter]);
+  }, [bookings, sortConfig, statusFilter, searchTerm, dateRange, dateFilterType]);
+
+  const scheduledDatesSet = useMemo(() => {
+    return new Set(bookings.filter(b => b.Date).map(b => b.Date));
+  }, [bookings]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setIsCalendarOpen(false);
+      }
+    }
+    if (isCalendarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCalendarOpen]);
+
+  const handleDateSelect = (date) => {
+    const dStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    if (!dateRange.start || (dateRange.start && dateRange.end)) {
+      setDateRange({ start: dStr, end: null });
+    } else {
+      const start = new Date(dateRange.start);
+      if (date < start) {
+        setDateRange({ start: dStr, end: dateRange.start });
+      } else {
+        setDateRange({ start: dateRange.start, end: dStr });
+      }
+    }
+  };
+
+  const getCalendarDays = () => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    const days = [];
+    // Padding for first week
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      days.push(null);
+    }
+    // Days of month
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      days.push(new Date(year, month, i));
+    }
+    return days;
+  };
 
   const exportRows = useMemo(
     () =>
@@ -120,7 +226,7 @@ export default function AdminDashboard() {
         pinCode: booking['Pin Code'] || '',
         acres: booking.Acres || '',
         cropType: booking['Crop Type'] || '',
-        preferredDate: booking.Date || '',
+        preferredDate: formatDateOnly(booking.Date),
         status: booking.Status || 'Pending',
         remarks: booking.Remarks || '',
         sales: booking.Sales || 0,
@@ -484,9 +590,9 @@ export default function AdminDashboard() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="overflow-hidden rounded-[3rem] border border-green-900/10 bg-white/40 shadow-xl shadow-green-900/5"
+          className="relative rounded-[3rem] border border-green-900/10 bg-white/40 shadow-xl shadow-green-900/5 overflow-visible"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-green-900/10 bg-white/60 px-6 sm:px-8 py-5 sm:py-6 gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-green-900/10 bg-white/60 px-6 sm:px-8 py-5 sm:py-6 gap-4 rounded-t-[3rem]">
             <h2 className="flex items-center gap-3 text-base sm:text-lg font-semibold text-[#1b4a36]">
               <span className="relative flex h-3 w-3">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -512,29 +618,143 @@ export default function AdminDashboard() {
           </div>
 
           {/* Advanced Controls Bar */}
-          <div className="flex flex-col gap-5 bg-white px-6 py-5 border-b border-green-900/10 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">Filter Status</span>
-              <div className="flex gap-1.5 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
-                {['All', 'Pending', 'Accept', 'Completed', 'Reject'].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setStatusFilter(s)}
-                    className={`whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[10px] font-bold tracking-wide transition-all ${
-                      statusFilter === s
-                        ? 'bg-[#1b4a36] text-white shadow-md'
-                        : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+          <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:flex-row lg:items-center lg:justify-between lg:px-8 overflow-visible">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:items-center gap-6 w-full lg:w-auto">
+              
+              {/* Search Bar */}
+              <div className="relative group min-w-0 lg:w-64">
+                <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#6b7c72] transition-colors group-focus-within:text-green-700" />
+                <input
+                  type="text"
+                  placeholder="Seach by name, phone, crop..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full rounded-xl border border-green-900/10 bg-[#f9faf9] pl-10 pr-4 py-2.5 text-[10px] font-bold tracking-wide text-[#1b4a36] placeholder-[#8aa095] transition-all focus:border-green-900/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-900/5"
+                />
+              </div>
+
+              {/* Date Filter & Calendar */}
+              <div className="relative z-30">
+                <button
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                  className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-[10px] font-bold tracking-wide transition-all ${
+                    dateRange.start 
+                      ? 'border-green-700/30 bg-green-50 text-green-800' 
+                      : 'border-green-900/10 bg-white text-[#60796d] hover:bg-green-50'
+                  }`}
+                >
+                  <Calendar className="h-4 w-4 opacity-70" />
+                  <span>
+                    {dateRange.start 
+                      ? `${formatDateOnly(dateRange.start)}${dateRange.end ? ` to ${formatDateOnly(dateRange.end)}` : ''}` 
+                      : 'FILTER BY DATE'}
+                  </span>
+                  {dateRange.start && (
+                    <div 
+                      onClick={(e) => { e.stopPropagation(); setDateRange({ start: null, end: null }); }}
+                      className="ml-1 rounded-full bg-green-800/10 p-0.5 hover:bg-green-800/20"
+                    >
+                      <XOctagon className="h-3 w-3" />
+                    </div>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {isCalendarOpen && (
+                    <motion.div
+                      ref={calendarRef}
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="absolute left-0 bottom-full z-[100] mb-3 w-72 rounded-3xl border border-green-900/10 bg-white p-4 shadow-2xl backdrop-blur-3xl"
+                    >
+                        <div className="flex items-center justify-between mb-3 px-1">
+                          <button onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>
+                            <ChevronLeft className="h-4 w-4 text-[#1b4a36]" />
+                          </button>
+                          <span className="text-[11px] font-black uppercase tracking-widest text-[#1b4a36]">
+                            {calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                          </span>
+                          <button onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1))}>
+                            <ChevronRight className="h-4 w-4 text-[#1b4a36]" />
+                          </button>
+                        </div>
+
+                        <div className="mb-3 flex gap-1 rounded-xl bg-[#f6f4ee] p-1">
+                          {['Scheduling', 'Booking'].map(type => (
+                            <button
+                              key={type}
+                              onClick={() => setDateFilterType(type)}
+                              className={`flex-1 rounded-lg py-1.5 text-[9px] font-black uppercase tracking-tighter transition-all ${
+                                dateFilterType === type ? 'bg-[#1b4a36] text-white shadow-sm' : 'text-[#60796d]'
+                              }`}
+                            >
+                              {type} DATE
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                          {['S','M','T','W','T','F','S'].map(d => (
+                            <span key={d} className="text-[8px] font-black text-[#8aa095] uppercase">{d}</span>
+                          ))}
+                        </div>
+                        <div className="grid grid-cols-7 gap-1">
+                          {getCalendarDays().map((day, idx) => {
+                            if (!day) return <div key={`pad-${idx}`} />;
+                            const dStr = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+                            const isScheduled = scheduledDatesSet.has(dStr);
+                            const isSelected = dateRange.start === dStr || dateRange.end === dStr;
+                            const isInRange = dateRange.start && dateRange.end && dStr > dateRange.start && dStr < dateRange.end;
+                            
+                            return (
+                              <button
+                                key={dStr}
+                                onClick={() => handleDateSelect(day)}
+                                className={`group relative h-8 w-8 rounded-lg text-[10px] font-bold transition-all ${
+                                  isSelected ? 'bg-[#1b4a36] text-white' : 
+                                  isInRange ? 'bg-green-100 text-green-800' :
+                                  'text-[#1b4a36] hover:bg-green-50'
+                                }`}
+                              >
+                                {day.getDate()}
+                                {isScheduled && !isSelected && (
+                                  <span className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.6)]" />
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Status Filters */}
+              <div className="flex items-center gap-3">
+                <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Status:</span>
+                <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                  {['All', 'Pending', 'Accept', 'Completed', 'Reject'].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setStatusFilter(s)}
+                      className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
+                        statusFilter === s
+                          ? 'bg-[#1b4a36] text-white shadow-sm'
+                          : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">Order Records</span>
-              <div className="flex gap-1.5 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+            {/* Sorting Controls */}
+            <div className="flex items-center gap-3 lg:justify-end">
+              <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
+              <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
                 {[
                   { label: 'Name', key: 'Name' },
                   { label: 'Booking', key: 'Timestamp' },
@@ -545,9 +765,9 @@ export default function AdminDashboard() {
                   <button
                     key={sort.key}
                     onClick={() => toggleSort(sort.key)}
-                    className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[10px] font-bold tracking-wide transition-all ${
+                    className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
                       sortConfig.key === sort.key
-                        ? 'bg-emerald-600 text-white shadow-md'
+                        ? 'bg-emerald-600 text-white shadow-sm'
                         : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
                     }`}
                   >
@@ -622,7 +842,7 @@ export default function AdminDashboard() {
                            {booking['Crop Type']}
                         </div>
                         <div className="flex items-center gap-1.5 text-[10px] text-[#8aa095] font-medium">
-                           <Clock className="h-3 w-3" /> {booking.Date || '-'}
+                           <Clock className="h-3 w-3" /> {formatDateOnly(booking.Date)}
                         </div>
                       </div>
                     </div>

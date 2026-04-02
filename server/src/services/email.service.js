@@ -66,6 +66,16 @@ const formatPhoneNumber = (phone) => {
   return `+91 ${cleaned}`;
 };
 
+const formatDate = (value) => {
+  if (!value) return "-";
+  const d = new Date(value.includes("T") ? value : `${value}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return value;
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 const sendMailWithLogging = async ({ label, to, subject, html }) => {
   logEmail(`${label} queued`, { to, subject });
 
@@ -172,7 +182,7 @@ const sendBookingEmails = async ({
   try {
     const formattedPhone = formatPhoneNumber(phone);
     const dataItems = [
-      { label: "Date", value: date },
+      { label: "Date", value: formatDate(date) },
       { label: "Location", value: `${district}, ${state}` },
       { label: "Pin Code", value: pinCode },
       { label: "Acreage", value: `${acres} Acres` },
