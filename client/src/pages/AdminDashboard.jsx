@@ -247,10 +247,10 @@ export default function AdminDashboard() {
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="mb-5 inline-flex items-center justify-center rounded-2xl border border-green-900/10 bg-white/80 p-4 shadow-inner"
             >
-              <Wind className="h-10 w-10 text-green-700" />
+              <Wind className="h-8 w-8 sm:h-10 sm:w-10 text-green-700" />
             </motion.div>
-            <h1 className="text-3xl font-bold tracking-tight text-[#1b4a36]">Administrator Access</h1>
-            <p className="mt-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#5d7365]">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1b4a36] text-center">Administrator Access</h1>
+            <p className="mt-2 flex items-center gap-2 text-[10px] sm:text-sm font-semibold uppercase tracking-widest text-[#5d7365]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-600" />
               Authorized Personnel Only
             </p>
@@ -307,21 +307,21 @@ export default function AdminDashboard() {
         }}
       />
 
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/10 bg-[#f6f4ee]/90 px-8 py-5 shadow-sm backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="rounded-xl border border-green-700/20 bg-gradient-to-br from-green-500/20 to-lime-500/10 p-2.5 text-green-700 shadow-inner">
-            <LayoutDashboard className="h-5 w-5" />
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/10 bg-[#f6f4ee]/90 px-4 sm:px-8 py-3 sm:py-5 shadow-sm backdrop-blur-xl">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="rounded-xl border border-green-700/20 bg-gradient-to-br from-green-500/20 to-lime-500/10 p-2 sm:p-2.5 text-green-700 shadow-inner">
+            <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div>
-            <span className="text-2xl font-bold tracking-tight text-[#1b4a36]">Management Console</span>
-            <div className="mt-1 flex items-center gap-2 text-xs text-[#60796d]">
+            <span className="text-lg sm:text-2xl font-bold tracking-tight text-[#1b4a36]">Admin Panel</span>
+            <div className="hidden sm:flex mt-1 items-center gap-2 text-xs text-[#60796d]">
               <span
                 className={`inline-block h-2.5 w-2.5 rounded-full ${
                   health.status === 'ok'
                     ? 'bg-emerald-400'
                     : health.status === 'checking'
-                      ? 'animate-pulse bg-amber-400'
-                      : 'bg-red-400'
+                       ? 'animate-pulse bg-amber-400'
+                       : 'bg-red-400'
                 }`}
               />
               <span>
@@ -334,18 +334,21 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={checkHealth}
-            className="rounded-xl border border-green-900/10 bg-white px-4 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95"
+            className="rounded-xl border border-green-900/10 bg-white p-2.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95"
+            title="Verify Status"
           >
-            VERIFY STATUS
+            <span className="hidden sm:inline">VERIFY STATUS</span>
+            <CheckCircle2 className="sm:hidden h-4 w-4" />
           </button>
           <button
             onClick={logout}
-            className="group flex items-center gap-2 rounded-xl border border-transparent px-5 py-2.5 text-[#60796d] transition-all duration-300 hover:border-green-900/10 hover:bg-white hover:text-[#1b4a36] active:scale-95"
+            className="group flex items-center gap-2 rounded-xl border border-transparent p-2.5 sm:px-5 sm:py-2.5 text-[#60796d] transition-all duration-300 hover:border-green-900/10 hover:bg-white hover:text-[#1b4a36] active:scale-95"
+            title="Log Out"
           >
-            <span className="text-sm font-semibold tracking-wide">LOG OUT</span>
+            <span className="hidden sm:inline text-sm font-semibold tracking-wide">LOG OUT</span>
             <LogOut className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </div>
@@ -362,13 +365,13 @@ export default function AdminDashboard() {
               transition: { staggerChildren: 0.1 }
             }
           }}
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-4 lg:grid-cols-4"
         >
           {[
-            { label: 'Total Inquiries', value: analytics.total || 0, icon: Users, color: 'text-[#2f6a47]', bg: 'bg-green-100/70', border: 'border-green-700/20' },
-            { label: 'Pending Review', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
-            { label: 'Confirmed Bookings', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
-            { label: 'Services Completed', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
+            { label: 'Inquiries', value: analytics.total || 0, icon: Users, color: 'text-[#2f6a47]', bg: 'bg-green-100/70', border: 'border-green-700/20' },
+            { label: 'Pending', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
+            { label: 'Accepted', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
+            { label: 'Finished', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
           ].map((stat) => (
             <motion.div 
               key={stat.label} 
@@ -377,16 +380,16 @@ export default function AdminDashboard() {
                 show: { opacity: 1, y: 0 }
               }}
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="group relative overflow-hidden rounded-3xl border border-green-900/10 bg-white/70 p-7 backdrop-blur-md transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_8px_40px_-12px_rgba(22,60,47,0.28)]"
+              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-green-900/10 bg-white/70 p-4 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_8px_40px_-12px_rgba(22,60,47,0.28)]"
             >
               <div className="absolute -mr-16 -mt-16 rounded-full bg-gradient-to-br from-green-200/30 to-transparent p-32 transition-transform duration-700 group-hover:scale-110" />
               <div className="relative z-10 flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium tracking-wide text-[#60796d]">{stat.label}</p>
-                  <p className="mt-3 flex items-baseline gap-2 text-4xl font-bold text-[#1b4a36]">{stat.value}</p>
+                  <p className="text-[10px] sm:text-sm font-medium tracking-wide text-[#60796d]">{stat.label}</p>
+                  <p className="mt-1 sm:mt-3 flex items-baseline gap-2 text-2xl sm:text-4xl font-bold text-[#1b4a36]">{stat.value}</p>
                 </div>
-                <div className={`rounded-2xl border p-4 ring-1 ring-inset ring-white/70 shadow-inner ${stat.bg} ${stat.border}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                <div className={`rounded-lg sm:rounded-2xl border p-2 sm:p-4 ring-1 ring-inset ring-white/70 shadow-inner ${stat.bg} ${stat.border}`}>
+                  <stat.icon className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />
                 </div>
               </div>
             </motion.div>
@@ -399,32 +402,34 @@ export default function AdminDashboard() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/75 shadow-[0_20px_60px_-15px_rgba(22,60,47,0.28)] backdrop-blur-xl"
         >
-          <div className="flex items-center justify-between border-b border-green-900/10 bg-white/60 px-8 py-6">
-            <h2 className="flex items-center gap-3 text-lg font-semibold text-[#1b4a36]">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-green-900/10 bg-white/60 px-6 sm:px-8 py-5 sm:py-6 gap-4">
+            <h2 className="flex items-center gap-3 text-base sm:text-lg font-semibold text-[#1b4a36]">
               <span className="relative flex h-3 w-3">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
               </span>
-              Recent Booking Records
+              Booking Records
             </h2>
-            <div className="flex items-center gap-2">
-              <button onClick={handleDownloadCsv} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <button onClick={handleDownloadCsv} className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2.5 text-xs font-medium text-[#355f48] transition-colors hover:bg-green-50 shadow-sm">
                 <Download className="h-4 w-4" />
                 CSV
               </button>
-              <button onClick={handleDownloadExcel} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
+              <button onClick={handleDownloadExcel} className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2.5 text-xs font-medium text-[#355f48] transition-colors hover:bg-green-50 shadow-sm">
                 <Download className="h-4 w-4" />
                 EXCEL
               </button>
-              <button onClick={fetchBookings} className="group flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-4 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95">
+              <button onClick={fetchBookings} className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl border border-green-900/10 bg-white px-4 py-2.5 text-xs font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95 shadow-sm">
                 <Loader2 className={`h-4 w-4 text-green-700 ${isLoading ? 'animate-spin cursor-not-allowed' : 'transition-transform duration-500 group-hover:rotate-180'}`} />
-                REFRESH DATA
+                <span className="hidden sm:inline">REFRESH</span>
+                <span className="sm:hidden text-[10px]">SYNC</span>
               </button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left">
+            {/* Desktop Table */}
+            <table className="hidden md:table w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-green-900/10 bg-white/50 text-xs font-semibold uppercase tracking-widest text-[#60796d]">
                   <th className="px-8 py-5">Reference No.</th>
@@ -531,6 +536,95 @@ export default function AdminDashboard() {
                 )}
               </tbody>
             </table>
+
+            {/* Mobile Card List */}
+            <div className="md:hidden divide-y divide-green-900/10">
+              {(!bookings || bookings.length === 0) && !isLoading ? (
+                <div className="px-6 py-20 text-center text-[#76877d]">
+                  <Wind className="mx-auto mb-6 h-16 w-16 opacity-20" />
+                  <p className="text-lg">No records found.</p>
+                </div>
+              ) : (
+                [...bookings].reverse().map((booking) => (
+                  <div key={booking.id} className="p-6 space-y-4 hover:bg-green-50/50 transition-colors">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-mono text-[10px] text-green-700">REF: {booking['Booking ID'] || booking.id.toString().slice(0, 8)}</div>
+                        <div className="text-xs text-[#60796d] mt-1">{formatDateTime(booking.Timestamp)}</div>
+                      </div>
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
+                          booking.Status === 'Completed' ? 'border-indigo-500/20 bg-indigo-500/10 text-indigo-400' :
+                          booking.Status === 'Accept' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' :
+                          booking.Status === 'Reject' ? 'border-red-500/20 bg-red-500/10 text-red-400' :
+                          'border-amber-500/20 bg-amber-500/10 text-amber-400'
+                        }`}
+                      >
+                        {booking.Status || 'Pending'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="text-lg font-bold text-[#243328]">{booking.Name}</div>
+                      <div className="text-sm text-[#60796d]">{booking.Email}</div>
+                      <div className="text-sm text-[#76877d]">{booking.Phone}</div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div className="p-3 bg-green-50/50 rounded-xl border border-green-900/5">
+                        <div className="text-[10px] uppercase tracking-wider text-[#60796d] mb-1">Coverage</div>
+                        <div className="font-mono text-sm font-bold text-[#28593b]">{booking.Acres} Acres</div>
+                      </div>
+                      <div className="p-3 bg-green-50/50 rounded-xl border border-green-900/5">
+                        <div className="text-[10px] uppercase tracking-wider text-[#60796d] mb-1">Crop Type</div>
+                        <div className="text-sm font-bold text-[#28593b]">{booking['Crop Type']}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-[#60796d]">
+                      <Clock className="h-4 w-4" />
+                      <span>{booking.State}, {booking.District}</span>
+                    </div>
+
+                    {booking.Remarks && (
+                      <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-3 text-xs italic text-[#7e604d]">
+                        "{booking.Remarks}"
+                      </div>
+                    )}
+
+                    <div className="pt-2">
+                       {!booking.Status || booking.Status === 'Pending' ? (
+                        <div className="space-y-3">
+                          <input
+                            type="text"
+                            placeholder="Add remarks..."
+                            value={pendingRemarks[booking.id] || ''}
+                            onChange={(event) => handleRemarkChange(booking.id, event.target.value)}
+                            className="w-full rounded-xl border border-green-900/10 bg-white px-4 py-2.5 text-sm transition-all focus:ring-2 focus:ring-green-700/20"
+                          />
+                          <div className="flex gap-2">
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Accept')} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 active:scale-95 transition-all">
+                              <Wind className="h-4 w-4" /> ACCEPT
+                            </button>
+                            <button onClick={() => handleUpdateStatus(booking.id, 'Reject')} className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 active:scale-95 transition-all">
+                               REJECT
+                            </button>
+                          </div>
+                        </div>
+                      ) : booking.Status === 'Accept' ? (
+                        <button onClick={() => handleUpdateStatus(booking.id, 'Completed')} className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                          <CheckCircle2 className="h-4 w-4" /> MARK COMPLETED
+                        </button>
+                      ) : (
+                        <div className="text-center py-2 text-[10px] uppercase font-bold text-[#b0bcaf] tracking-widest bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                          Finalized / Closed
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </motion.div>
       </main>

@@ -16,7 +16,7 @@ Build a simple and clean platform where users can book drone spraying services, 
 * Backend: Node.js + Express (Hosted on Vercel)
 * Auth: JWT
 * Email: Nodemailer
-* Storage: Google Sheets
+* Storage: Supabase (PostgreSQL)
 
 ---
 
@@ -29,7 +29,7 @@ Frontend (Vercel)
    ↓ API calls
 Backend (Vercel)
    ↓
-Google Sheets + Gmail SMTP
+Supabase Database + Gmail SMTP
 ```
 
 ---
@@ -40,6 +40,7 @@ Google Sheets + Gmail SMTP
 | ---------------- | -------- | ---- |
 | Frontend Hosting | Vercel   | Free |
 | Backend Hosting  | Vercel   | Free |
+| Database         | Supabase | Free |
 | Domain           | Custom   | Done |
 
 Current stack cost can stay at `₹0` on free tier while traffic is low.
@@ -67,13 +68,12 @@ Current stack cost can stay at `₹0` on free tier while traffic is low.
 ## Booking System
 
 * [X] Booking form (name, phone, location, farm size, date)
-* [X] Store booking in Spreadsheet / Excel-style sheet
+* [X] Store booking in Supabase database
 * [X] Send booking details to admin (email)
 * [X] Send confirmation email to user
 * [X] Prevent duplicate pending bookings
 * [X] Validate booking fields
 * [X] Add booking rate limiting
-* [X] Google Sheets chosen intentionally as per client requirement
 
 ---
 
@@ -88,7 +88,7 @@ Current stack cost can stay at `₹0` on free tier while traffic is low.
 
 * [ ] Home Page
 * [ ] About Page
-* [ ] Booking Page
+* [X] Booking Page
 * [ ] User Dashboard
 * [ ] Admin Panel
 
@@ -96,8 +96,8 @@ Current stack cost can stay at `₹0` on free tier while traffic is low.
 
 ## MVP (Must Complete First)
 
-* [ ] Booking form
-* [ ] Admin login interface
+* [X] Booking form
+* [X] Admin login interface
 * [X] Email notifications
 * [X] Admin booking management
 * [X] Backend deployment
@@ -108,7 +108,7 @@ Current stack cost can stay at `₹0` on free tier while traffic is low.
 
 * [X] Health endpoint
 * [X] Environment variable validation
-* [X] Google Sheets integration working on Vercel
+* [X] Supabase integration working on Vercel
 * [X] Booking email flow fixed on Vercel
 * [X] Admin status update route fixed on Vercel
 * [X] Frontend API wiring updated for deployed backend
@@ -118,29 +118,19 @@ Current stack cost can stay at `₹0` on free tier while traffic is low.
 
 ---
 
-## Current Limitations
+## Future Enhancements & Scaling
 
-* [ ] Queue-based email delivery
-* [ ] Structured logging/monitoring
-* [ ] Payment integration
-* [ ] Map integration for location
-* [ ] SMS notifications
-* [ ] Advanced analytics dashboard
+* [ ] Payment integration (UPI/Razorpay)
+* [ ] Map integration for precise farm location
+* [ ] SMS notifications for status updates
+* [ ] Queue-based email delivery (for higher volumes)
+* [ ] Replace Gmail SMTP with dedicated transactional email service (SendGrid/Postmark)
+* [ ] Advanced analytics dashboard (charts/trends)
 
----
-
-## Future Enhancements (Optional)
-
-* [ ] Payment integration
-* [ ] Map integration for location
-* [ ] SMS notifications
-* [ ] Advanced analytics dashboard
-* [ ] Replace Gmail SMTP with dedicated transactional email service
-* [ ] Improve scaling if traffic grows beyond free-tier comfort
-* [ ] Current practical estimate: around `150-300 bookings/day`
-* [ ] Current practical estimate: around `20-50 users at a time` doing backend actions
-* [ ] Current practical estimate: around `10,000-50,000 monthly visitors`
-* [ ] Main future bottlenecks: Google Sheets reads/writes and Gmail SMTP sending volume
+### Current Practical Capacity (Free Tier)
+* Estimated `~50-100 bookings/day`
+* Estimated `~10-20 concurrent users`
+* Estimated `~5,000 monthly visitors`
 
 ---
 
