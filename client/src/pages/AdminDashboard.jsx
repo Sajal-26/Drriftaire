@@ -54,11 +54,6 @@ export default function AdminDashboard() {
   const [pendingRemarks, setPendingRemarks] = useState({});
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, status: null });
 
-  const GOOGLE_SHEET_URL =
-    import.meta.env.VITE_GOOGLE_SHEET_URL ||
-    (import.meta.env.VITE_GOOGLE_SHEET_ID
-      ? `https://docs.google.com/spreadsheets/d/${import.meta.env.VITE_GOOGLE_SHEET_ID}`
-      : '');
 
   useEffect(() => {
     if (error) {
@@ -232,13 +227,6 @@ export default function AdminDashboard() {
     XLSX.writeFile(wb, `bookings-${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
-  const handleOpenSheet = () => {
-    if (!GOOGLE_SHEET_URL) {
-      toast.error('Google Sheet URL is not configured');
-      return;
-    }
-    window.open(GOOGLE_SHEET_URL, '_blank', 'noopener,noreferrer');
-  };
 
   if (!adminToken) {
     return (
@@ -428,10 +416,6 @@ export default function AdminDashboard() {
                 <Download className="h-4 w-4" />
                 EXCEL
               </button>
-              <button onClick={handleOpenSheet} className="flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-3 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50">
-                <ExternalLink className="h-4 w-4" />
-                SPREADSHEET
-              </button>
               <button onClick={fetchBookings} className="group flex items-center gap-2 rounded-xl border border-green-900/10 bg-white px-4 py-2 text-sm font-medium text-[#355f48] transition-colors hover:bg-green-50 active:scale-95">
                 <Loader2 className={`h-4 w-4 text-green-700 ${isLoading ? 'animate-spin cursor-not-allowed' : 'transition-transform duration-500 group-hover:rotate-180'}`} />
                 REFRESH DATA
@@ -463,7 +447,7 @@ export default function AdminDashboard() {
                       className="transition-colors duration-300 hover:bg-green-50/50"
                     >
                     <td className="whitespace-nowrap px-8 py-6">
-                      <div className="mb-1 font-mono text-xs text-green-700">ID: {booking.id.toString().padStart(4, '0')}</div>
+                      <div className="mb-1 font-mono text-xs text-green-700">Ref: {booking['Booking ID'] || booking.id.toString().slice(0, 8)}</div>
                       <div className="text-sm text-[#60796d]">Requested: {formatDateTime(booking.Timestamp)}</div>
                     </td>
                     <td className="px-8 py-6">

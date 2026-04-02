@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const { getAllBookings, updateBookingStatus } = require("../services/sheets.service");
+const { getAllBookings, updateBookingStatus } = require("../services/supabase.service");
 const { sendStatusChangeEmail } = require("../services/email.service");
 
 const verifyPassword = (password) => {

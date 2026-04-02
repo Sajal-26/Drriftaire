@@ -5,7 +5,7 @@ import styles from "../styles/BookingPage.module.css";
 import API_URL from "../config/api";
 
 // --- Configuration & Constants ---
-const STATE_DISTRICT_DATA_URL = "https://raw.githubusercontent.com/aharnish-infotech/india-state-district-json/main/India-State-District.json";
+const STATE_DISTRICT_DATA_URL = "/data/state-districts.json";
 const PINCODE_LOOKUP_URL = "https://api.postalpincode.in/pincode";
 
 const cropOptions = ["Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Pulses", "Vegetables", "Fruits", "Other"];
@@ -24,7 +24,12 @@ const initialFormData = {
 };
 
 // --- Helper Functions ---
-const formatDateValue = (date) => date.toISOString().split("T")[0];
+const formatDateValue = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 const parseDateValue = (value) => {
   const [year, month, day] = value.split("-").map(Number);
   return new Date(year, month - 1, day);
@@ -110,6 +115,17 @@ export default function BookingPage() {
       }
     };
     document.addEventListener("pointerdown", handleOutside);
+
+    // Auto-scroll to form if hash is present
+    if (window.location.hash === '#form') {
+      const formElement = document.getElementById('booking-form-section');
+      if (formElement) {
+        setTimeout(() => {
+          formElement.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      }
+    }
+
     return () => document.removeEventListener("pointerdown", handleOutside);
   }, []);
 
@@ -368,6 +384,7 @@ export default function BookingPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
           className={styles.formPanel}
+          id="booking-form-section"
         >
           <div className={styles.formShell}>
             <div className={styles.formHeader}>

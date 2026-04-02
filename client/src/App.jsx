@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageWrapper from "./components/PageWrapper";
 import BackToTop from "./components/BackToTop";
+import BookNowFAB from "./components/BookNowFAB";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
         <Footer />
       </main>
       <BackToTop />
+      <BookNowFAB />
     </div>
   );
 }

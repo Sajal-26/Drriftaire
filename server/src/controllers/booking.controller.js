@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { appendBooking, getAllBookings } = require("../services/sheets.service");
+const { insertBooking, getAllBookings } = require("../services/supabase.service");
 const { sendBookingEmails, sendDuplicateBookingEmail } = require("../services/email.service");
 
 const activeBookingLocks = new Set();
@@ -62,7 +62,7 @@ const createBooking = async (req, res) => {
       Remarks: ""
     };
 
-    await appendBooking(bookingData);
+    await insertBooking(bookingData);
     await sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date });
 
     res.status(201).json({
