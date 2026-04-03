@@ -104,12 +104,12 @@ export default function AdminDashboard() {
   const sortedBookings = useMemo(() => {
     let list = [...bookings];
 
-    // 1. Filter by Status
+
     if (statusFilter !== 'All') {
       list = list.filter((b) => (b.Status || 'Pending') === statusFilter);
     }
 
-    // 2. Filter by Search Query
+
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
       list = list.filter((b) => {
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
       });
     }
 
-    // 3. Filter by Date Range
+
     if (dateRange.start) {
       const start = new Date(dateRange.start);
       start.setHours(0, 0, 0, 0);
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
       });
     }
 
-    // 4. Sort
+
     const { key, direction } = sortConfig;
 
     return list.sort((a, b) => {
@@ -209,11 +209,11 @@ export default function AdminDashboard() {
     const lastDay = new Date(year, month + 1, 0);
     
     const days = [];
-    // Padding for first week
+
     for (let i = 0; i < firstDay.getDay(); i++) {
       days.push(null);
     }
-    // Days of month
+
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(new Date(year, month, i));
     }
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Bookings');
 
-    // Define Columns
+
     const columns = [
       { header: 'Booking ID', key: 'bookingId', width: 25 },
       { header: 'Request Date', key: 'requestDate', width: 20 },
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
 
     worksheet.columns = columns;
 
-    // Add Table
+
     worksheet.addTable({
       name: 'BookingsTable',
       ref: 'A1',
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
       ]),
     });
 
-    // Style the header row (Deep Green & White)
+
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
       cell.fill = {
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
     });
 
-    // Style Status column based on content
+
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber > 1) { // Skip header
         const statusCell = row.getCell(12); // L column
@@ -631,7 +631,12 @@ export default function AdminDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
               
               {/* Search Bar */}
-              <div className="relative group min-w-0 w-full md:w-96 flex-shrink-0">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+                className="relative group min-w-0 w-full md:w-96 flex-shrink-0"
+              >
                 <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#6b7c72] transition-colors group-focus-within:text-green-700" />
                 <input
                   type="text"
@@ -640,21 +645,28 @@ export default function AdminDashboard() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full rounded-xl border border-green-900/10 bg-[#f9faf9] pl-10 pr-4 py-2.5 text-[10px] font-bold tracking-wide text-[#1b4a36] placeholder-[#8aa095] transition-all focus:border-green-900/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-900/5"
                 />
-              </div>
+              </motion.div>
 
               {/* Actions: Clear & Date */}
               <div className="flex items-center gap-3">
-                <button
-                  onClick={handleClearFilters}
-                  title="Clear All Filters"
-                  className="flex items-center justify-center gap-2 rounded-xl border border-rose-900/10 bg-white px-3 py-2.5 text-[10px] font-bold tracking-wide text-rose-500 transition-colors hover:bg-rose-50 hover:border-rose-200 active:scale-95 shadow-sm"
-                >
-                  <FilterX className="h-4 w-4" />
-                  <span className="hidden sm:inline">CLEAR</span>
-                </button>
+                <AnimatePresence>
+                  {(searchTerm || statusFilter !== 'All' || dateRange.start || sortConfig.key !== 'Timestamp') && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={handleClearFilters}
+                      title="Clear All Filters"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-rose-900/10 bg-white px-3 py-2.5 text-[10px] font-bold tracking-wide text-rose-500 transition-colors hover:bg-rose-50 hover:border-rose-200 active:scale-95 shadow-sm"
+                    >
+                      <FilterX className="h-4 w-4" />
+                      <span className="hidden sm:inline">CLEAR</span>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
 
                 {/* Date Filter & Calendar */}
-                <div className="relative z-30">
+                <div className="relative z-30" ref={calendarRef}>
                 <button
                   onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                   className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-[10px] font-bold tracking-wide transition-all ${
@@ -682,7 +694,6 @@ export default function AdminDashboard() {
                 <AnimatePresence>
                   {isCalendarOpen && (
                     <motion.div
-                      ref={calendarRef}
                       initial={{ opacity: 0, y: 30, scale: 0.8, rotate: 2 }}
                       animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
                       exit={{ opacity: 0, y: 20, scale: 0.8, rotate: -2 }}
@@ -763,13 +774,20 @@ export default function AdminDashboard() {
                     <button
                       key={s}
                       onClick={() => setStatusFilter(s)}
-                      className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
+                      className={`relative whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
                         statusFilter === s
-                          ? 'bg-[#1b4a36] text-white shadow-sm'
+                          ? 'text-white'
                           : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
                       }`}
                     >
-                      {s}
+                      {statusFilter === s && (
+                        <motion.div
+                          layoutId="activeStatus"
+                          className="absolute inset-0 rounded-lg bg-[#1b4a36]"
+                          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                        />
+                      )}
+                      <span className="relative z-10">{s}</span>
                     </button>
                   ))}
                 </div>
@@ -789,18 +807,27 @@ export default function AdminDashboard() {
                   <button
                     key={sort.key}
                     onClick={() => toggleSort(sort.key)}
-                    className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
+                    className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
                       sortConfig.key === sort.key
-                        ? 'bg-emerald-600 text-white shadow-sm'
+                        ? 'text-white'
                         : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
                     }`}
                   >
-                    {sort.label}
                     {sortConfig.key === sort.key && (
-                      <span className="text-[8px] opacity-70">
-                        {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                      </span>
+                      <motion.div
+                        layoutId="activeSort"
+                        className="absolute inset-0 rounded-lg bg-emerald-600"
+                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                      />
                     )}
+                    <span className="relative z-10 flex items-center gap-2">
+                      {sort.label}
+                      {sortConfig.key === sort.key && (
+                        <span className="text-[8px] opacity-70">
+                          {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                        </span>
+                      )}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -810,17 +837,27 @@ export default function AdminDashboard() {
 
           <div className="w-full lg:px-8 lg:py-8">
             {/* Premium Horizontal List Layout */}
-            <div className="flex flex-col gap-5">
-              <AnimatePresence mode="popLayout">
-                {sortedBookings.map((booking) => (
-                  <motion.div
-                    key={booking.id}
-                    layout
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    className="group relative flex flex-col lg:flex-row items-stretch lg:items-center gap-6 overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/70 p-5 lg:p-4 backdrop-blur-3xl transition-all duration-500 hover:border-green-900/20 hover:shadow-[0_15px_40px_-10px_rgba(22,60,47,0.12)] hover:bg-white/90"
-                  >
+              <motion.div 
+                layout
+                transition={{
+                  layout: { type: "spring", stiffness: 450, damping: 40 }
+                }}
+                className="flex flex-col gap-5"
+              >
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {sortedBookings.map((booking) => (
+                    <motion.div
+                      key={booking.id}
+                      layout
+                      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                      transition={{
+                        layout: { type: "spring", stiffness: 450, damping: 40 },
+                        opacity: { duration: 0.3 }
+                      }}
+                      className="group relative flex flex-col lg:flex-row items-stretch lg:items-center gap-6 overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/70 p-5 lg:p-4 backdrop-blur-3xl transition-all duration-500 hover:border-green-900/20 hover:shadow-[0_15px_40px_-10px_rgba(22,60,47,0.12)] hover:bg-white/90"
+                    >
                     {/* ID & Status Section */}
                     <div className="flex lg:flex-col items-center lg:items-start justify-between lg:justify-center gap-3 lg:w-[12%] lg:pl-4 border-b lg:border-b-0 lg:border-r border-green-900/5 pb-4 lg:pb-0">
                       <div className="flex flex-col">
@@ -956,14 +993,21 @@ export default function AdminDashboard() {
                 ))}
               </AnimatePresence>
 
-              {(!bookings || bookings.length === 0) && !isLoading && (
-                <div className="flex flex-col items-center justify-center py-24 text-center">
-                  <Wind className="mb-6 h-12 w-12 text-green-700/10" />
-                  <p className="text-sm font-bold text-[#243328]/40">No records found.</p>
-                </div>
-              )}
+                <AnimatePresence>
+                  {(!sortedBookings || sortedBookings.length === 0) && !isLoading && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="flex flex-col items-center justify-center py-24 text-center"
+                    >
+                      <Wind className="mb-6 h-12 w-12 text-green-700/10" />
+                      <p className="text-sm font-bold text-[#243328]/40">No records found.</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </div>
-          </div>
         </motion.div>
       </main>
 

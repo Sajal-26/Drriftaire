@@ -34,14 +34,14 @@ const Navbar = () => {
     const handleScroll = () => {
       const currentScrollY = scrollContainer.scrollTop;
       
-      // Always show at the very top
+
       if (currentScrollY < 10) {
         setIsVisible(true);
         setLastScrollY(currentScrollY);
         return;
       }
 
-      // Determine visibility based on direction
+
       if (currentScrollY > lastScrollY && currentScrollY > 70) {
         setIsVisible(false);
       } else {

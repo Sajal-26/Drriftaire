@@ -6,7 +6,7 @@ const { adminLoginRateLimiter } = require("../middleware/security.middleware");
 
 router.post("/login", adminLoginRateLimiter, adminLogin);
 
-// Protect all admin routes with this common middleware check
+
 const verifyAdmin = (req, res, next) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ message: "Access denied. Admins only." });

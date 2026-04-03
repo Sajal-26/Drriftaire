@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import styles from './BackToTop.module.css';
+import styles from '../styles/BackToTop.module.css';
 
 const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);

@@ -81,7 +81,7 @@ body {
   flex-direction: column;
 }
 
-/* Hide scrollbar utility */
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
