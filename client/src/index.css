@@ -16,12 +16,21 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6, p, span, label {
+  cursor: default;
+}
+
+a, button, [role="button"], input, textarea, select {
+  cursor: auto;
+}
+
 .app-shell {
   height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: #f6f4ee;
+  min-height: 100vh;
 }
 
 .app-content {
@@ -32,6 +41,7 @@ body {
   flex-direction: column;
   padding-top: 72px;
   scrollbar-width: none;
+  position: relative;
 }
 
 @media (min-width: 640px) {
@@ -69,22 +79,11 @@ body {
   height: 100%;
 }
 
-.app-shell {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.app-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

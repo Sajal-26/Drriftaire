@@ -70,19 +70,22 @@ function HomePage() {
   return (
     <main className="w-full text-[#243328]">
       {/* Hero with video background */}
-      <div className="relative min-h-[calc(100vh-96px)] overflow-hidden">
+      <div className="relative min-h-[680px] lg:min-h-[calc(100vh-96px)] overflow-hidden bg-[#f6f4ee]">
         <video
           autoPlay
           loop
           muted
           playsInline
+          poster="/video-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover z-0"
         >
           <source src="/0404.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 z-[1] bg-white/30 pointer-events-none" />
+        {/* Cinematic Deep Overlay for Contrast */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#18241c]/80 via-[#18241c]/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-[#18241c]/10 to-[#f6f4ee] pointer-events-none" />
         
-        <section className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
+        <section className="relative z-10 mx-auto grid min-h-[680px] lg:min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
           <motion.div 
             initial="hidden"
             animate="visible"
@@ -91,19 +94,19 @@ function HomePage() {
           >
             <motion.p 
               variants={fadeInUp}
-              className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]"
+              className="text-[10px] sm:text-sm font-black uppercase tracking-[0.4em] text-emerald-400 drop-shadow-sm"
             >
               Smart Drone Agriculture
             </motion.p>
             <motion.h1 
               variants={fadeInUp}
-              className="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-[#18241c] sm:text-5xl lg:text-6xl leading-[1.1]"
+              className="mt-6 max-w-3xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-7xl leading-[1.05] drop-shadow-xl"
             >
-              Faster, safer crop spraying built for modern farms.
+              Faster, safer crop spraying<br className="hidden sm:block" /> built for modern farms.
             </motion.h1>
             <motion.p 
               variants={fadeInUp}
-              className="mt-6 max-w-2xl text-lg leading-8 text-white drop-shadow-md"
+              className="mt-8 max-w-xl text-base sm:text-xl leading-relaxed text-emerald-50/90 font-medium drop-shadow-md"
             >
               Drriftaire helps farms book drone operations with less friction, better
               planning, and a cleaner digital workflow from inquiry to completion.
@@ -111,20 +114,20 @@ function HomePage() {
 
             <motion.div 
               variants={fadeInUp}
-              className="mt-8 flex flex-wrap gap-4"
+              className="mt-12 flex flex-col gap-4 items-center sm:flex-row sm:justify-start"
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to="/booking"
-                  className="inline-block rounded-full bg-[#28593b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white no-underline shadow-lg shadow-[#28593b]/20 transition hover:bg-[#1f4930]"
+                  className="group relative flex w-full sm:w-64 items-center justify-center overflow-hidden rounded-full bg-emerald-500 px-8 py-5 text-[12px] font-black uppercase tracking-[0.22em] text-[#18241c] no-underline shadow-[0_20px_50px_-12px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-400"
                 >
                   Book a Service
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to="/services"
-                  className="inline-block rounded-full border border-[#28593b]/20 bg-white/80 backdrop-blur-sm px-8 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-[#28593b] no-underline transition hover:bg-white/90 shadow-sm"
+                  className="flex w-full sm:w-64 items-center justify-center rounded-full border-2 border-white/30 bg-white/10 backdrop-blur-md px-8 py-5 text-[12px] font-black uppercase tracking-[0.22em] text-white no-underline transition hover:bg-white/20 hover:border-white/50"
                 >
                   Explore Services
                 </Link>
@@ -133,30 +136,30 @@ function HomePage() {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, scale: 0.98, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-[2.5rem] border border-[#28593b]/10 bg-white/90 backdrop-blur-md p-6 shadow-[0_40px_100px_-32px_rgba(40,89,59,0.3)] sm:p-10 self-center"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="hidden lg:block rounded-[3rem] border border-white/40 bg-white/40 backdrop-blur-3xl p-8 shadow-[0_40px_100px_-32px_rgba(40,89,59,0.3)] self-center"
           >
-            <div className="rounded-[2rem] bg-[linear-gradient(135deg,#eef3ec,#f6f1ff)] p-6 sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#4b1f8a] opacity-60">
+            <div className="rounded-[2.5rem] bg-gradient-to-br from-[#eef3ec] to-[#f6f1ff] p-8">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#4b1f8a] opacity-50 mb-8">
                 Experience the Difference
               </p>
               <motion.div 
                 initial="hidden"
                 animate="visible"
                 variants={staggerContainer}
-                className="mt-8 grid gap-5"
+                className="grid gap-6"
               >
                 {highlights.map((item) => (
                   <motion.article
                     key={item.title}
                     variants={revealRight}
-                    whileHover={{ x: 8, backgroundColor: "rgba(255,255,255,1)" }}
-                    className="rounded-[1.5rem] border border-white/70 bg-white/60 p-6 shadow-sm transition-all duration-300"
+                    whileHover={{ x: 10, backgroundColor: "#ffffff" }}
+                    className="rounded-[1.75rem] border border-white/60 bg-white/40 p-6 shadow-sm transition-all duration-300"
                   >
-                    <h2 className="text-xl font-bold text-[#1d2b21]">{item.title}</h2>
-                    <p className="mt-2 text-sm leading-7 text-[#56675b]">
+                    <h2 className="text-lg font-bold text-[#1d2b21]">{item.title}</h2>
+                    <p className="mt-2 text-xs leading-6 text-[#56675b] font-medium">
                       {item.description}
                     </p>
                   </motion.article>
@@ -168,30 +171,30 @@ function HomePage() {
       </div>
 
       {/* What is Drriftaire Section */}
-      <section className="relative z-10 bg-[#f6f4ee] py-28 px-6 lg:px-10">
-        <div className="mx-auto max-w-7xl grid gap-14 items-center lg:grid-cols-[380px_1fr]">
+      <section className="relative z-10 bg-[#f6f4ee] pt-2 pb-24 lg:pt-28 px-6 lg:px-10 -mt-0.5 outline-none border-none">
+        <div className="mx-auto max-w-7xl grid gap-12 items-center lg:grid-cols-[380px_1fr]">
           
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={staggerContainer}
-            className="flex gap-4 justify-center lg:justify-start"
+            className="grid grid-cols-[auto_auto] gap-3 sm:gap-6 justify-center lg:justify-start items-center w-full"
           >
-            <div className="flex flex-col gap-4">
-              <motion.div variants={revealLeft} className="w-[150px] h-[160px] rounded-[3rem] overflow-hidden shadow-xl">
+            <div className="flex flex-col gap-3 sm:gap-6">
+              <motion.div variants={revealLeft} className="w-[110px] sm:w-[150px] aspect-[15/16] rounded-[1.8rem] sm:rounded-[3rem] overflow-hidden shadow-xl">
                 <img src="/wheat-field.png" alt="" className="w-full h-full object-cover" />
               </motion.div>
-              <motion.div variants={revealLeft} className="relative w-[150px] h-[180px] rounded-[3rem] overflow-hidden shadow-xl">
+              <motion.div variants={revealLeft} className="relative w-[110px] sm:w-[150px] aspect-[15/18] rounded-[1.8rem] sm:rounded-[3rem] overflow-hidden shadow-xl">
                 <img src="/drone-spraying.png" alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#28593b]/30" />
               </motion.div>
             </div>
-            <motion.div variants={revealRight} className="relative w-[210px] h-[360px] rounded-[3.5rem] overflow-hidden shadow-2xl mt-6">
+            <motion.div variants={revealRight} className="relative w-[165px] sm:w-[210px] aspect-[21/36] rounded-[2.2rem] sm:rounded-[3.5rem] overflow-hidden shadow-2xl mt-4 sm:mt-8">
               <img src="/farm-landscape.png" alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/80 via-transparent to-transparent flex items-end justify-center pb-8">
-                <p className="text-white text-xs font-bold uppercase tracking-[0.25em] text-center leading-5">
-                  Farming<br /><span className="text-lg">Made Smart</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/80 via-transparent to-transparent flex items-end justify-center pb-6 sm:pb-8">
+                <p className="text-white text-[9px] sm:text-xs font-bold uppercase tracking-[0.25em] text-center leading-relaxed">
+                  Farming<br /><span className="text-xs sm:text-lg">Made Smart</span>
                 </p>
               </div>
             </motion.div>
@@ -202,13 +205,13 @@ function HomePage() {
             whileInView="visible"
             viewport={{ once: true, amount: 0.4 }}
             variants={staggerContainer}
-            className="lg:pl-10"
+            className="lg:pl-10 text-center lg:text-left"
           >
-            <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]">Our Mission</motion.p>
-            <motion.h2 variants={fadeInUp} className="mt-4 text-4xl font-extrabold tracking-tight text-[#18241c] sm:text-5xl leading-[1.1]">
+            <motion.p variants={fadeInUp} className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#28593b]">Our Mission</motion.p>
+            <motion.h2 variants={fadeInUp} className="mt-4 text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-5xl leading-[1.1]">
               A platform built for<br />Indian agriculture.
             </motion.h2>
-            <motion.p variants={fadeInUp} className="mt-8 max-w-xl text-lg leading-relaxed text-[#55665a]">
+            <motion.p variants={fadeInUp} className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-[#55665a] mx-auto lg:mx-0">
               Drriftaire is more than just technology. It's a comprehensive ecosystem that 
               brings high-precision drone services to every district. We empower rural 
               entrepreneurs as drone operators, ensuring that the next generation of 
@@ -219,7 +222,7 @@ function HomePage() {
       </section>
 
       {/* Technology in Action: Hexadrone Section */}
-      <section className="relative overflow-hidden bg-[#18241c] py-32 px-6 lg:px-10">
+      <section className="relative overflow-hidden bg-[#18241c] py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 items-center">
             <motion.div
@@ -264,14 +267,14 @@ function HomePage() {
                 your specific crop varieties.
               </motion.p>
               
-              <motion.div variants={staggerContainer} className="mt-12 grid grid-cols-2 gap-10 border-t border-white/10 pt-10">
+              <motion.div variants={staggerContainer} className="mt-8 sm:mt-12 grid grid-cols-2 gap-6 sm:gap-10 border-t border-white/10 pt-8 sm:pt-10">
                 <motion.div variants={fadeInUp}>
-                  <p className="text-4xl font-extrabold text-white">10kg</p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Payload Capacity</p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-white">10kg</p>
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Payload Capacity</p>
                 </motion.div>
                 <motion.div variants={fadeInUp}>
-                  <p className="text-4xl font-extrabold text-white">0.1m</p>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Spray Precision</p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-white">0.1m</p>
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Spray Precision</p>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -280,7 +283,7 @@ function HomePage() {
       </section>
 
       {/* Empowering Farmers Section */}
-      <section className="bg-white py-32 px-6 lg:px-10">
+      <section className="bg-white py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -308,14 +311,16 @@ function HomePage() {
                 title: "Boosting Productivity",
                 desc: "Precision drone spraying ensures uniform coverage with zero chemical waste. We drastically reduce costs while significantly improving yields.",
                 label: "ROI Focus",
-                color: "text-[#28593b]"
+                color: "text-[#28593b]",
+                pos: "object-top"
               },
               {
                 img: "/booking-real.png",
                 title: "Seamless Booking",
                 desc: "Our streamlined digital dashboard removes field complexity. Schedule sorties and receive spray logs in under two minutes.",
                 label: "Digital First",
-                color: "text-[#4b1f8a]"
+                color: "text-[#4b1f8a]",
+                pos: "object-center"
               }
             ].map((card, i) => (
               <motion.div
@@ -324,12 +329,21 @@ function HomePage() {
                 whileHover={{ y: -8 }}
                 className="group relative overflow-hidden rounded-[2.5rem] bg-[#f6f4ee] p-8 transition-all hover:bg-[#eef3ec] hover:shadow-xl hover:shadow-gray-100"
               >
-                <div className="mb-8 h-64 w-full overflow-hidden rounded-[2rem] shadow-sm">
-                  <img src={card.img} alt="" className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                <div className="mb-8 h-72 w-full overflow-hidden rounded-[2rem] shadow-sm">
+                  <img src={card.img} alt="" className={`h-full w-full object-cover ${card.pos} transition-transform duration-1000 group-hover:scale-110`} />
                 </div>
                 <h3 className="text-2xl font-bold text-[#18241c]">{card.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-[#55665a]">{card.desc}</p>
-                <p className={`mt-6 text-[10px] font-black uppercase tracking-[0.3em] ${card.color}`}>— {card.label}</p>
+                
+                <div className="mt-8 flex items-center justify-between">
+                  <p className={`text-[10px] font-black uppercase tracking-[0.3em] ${card.color}`}>— {card.label}</p>
+                  <Link 
+                    to="/booking"
+                    className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#18241c] shadow-sm transition hover:bg-[#18241c] hover:text-white"
+                  >
+                    <span className="text-lg">🗓️</span> Book Now
+                  </Link>
+                </div>
               </motion.div>
             ))}
 

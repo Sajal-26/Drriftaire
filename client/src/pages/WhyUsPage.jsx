@@ -104,20 +104,20 @@ function WhyUsPage() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1a3a24]/20 to-transparent" />
               </motion.div>
 
-              {/* Cinematic Detail Image (Floating) */}
+              {/* Cinematic Detail Image (Floating) - Desktop Only */}
               <motion.div
                 variants={float}
                 animate="animate"
-                className="absolute -right-8 -top-8 z-20 h-48 w-48 overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white"
+                className="absolute -right-8 -top-8 z-20 h-48 w-48 overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white hidden lg:block"
               >
                 <img src="/drone-tech-detail.png" alt="Drone Sensor" className="h-full w-full object-cover" />
               </motion.div>
 
-              {/* Insight Card 1 (Floating) */}
+              {/* Insight Card 1 (Floating) - Desktop Only */}
               <motion.div
                 variants={float}
                 animate="animate"
-                className="absolute -left-12 bottom-12 z-20 rounded-[2rem] bg-[#18241c] p-6 text-white shadow-2xl shadow-emerald-900/40"
+                className="absolute -left-12 bottom-12 z-20 rounded-[2rem] bg-[#18241c] p-6 text-white shadow-2xl shadow-emerald-900/40 hidden lg:block"
                 style={{ transitionDelay: '0.2s' }}
               >
                 <div className="flex items-center gap-4">
@@ -129,10 +129,10 @@ function WhyUsPage() {
                 </div>
               </motion.div>
 
-              {/* Insight Card 2 (Bottom Left) */}
+              {/* Insight Card 2 (Bottom Right) - Desktop Only */}
               <motion.div
                 variants={fadeInUp}
-                className="absolute right-12 -bottom-6 z-20 rounded-[1.5rem] bg-white p-5 shadow-xl border border-gray-100"
+                className="absolute right-12 -bottom-6 z-20 rounded-[1.5rem] bg-white p-5 shadow-xl border border-gray-100 hidden lg:block"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />

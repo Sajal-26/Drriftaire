@@ -38,31 +38,31 @@ function ContactPage() {
         >
           {/* Left: Contact Info */}
           <motion.div variants={fadeInUp}>
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]">Get in Touch</p>
-            <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-[#18241c] sm:text-6xl leading-[1.1]">
-              Connecting the<br />field to the future.
+            <p className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.3em] text-[#28593b]">Get in Touch</p>
+            <h1 className="mt-4 sm:mt-6 text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-6xl leading-[1.1]">
+              Connecting the<br className="hidden sm:block" /> field to the future.
             </h1>
-            <p className="mt-10 text-lg leading-relaxed text-[#55665a] max-w-lg">
+            <p className="mt-8 sm:mt-10 text-base sm:text-lg leading-relaxed text-[#55665a] max-w-lg">
               Whether you're a farmer looking to optimize your yield or an 
               entrepreneur interested in our drone pilot network, we're ready 
               to discuss how we can grow together.
             </p>
 
-            <div className="mt-16 space-y-12">
-              <div className="flex gap-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#28593b]/10 text-xl">✉️</div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Email Us</p>
-                  <a href="mailto:support@drriftaire.com" className="mt-1 block text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors">
-                    support@drriftaire.com
+            <div className="mt-12 sm:mt-16 space-y-8 sm:space-y-12">
+              <div className="flex gap-4 sm:gap-6">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#28593b]/10 text-lg sm:text-xl">✉️</div>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Email Us</p>
+                  <a href="mailto:support.drriftaire@gmail.com" className="mt-1 block text-base sm:text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors break-words">
+                    support.drriftaire@gmail.com
                   </a>
                 </div>
               </div>
-              <div className="flex gap-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#28593b]/10 text-xl">📍</div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Regional Presence</p>
-                  <p className="mt-1 text-2xl font-bold text-[#18241c]">
+              <div className="flex gap-4 sm:gap-6">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#28593b]/10 text-lg sm:text-xl">📍</div>
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Regional Presence</p>
+                  <p className="mt-1 text-lg sm:text-2xl font-bold text-[#18241c] leading-tight">
                     Serving 12+ States Across India
                   </p>
                 </div>
@@ -73,7 +73,7 @@ function ContactPage() {
           {/* Right: Contact Form */}
           <motion.div
             variants={fadeInUp}
-            className="rounded-[3rem] bg-white p-8 sm:p-12 shadow-[0_40px_100px_-32px_rgba(40,89,59,0.25)] border border-[#28593b]/5"
+            className="rounded-[2.5rem] sm:rounded-[3rem] bg-white p-6 sm:p-12 shadow-[0_40px_100px_-32px_rgba(40,89,59,0.2)] border border-[#28593b]/5"
           >
             <form className="grid gap-8">
               <div className="grid gap-8 sm:grid-cols-2">

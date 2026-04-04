@@ -31,24 +31,26 @@ const Navbar = () => {
     const scrollContainer = document.querySelector('.app-content');
     if (!scrollContainer) return;
 
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = scrollContainer.scrollTop;
-      
-
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-        setLastScrollY(currentScrollY);
-        return;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = scrollContainer.scrollTop;
+          
+          if (currentScrollY < 10) {
+            setIsVisible(true);
+          } else if (currentScrollY > lastScrollY && currentScrollY > 70) {
+            setIsVisible(false);
+          } else {
+            setIsVisible(true);
+          }
+          
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-
-      if (currentScrollY > lastScrollY && currentScrollY > 70) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
     };
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
