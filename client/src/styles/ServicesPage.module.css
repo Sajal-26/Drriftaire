@@ -42,6 +42,7 @@
 
 .heroTag {
   display: inline-block;
+  position: relative;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.35em;
@@ -51,7 +52,75 @@
   padding: 0.45rem 1.5rem;
   border-radius: 999px;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  cursor: default;
+  transition:
+    background 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    backdrop-filter 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    -webkit-backdrop-filter 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Shimmer sweep pseudo-element */
+.heroTag::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 80%
+  );
+  transition: none;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── iOS 26 Liquid Glass Hover ── */
+.heroTag:hover {
+  color: rgba(255, 255, 255, 0.95);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.08) 40%,
+      rgba(255, 255, 255, 0.14) 70%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+  border-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(28px) saturate(1.6) brightness(1.1);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6) brightness(1.1);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset,
+    0 -1px 0 0 rgba(255, 255, 255, 0.05) inset,
+    0 8px 32px -8px rgba(0, 0, 0, 0.25),
+    0 0 20px -4px rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.heroTag:hover::after {
+  animation: glassShimmer 0.8s ease forwards;
+}
+
+@keyframes glassShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .heroTitle {

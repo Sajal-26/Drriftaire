@@ -131,7 +131,7 @@ function ServicesPage() {
             transition={{ duration: 0.7, delay: 0.25 }}
             className={styles.heroTitle}
           >
-            Precision agriculture,
+            Precision agriculture
             <br />
             delivered by drone.
           </motion.h1>

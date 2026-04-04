@@ -1,55 +1,142 @@
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+
+/* ─── Animation Variants ─── */
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
+  },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
 
 function AboutPage() {
   return (
-    <main className="min-h-[calc(100vh-96px)] bg-[#f6f4ee] px-6 py-14 text-[#243328] lg:px-10">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.15 },
-          },
-        }}
-        className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]"
-      >
-        <motion.section
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="rounded-[2rem] border border-[#28593b]/10 bg-white p-8 shadow-[0_24px_70px_-30px_rgba(40,89,59,0.3)] sm:p-10"
-        >
-          <p className="text-sm font-semibold uppercase tracking-[0.26em] text-[#28593b]">
-            About
-          </p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-[#18241c]">
-            Drriftaire is shaping a cleaner booking experience for drone agriculture.
-          </h1>
-          <p className="mt-6 text-base leading-8 text-[#56675b]">
-            The product connects field demand with operational control, making it easier
-            to collect customer requests and manage service status without unnecessary
-            back-and-forth.
-          </p>
-        </motion.section>
+    <main className="w-full bg-white text-[#243328]">
+      {/* Story Section */}
+      <section className="relative py-24 px-6 lg:px-10 bg-[#f6f4ee] overflow-hidden">
+        <div className="mx-auto max-w-7xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid gap-16 lg:grid-cols-2 items-center"
+          >
+            <motion.div variants={fadeInUp}>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]">Our Story</p>
+              <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-[#18241c] sm:text-5xl leading-[1.1]">
+                Born from the soil,<br />powered by the sky.
+              </h1>
+              <p className="mt-8 text-lg leading-relaxed text-[#55665a]">
+                Drriftaire began with a simple observation: Indian agriculture is 
+                standing on the brink of a technological revolution, but access 
+                remains inconsistent. We set out to bridge this gap by creating 
+                a platform that makes industrial-grade drone technology as 
+                accessible as a phone call.
+              </p>
+              <p className="mt-6 text-lg leading-relaxed text-[#55665a]">
+                Today, we are more than just a booking service. We are a network 
+                of engineers, agronomists, and rural partners working together to 
+                ensure that every field, no matter how remote, can benefit from 
+                the precision of the airborne era.
+              </p>
+            </motion.div>
 
-        <motion.section
-          variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-          className="rounded-[2rem] bg-[linear-gradient(135deg,#eef3ec,#f5f1ff)] p-8 sm:p-10"
-        >
-          <h2 className="text-2xl font-bold text-[#1d2b21]">What the platform focuses on</h2>
-          <ul className="mt-6 grid gap-4 p-0 text-base leading-8 text-[#4b5b50]">
-            <li className="list-none rounded-[1.25rem] bg-white/80 px-5 py-4">
-              Simple booking for farmers and clients.
-            </li>
-            <li className="list-none rounded-[1.25rem] bg-white/80 px-5 py-4">
-              Centralized admin visibility for requests and analytics.
-            </li>
-            <li className="list-none rounded-[1.25rem] bg-white/80 px-5 py-4">
-              A frontend foundation ready for brand and product expansion.
-            </li>
-          </ul>
-        </motion.section>
-      </motion.div>
+            <motion.div
+              variants={fadeInUp}
+              className="relative aspect-[4/5] lg:aspect-square overflow-hidden rounded-[3rem] shadow-2xl"
+            >
+              <img src="/farm-panoramic.png" alt="Indian Terraced Farm" className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/20 to-transparent" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="py-32 px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid gap-12 md:grid-cols-2"
+          >
+            <motion.div variants={fadeInUp} className="p-12 rounded-[3rem] bg-[#18241c] text-white">
+              <div className="text-4xl mb-6">🚀</div>
+              <h2 className="text-3xl font-bold">Our Mission</h2>
+              <p className="mt-6 text-lg leading-relaxed text-[#a8b8ac]">
+                To democratize advanced agricultural technology by empowering 
+                local entrepreneurs and providing farmers with the precision tools 
+                they need to thrive in a changing climate.
+              </p>
+            </motion.div>
+            <motion.div variants={fadeInUp} className="p-12 rounded-[3rem] border border-[#28593b]/10 bg-[#f6f4ee]">
+              <div className="text-4xl mb-6">👁️</div>
+              <h2 className="text-3xl font-bold text-[#18241c]">Our Vision</h2>
+              <p className="mt-6 text-lg leading-relaxed text-[#55665a]">
+                A future where every Indian farm is part of a connected, 
+                data-driven ecosystem that maximizes yields, minimizes waste, 
+                and restores the health of our natural environment.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
+        <div className="mx-auto max-w-7xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid gap-16 lg:grid-cols-2 items-center"
+          >
+            <motion.div
+              variants={fadeInUp}
+              className="relative aspect-[16/10] overflow-hidden rounded-[3rem] shadow-2xl order-2 lg:order-1"
+            >
+              <img src="/rural-pilot.png" alt="Smiling Indian Farmer" className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/40 to-transparent" />
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="order-1 lg:order-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#e2ebd8]">Our Vision</p>
+              <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl leading-[1.1]">
+                Empowering the<br />modern farmer.
+              </h2>
+              <p className="mt-8 text-lg leading-relaxed text-[#a8b8ac]">
+                Our vision is to put the power of precision agriculture directly into the
+                hands of the people who know the land best. By simplifying drone
+                operations, we are working toward a future where every farmer can 
+                improve their livelihood through advanced aerial insights and efficiency.
+              </p>
+              <p className="mt-6 text-lg leading-relaxed text-[#a8b8ac]">
+                At Drriftaire, we believe that the true value of technology lies in its
+                ability to support the hard work performed in the field. Our goal is to 
+                ensure that the advantages of the digital age are accessible and affordable 
+                for every smallholder farmer across the country.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
     </main>
   );
 }

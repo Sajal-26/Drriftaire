@@ -40,7 +40,7 @@ function Footer() {
           </p>
           <div className={styles.meta}>
             <span> support.drriftaire@gmail.com</span>
-            <span>+91 90000 00000</span>
+            <span>+91 98311 22651</span>
           </div>
         </div>
 
