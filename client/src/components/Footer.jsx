@@ -39,7 +39,7 @@ function Footer() {
             operations.
           </p>
           <div className={styles.meta}>
-            <span>drriftaire@gmail.com</span>
+            <span> support.drriftaire@gmail.com</span>
             <span>+91 90000 00000</span>
           </div>
         </div>

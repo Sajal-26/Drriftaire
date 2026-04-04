@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import PageWrapper from "./components/PageWrapper";
 import BackToTop from "./components/BackToTop";
 import BookNowFAB from "./components/BookNowFAB";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function App() {
   return (
     <div className="app-shell">
       <Navbar />
+      <ScrollToTop />
       <main className="app-content">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>

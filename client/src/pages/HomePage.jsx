@@ -18,8 +18,20 @@ const highlights = [
 
 function HomePage() {
   return (
-    <main className="bg-[#f6f4ee] text-[#243328]">
-      <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
+    <main className="w-full text-[#243328]">
+      {/* Hero with video background */}
+      <div className="relative min-h-[calc(100vh-96px)] overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover z-0"
+        >
+          <source src="/0404.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 z-[1] bg-white/30 pointer-events-none" />
+        <section className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
         <motion.div 
           initial="hidden"
           animate="visible"
@@ -46,7 +58,7 @@ function HomePage() {
           </motion.h1>
           <motion.p 
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            className="mt-6 max-w-2xl text-lg leading-8 text-[#55665a]"
+            className="mt-6 max-w-2xl text-lg leading-8 text-white"
           >
             Drriftaire helps farms book drone operations with less friction, better
             planning, and a cleaner digital workflow from inquiry to completion.
@@ -116,6 +128,73 @@ function HomePage() {
             </motion.div>
           </div>
         </motion.div>
+        </section>
+      </div>
+
+      {/* What is Drriftaire Section */}
+      <section className="relative z-10 bg-[#f6f4ee] py-20 px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl grid gap-14 items-center lg:grid-cols-[340px_1fr]">
+          
+          {/* Left – pill-shaped image collage */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="flex gap-4 justify-center lg:justify-start"
+          >
+            {/* Left column – two small pills stacked */}
+            <div className="flex flex-col gap-4">
+              <div className="w-[140px] h-[150px] rounded-[2.5rem] overflow-hidden shadow-lg">
+                <img
+                  src="/wheat-field.png"
+                  alt="Golden wheat field"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="relative w-[140px] h-[170px] rounded-[2.5rem] overflow-hidden shadow-lg">
+                <img
+                  src="/drone-spraying.png"
+                  alt="Drone spraying crops"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#28593b]/30" />
+              </div>
+            </div>
+            {/* Right column – one tall pill with overlay text */}
+            <div className="relative w-[180px] h-[335px] rounded-[2.5rem] overflow-hidden shadow-lg mt-4">
+              <img
+                src="/farm-landscape.png"
+                alt="Scenic farmland"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/70 via-transparent to-transparent flex items-end justify-center pb-6">
+                <p className="text-white text-sm font-bold uppercase tracking-[0.2em] text-center leading-5">
+                  Farming<br />Made Smart
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right – text content */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+          >
+            <h2 className="text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-4xl">
+              What is Drriftaire?
+            </h2>
+            <p className="mt-5 max-w-xl text-base leading-7 text-[#55665a]">
+              Drriftaire is a comprehensive platform for drone spraying in Indian
+              agriculture, making advanced technology accessible to farmers. It
+              empowers rural partners as drone operators, ensuring efficient,
+              cost-effective, and sustainable farming solutions — from booking to
+              field execution.
+            </p>
+          </motion.div>
+        </div>
       </section>
     </main>
   );
