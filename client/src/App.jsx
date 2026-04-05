@@ -7,6 +7,8 @@ import ServicesPage from "./pages/ServicesPage";
 import WhyUsPage from "./pages/WhyUsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import PartnerPage from "./pages/PartnerPage";
+import CareersPage from "./pages/CareersPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageWrapper from "./components/PageWrapper";
@@ -27,8 +29,10 @@ function App() {
             <Route path="/" element={<PageWrapper><HomePage /></PageWrapper>} />
             <Route path="/booking" element={<PageWrapper><BookingPage /></PageWrapper>} />
             <Route path="/services" element={<PageWrapper><ServicesPage /></PageWrapper>} />
+            <Route path="/partner" element={<PageWrapper><PartnerPage /></PageWrapper>} />
             <Route path="/why-us" element={<PageWrapper><WhyUsPage /></PageWrapper>} />
             <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+            <Route path="/careers" element={<PageWrapper><CareersPage /></PageWrapper>} />
             <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
             <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
           </Routes>

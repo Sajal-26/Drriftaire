@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 /* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
   },
 };
 
@@ -43,8 +43,8 @@ function ContactPage() {
               Connecting the<br className="hidden sm:block" /> field to the future.
             </h1>
             <p className="mt-8 sm:mt-10 text-base sm:text-lg leading-relaxed text-[#55665a] max-w-lg">
-              Whether you're a farmer looking to optimize your yield or an 
-              entrepreneur interested in our drone pilot network, we're ready 
+              Whether you're a farmer looking to optimize your yield or an
+              entrepreneur interested in our drone pilot network, we're ready
               to discuss how we can grow together.
             </p>
 
@@ -63,7 +63,7 @@ function ContactPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Regional Presence</p>
                   <p className="mt-1 text-lg sm:text-2xl font-bold text-[#18241c] leading-tight">
-                    Serving X+ States Across India
+                    Serving Karnataka & West Bengal
                   </p>
                 </div>
               </div>
@@ -73,43 +73,83 @@ function ContactPage() {
           {/* Right: Contact Form */}
           <motion.div
             variants={fadeInUp}
-            className="rounded-[2.5rem] sm:rounded-[3rem] bg-white p-6 sm:p-12 shadow-[0_40px_100px_-32px_rgba(40,89,59,0.2)] border border-[#28593b]/5"
+            className="relative group rounded-[2.5rem] sm:rounded-[4rem] bg-gradient-to-br from-white to-[#fcfdfa] p-6 sm:p-12 shadow-[0_45px_100px_-25px_rgba(40,89,59,0.15),0_10px_20px_-5px_rgba(40,89,59,0.05)] border border-[#28593b]/5 overflow-hidden"
           >
-            <form className="grid gap-8">
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60 ml-1">Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="Enter your name"
-                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none transition-all duration-300"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60 ml-1">Email</label>
-                  <input 
-                    type="email" 
-                    placeholder="Enter your email"
-                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none transition-all duration-300"
-                  />
-                </div>
+            {/* Decorative Top Bar */}
+            <div className="absolute top-0 inset-x-0 h-2 bg-[#28593b]" />
+            
+            {/* Subtle Brand Watermark */}
+            <div className="absolute -bottom-10 -right-10 text-[12rem] font-black text-[#18241c]/[0.02] pointer-events-none select-none italic">
+              D
+            </div>
+
+            <div className="relative z-10">
+              <div className="mb-10">
+                <h3 className="text-2xl font-bold text-[#18241c]">Send us a message</h3>
+                <p className="mt-2 text-sm text-[#55665a]">We typically respond within 24 hours.</p>
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60 ml-1">Message</label>
-                <textarea 
-                  rows="4"
-                  placeholder="How can we help your farm?"
-                  className="w-full rounded-3xl border border-gray-100 bg-gray-50/50 px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none transition-all duration-300 resize-none"
-                ></textarea>
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02, backgroundColor: "#1f4930" }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full rounded-2xl bg-[#28593b] py-5 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-xl shadow-[#28593b]/20 transition-all duration-300"
-              >
-                Send Message
-              </motion.button>
-            </form>
+
+              <form className="grid gap-8">
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div className="space-y-2 group/input">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Name</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="Enter your name"
+                      className="w-full rounded-2xl border border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
+                    />
+                  </div>
+                  <div className="space-y-2 group/input">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Email</label>
+                    <input
+                      required
+                      type="email"
+                      placeholder="Enter your email"
+                      className="w-full rounded-2xl border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2 group/input">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Phone Number</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none border-r border-[#28593b]/10 pr-4 my-3">
+                      <span className="text-lg mr-2">🇮🇳</span>
+                      <span className="text-sm font-bold text-[#18241c]">+91</span>
+                    </div>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="Enter your mobile number"
+                      className="w-full rounded-2xl border border-[#28593b]/5 bg-[#f9faf9] pl-28 pr-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2 group/input">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Message</label>
+                  <textarea
+                    required
+                    rows="4"
+                    placeholder="How can we help your farm?"
+                    className="w-full rounded-3xl border border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300 resize-none"
+                  ></textarea>
+                </div>
+                
+                <motion.button
+                  whileHover={{ 
+                    scale: 1.02, 
+                    backgroundColor: "#1f4930",
+                    boxShadow: "0 20px 40px -10px rgba(40,89,59,0.3)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full rounded-2xl bg-[#28593b] py-6 text-sm font-bold uppercase tracking-[0.25em] text-white shadow-xl shadow-[#28593b]/20 transition-all duration-300"
+                >
+                  Send Message
+                </motion.button>
+              </form>
+            </div>
           </motion.div>
         </motion.div>
       </div>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import FAQSection from "../components/FAQSection";
 
 const highlights = [
   {
@@ -119,7 +120,7 @@ function HomePage() {
               <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to="/booking"
-                  className="group relative flex w-full sm:w-64 items-center justify-center overflow-hidden rounded-full bg-emerald-500 px-8 py-5 text-[12px] font-black uppercase tracking-[0.22em] text-[#18241c] no-underline shadow-[0_20px_50px_-12px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-400"
+                  className="group relative flex w-full sm:w-64 items-center justify-center overflow-hidden rounded-full bg-[#18241c] px-8 py-5 text-[12px] font-black uppercase tracking-[0.22em] text-white no-underline shadow-2xl shadow-black/20 transition-all hover:bg-[#28593b]"
                 >
                   Book a Service
                 </Link>
@@ -269,12 +270,12 @@ function HomePage() {
               
               <motion.div variants={staggerContainer} className="mt-8 sm:mt-12 grid grid-cols-2 gap-6 sm:gap-10 border-t border-white/10 pt-8 sm:pt-10">
                 <motion.div variants={fadeInUp}>
-                  <p className="text-3xl sm:text-4xl font-extrabold text-white">10kg</p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-white">10 Litre</p>
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Payload Capacity</p>
                 </motion.div>
                 <motion.div variants={fadeInUp}>
-                  <p className="text-3xl sm:text-4xl font-extrabold text-white">0.1m</p>
-                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Spray Precision</p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-white">30%</p>
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#7a8d7f] mt-2">Less Cost</p>
                 </motion.div>
               </motion.div>
             </motion.div>
@@ -376,6 +377,8 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      <FAQSection />
 
       {/* Future of Farming: Final CTA Expansion */}
       <section className="relative overflow-hidden bg-[#f6f4ee] py-32 px-6 lg:px-10">

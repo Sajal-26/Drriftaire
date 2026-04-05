@@ -733,8 +733,8 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="grid grid-cols-7 gap-1 text-center mb-1">
-                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                            <span key={d} className="text-[8px] font-black text-[#8aa095] uppercase">{d}</span>
+                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, idx) => (
+                            <span key={`${d}-${idx}`} className="text-[8px] font-black text-[#8aa095] uppercase">{d}</span>
                           ))}
                         </div>
                         <div className="grid grid-cols-7 gap-1">

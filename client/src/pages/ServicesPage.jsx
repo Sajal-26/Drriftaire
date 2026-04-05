@@ -55,12 +55,12 @@ const processSteps = [
   },
   {
     number: "03",
-    title: "Drone Dispatch",
+    title: "Drone Service Execution",
     description: "Certified operator arrives with calibrated equipment on schedule.",
   },
   {
     number: "04",
-    title: "Completion Report",
+    title: "Feedback",
     description: "Spray log with coverage maps, volume & photo proof delivered.",
   },
 ];
@@ -349,9 +349,8 @@ function ServicesPage() {
               }}
             >
               {[
-                { value: "50K+", label: "Acres Covered" },
+                { value: "5K+", label: "Acres Covered" },
                 { value: "200+", label: "Field Operations" },
-                { value: "95%", label: "Coverage Accuracy" },
               ].map((s) => (
                 <motion.div
                   key={s.label}

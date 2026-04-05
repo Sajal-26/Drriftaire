@@ -9,6 +9,7 @@ const navSections = [
     items: [
       { to: '/', label: 'Home' },
       { to: '/services', label: 'Services' },
+      { to: '/partner', label: 'Partners' },
       { to: '/booking', label: 'Booking' },
     ],
   },
@@ -17,6 +18,7 @@ const navSections = [
     items: [
       { to: '/why-us', label: 'Why us' },
       { to: '/about', label: 'About' },
+      { to: '/careers', label: 'Careers' },
       { to: '/contact', label: 'Contact us' },
     ],
   },

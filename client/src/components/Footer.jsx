@@ -7,6 +7,7 @@ const footerGroups = [
     links: [
       { to: "/", label: "Home" },
       { to: "/services", label: "Services" },
+      { to: "/partner", label: "Partners" },
       { to: "/booking", label: "Booking" },
     ],
   },
@@ -15,6 +16,7 @@ const footerGroups = [
     links: [
       { to: "/why-us", label: "Why Us" },
       { to: "/about", label: "About" },
+      { to: "/careers", label: "Careers" },
       { to: "/contact", label: "Contact" },
     ],
   },
