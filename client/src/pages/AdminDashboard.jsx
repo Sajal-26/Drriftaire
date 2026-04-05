@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import BookingRow from '../components/admin/BookingRow';
 
-const ADMIN_EMAIL = 'drriftaire@gmail.com';
+const ADMIN_EMAIL = 'support.drriftaire@gmail.com';
 
 const formatDateTime = (value) => {
   const d = new Date(value);
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
     const month = calendarMonth.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    
+
     const days = [];
 
     for (let i = 0; i < firstDay.getDay(); i++) {
@@ -280,9 +280,9 @@ export default function AdminDashboard() {
     const { id, status } = confirmModal;
     const remarkToSend = pendingRemarks[id] || '';
     const financials = pendingFinancials[id] || {};
-    
+
     setConfirmModal({ isOpen: false, id: null, status: null });
-    
+
     toast.promise(updateBookingStatus(id, status, remarkToSend, financials.sales, financials.profit), {
       loading: 'Updating record...',
       success: `Record updated to ${status}`,
@@ -407,7 +407,7 @@ export default function AdminDashboard() {
       if (rowNumber > 1) { // Skip header
         const statusCell = row.getCell(12); // L column
         const status = statusCell.value;
-        
+
         let color = 'FF60796D'; // Default Gray
         if (status === 'Accept') color = 'FF10B981'; // Emerald
         if (status === 'Completed') color = 'FF6366F1'; // Indigo
@@ -431,14 +431,14 @@ export default function AdminDashboard() {
         <div className="pointer-events-none absolute left-1/4 top-1/4 h-[30rem] w-[30rem] rounded-full bg-green-600/10 blur-[120px]" />
         <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[30rem] w-[30rem] rounded-full bg-lime-600/10 blur-[120px]" />
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="z-10 w-full max-w-md rounded-3xl border border-green-900/10 bg-white/60 p-8 shadow-[0_8px_32px_0_rgba(29,78,59,0.18)] backdrop-blur-3xl sm:p-10"
         >
           <div className="mb-8 flex flex-col items-center">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
@@ -513,13 +513,12 @@ export default function AdminDashboard() {
             <span className="text-base sm:text-2xl font-bold tracking-tight text-[#1b4a36]">Admin Panel</span>
             <div className="hidden sm:flex mt-1 items-center gap-2 text-xs text-[#60796d]">
               <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${
-                  health.status === 'ok'
-                    ? 'bg-emerald-400'
-                    : health.status === 'checking'
-                       ? 'animate-pulse bg-amber-400'
-                       : 'bg-red-400'
-                }`}
+                className={`inline-block h-2.5 w-2.5 rounded-full ${health.status === 'ok'
+                  ? 'bg-emerald-400'
+                  : health.status === 'checking'
+                    ? 'animate-pulse bg-amber-400'
+                    : 'bg-red-400'
+                  }`}
               />
               <span>
                 {health.status === 'ok'
@@ -552,7 +551,7 @@ export default function AdminDashboard() {
       </nav>
 
       <main className="relative z-10 w-full mt-10 space-y-12 px-4 sm:px-10 lg:px-16">
-        <motion.div 
+        <motion.div
           initial="hidden"
           animate="show"
           variants={{
@@ -572,8 +571,8 @@ export default function AdminDashboard() {
             { label: 'Total Sales', value: `₹${(analytics.totalSales || 0).toLocaleString('en-IN')}`, icon: IndianRupee, color: 'text-blue-700', bg: 'bg-blue-100/70', border: 'border-blue-700/20' },
             { label: 'Total Profit', value: `₹${(analytics.totalProfit || 0).toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-indigo-700', bg: 'bg-indigo-100/70', border: 'border-indigo-700/20' },
           ].map((stat) => (
-            <motion.div 
-              key={stat.label} 
+            <motion.div
+              key={stat.label}
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 show: { opacity: 1, y: 0 }
@@ -595,7 +594,7 @@ export default function AdminDashboard() {
           ))}
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -630,9 +629,9 @@ export default function AdminDashboard() {
           <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:px-8 overflow-visible">
             {/* Row 1: Search & Date */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
-              
+
               {/* Search Bar */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
@@ -668,39 +667,38 @@ export default function AdminDashboard() {
 
                 {/* Date Filter & Calendar */}
                 <div className="relative z-30" ref={calendarRef}>
-                <button
-                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                  className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-[10px] font-bold tracking-wide transition-all ${
-                    dateRange.start 
-                      ? 'border-green-700/30 bg-green-50 text-green-800' 
+                  <button
+                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                    className={`flex items-center gap-3 rounded-xl border px-4 py-2.5 text-[10px] font-bold tracking-wide transition-all ${dateRange.start
+                      ? 'border-green-700/30 bg-green-50 text-green-800'
                       : 'border-green-900/10 bg-white text-[#60796d] hover:bg-green-50'
-                  }`}
-                >
-                  <Calendar className="h-4 w-4 opacity-70" />
-                  <span>
-                    {dateRange.start 
-                      ? `${formatDateOnly(dateRange.start)}${dateRange.end ? ` to ${formatDateOnly(dateRange.end)}` : ''}` 
-                      : 'FILTER BY DATE'}
-                  </span>
-                  {dateRange.start && (
-                    <div 
-                      onClick={(e) => { e.stopPropagation(); setDateRange({ start: null, end: null }); }}
-                      className="ml-1 rounded-full bg-green-800/10 p-0.5 hover:bg-green-800/20"
-                    >
-                      <XOctagon className="h-3 w-3" />
-                    </div>
-                  )}
-                </button>
+                      }`}
+                  >
+                    <Calendar className="h-4 w-4 opacity-70" />
+                    <span>
+                      {dateRange.start
+                        ? `${formatDateOnly(dateRange.start)}${dateRange.end ? ` to ${formatDateOnly(dateRange.end)}` : ''}`
+                        : 'FILTER BY DATE'}
+                    </span>
+                    {dateRange.start && (
+                      <div
+                        onClick={(e) => { e.stopPropagation(); setDateRange({ start: null, end: null }); }}
+                        className="ml-1 rounded-full bg-green-800/10 p-0.5 hover:bg-green-800/20"
+                      >
+                        <XOctagon className="h-3 w-3" />
+                      </div>
+                    )}
+                  </button>
 
-                <AnimatePresence>
-                  {isCalendarOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 30, scale: 0.8, rotate: 2 }}
-                      animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                      exit={{ opacity: 0, y: 20, scale: 0.8, rotate: -2 }}
-                      transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                      className="absolute right-0 sm:-right-4 md:right-0 origin-bottom-right bottom-full z-[100] mb-3 w-72 rounded-3xl border border-green-900/10 bg-white/95 p-4 shadow-[0_20px_50px_-12px_rgba(27,74,54,0.25)] backdrop-blur-3xl"
-                    >
+                  <AnimatePresence>
+                    {isCalendarOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 30, scale: 0.8, rotate: 2 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.8, rotate: -2 }}
+                        transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                        className="absolute right-0 sm:-right-4 md:right-0 origin-bottom-right bottom-full z-[100] mb-3 w-72 rounded-3xl border border-green-900/10 bg-white/95 p-4 shadow-[0_20px_50px_-12px_rgba(27,74,54,0.25)] backdrop-blur-3xl"
+                      >
                         <div className="flex items-center justify-between mb-3 px-1">
                           <button onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1))}>
                             <ChevronLeft className="h-4 w-4 text-[#1b4a36]" />
@@ -718,9 +716,8 @@ export default function AdminDashboard() {
                             <button
                               key={type}
                               onClick={() => setDateFilterType(type)}
-                              className={`flex-1 rounded-lg py-1.5 text-[9px] font-black uppercase tracking-tighter transition-all ${
-                                dateFilterType === type ? 'bg-[#1b4a36] text-white shadow-sm' : 'text-[#60796d]'
-                              }`}
+                              className={`flex-1 rounded-lg py-1.5 text-[9px] font-black uppercase tracking-tighter transition-all ${dateFilterType === type ? 'bg-[#1b4a36] text-white shadow-sm' : 'text-[#60796d]'
+                                }`}
                             >
                               {type} DATE
                             </button>
@@ -728,7 +725,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="grid grid-cols-7 gap-1 text-center mb-1">
-                          {['S','M','T','W','T','F','S'].map(d => (
+                          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
                             <span key={d} className="text-[8px] font-black text-[#8aa095] uppercase">{d}</span>
                           ))}
                         </div>
@@ -739,16 +736,15 @@ export default function AdminDashboard() {
                             const isScheduled = scheduledDatesSet.has(dStr);
                             const isSelected = dateRange.start === dStr || dateRange.end === dStr;
                             const isInRange = dateRange.start && dateRange.end && dStr > dateRange.start && dStr < dateRange.end;
-                            
+
                             return (
                               <button
                                 key={dStr}
                                 onClick={() => handleDateSelect(day)}
-                                className={`group relative h-8 w-8 rounded-lg text-[10px] font-bold transition-all ${
-                                  isSelected ? 'bg-[#1b4a36] text-white' : 
+                                className={`group relative h-8 w-8 rounded-lg text-[10px] font-bold transition-all ${isSelected ? 'bg-[#1b4a36] text-white' :
                                   isInRange ? 'bg-green-100 text-green-800' :
-                                  'text-[#1b4a36] hover:bg-green-50'
-                                }`}
+                                    'text-[#1b4a36] hover:bg-green-50'
+                                  }`}
                               >
                                 {day.getDate()}
                                 {isScheduled && !isSelected && (
@@ -759,9 +755,9 @@ export default function AdminDashboard() {
                           })}
                         </div>
                       </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
 
@@ -775,11 +771,10 @@ export default function AdminDashboard() {
                     <button
                       key={s}
                       onClick={() => setStatusFilter(s)}
-                      className={`relative whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
-                        statusFilter === s
-                          ? 'text-white'
-                          : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
-                      }`}
+                      className={`relative whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${statusFilter === s
+                        ? 'text-white'
+                        : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
+                        }`}
                     >
                       {statusFilter === s && (
                         <motion.div
@@ -794,85 +789,84 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-            {/* Sorting Controls */}
-            <div className="flex items-center gap-3 w-full xl:w-auto xl:justify-end min-w-0">
-              <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
-              <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
-                {[
-                  { label: 'Name', key: 'Name' },
-                  { label: 'Booking', key: 'Timestamp' },
-                  { label: 'Schedule', key: 'Date' },
-                  { label: 'Profit', key: 'Profit' },
-                  { label: 'Acres', key: 'Acres' },
-                ].map((sort) => (
-                  <button
-                    key={sort.key}
-                    onClick={() => toggleSort(sort.key)}
-                    className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${
-                      sortConfig.key === sort.key
+              {/* Sorting Controls */}
+              <div className="flex items-center gap-3 w-full xl:w-auto xl:justify-end min-w-0">
+                <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
+                <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
+                  {[
+                    { label: 'Name', key: 'Name' },
+                    { label: 'Booking', key: 'Timestamp' },
+                    { label: 'Schedule', key: 'Date' },
+                    { label: 'Profit', key: 'Profit' },
+                    { label: 'Acres', key: 'Acres' },
+                  ].map((sort) => (
+                    <button
+                      key={sort.key}
+                      onClick={() => toggleSort(sort.key)}
+                      className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[9px] font-black tracking-widest transition-all uppercase ${sortConfig.key === sort.key
                         ? 'text-white'
                         : 'bg-white text-[#60796d] hover:bg-green-50 border border-green-900/5'
-                    }`}
-                  >
-                    {sortConfig.key === sort.key && (
-                      <motion.div
-                        layoutId="activeSort"
-                        className="absolute inset-0 rounded-lg bg-emerald-600"
-                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <span className="relative z-10 flex items-center gap-2">
-                      {sort.label}
+                        }`}
+                    >
                       {sortConfig.key === sort.key && (
-                        <span className="text-[8px] opacity-70">
-                          {sortConfig.direction === 'asc' ? '↑' : '↓'}
-                        </span>
+                        <motion.div
+                          layoutId="activeSort"
+                          className="absolute inset-0 rounded-lg bg-emerald-600"
+                          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                        />
                       )}
-                    </span>
-                  </button>
-                ))}
+                      <span className="relative z-10 flex items-center gap-2">
+                        {sort.label}
+                        {sortConfig.key === sort.key && (
+                          <span className="text-[8px] opacity-70">
+                            {sortConfig.direction === 'asc' ? '↑' : '↓'}
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
             </div>
           </div>
 
           <div className="w-full lg:px-8 lg:py-8">
             {/* Premium Horizontal List Layout */}
-              <motion.div 
-                layout
-                className="flex flex-col gap-4 lg:gap-5"
-              >
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {sortedBookings.map((booking) => (
-                    <BookingRow
-                      key={booking.id}
-                      booking={booking}
-                      formatDateTime={formatDateTime}
-                      formatDateOnly={formatDateOnly}
-                      pendingRemarks={pendingRemarks}
-                      handleRemarkChange={handleRemarkChange}
-                      handleUpdateStatus={handleUpdateStatus}
-                      pendingFinancials={pendingFinancials}
-                      handleFinancialChange={handleFinancialChange}
-                    />
-                  ))}
-                </AnimatePresence>
+            <motion.div
+              layout
+              className="flex flex-col gap-4 lg:gap-5"
+            >
+              <AnimatePresence mode="popLayout" initial={false}>
+                {sortedBookings.map((booking) => (
+                  <BookingRow
+                    key={booking.id}
+                    booking={booking}
+                    formatDateTime={formatDateTime}
+                    formatDateOnly={formatDateOnly}
+                    pendingRemarks={pendingRemarks}
+                    handleRemarkChange={handleRemarkChange}
+                    handleUpdateStatus={handleUpdateStatus}
+                    pendingFinancials={pendingFinancials}
+                    handleFinancialChange={handleFinancialChange}
+                  />
+                ))}
+              </AnimatePresence>
 
-                <AnimatePresence>
-                  {(!sortedBookings || sortedBookings.length === 0) && !isLoading && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="flex flex-col items-center justify-center py-24 text-center"
-                    >
-                      <Wind className="mb-6 h-12 w-12 text-green-700/10" />
-                      <p className="text-sm font-bold text-[#243328]/40">No records found matching your filters.</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            </div>
+              <AnimatePresence>
+                {(!sortedBookings || sortedBookings.length === 0) && !isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="flex flex-col items-center justify-center py-24 text-center"
+                  >
+                    <Wind className="mb-6 h-12 w-12 text-green-700/10" />
+                    <p className="text-sm font-bold text-[#243328]/40">No records found matching your filters.</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </motion.div>
       </main>
 
@@ -880,14 +874,14 @@ export default function AdminDashboard() {
       <AnimatePresence>
         {confirmModal.isOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#1b4a36]/40 backdrop-blur-sm transition-opacity" 
+              className="absolute inset-0 bg-[#1b4a36]/40 backdrop-blur-sm transition-opacity"
               onClick={() => setConfirmModal({ isOpen: false, id: null, status: null })}
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -895,14 +889,13 @@ export default function AdminDashboard() {
               className="relative z-10 w-full max-w-sm rounded-[2rem] border border-green-900/10 bg-white p-8 shadow-2xl transition-all"
             >
               <div className="mb-6 flex flex-col items-center text-center">
-                <motion.div 
+                <motion.div
                   initial={{ rotate: -20, scale: 0.5 }}
                   animate={{ rotate: 0, scale: 1 }}
                   transition={{ delay: 0.1, type: "spring" }}
-                  className={`mb-4 flex h-16 w-16 items-center justify-center rounded-2xl ${
-                  confirmModal.status === 'Accept' ? 'bg-emerald-100 text-emerald-600' :
-                  confirmModal.status === 'Reject' ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'
-                }`}>
+                  className={`mb-4 flex h-16 w-16 items-center justify-center rounded-2xl ${confirmModal.status === 'Accept' ? 'bg-emerald-100 text-emerald-600' :
+                    confirmModal.status === 'Reject' ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'
+                    }`}>
                   {confirmModal.status === 'Accept' && <Wind className="h-8 w-8" />}
                   {confirmModal.status === 'Reject' && <XOctagon className="h-8 w-8" />}
                   {confirmModal.status === 'Completed' && <CheckCircle2 className="h-8 w-8" />}
@@ -917,10 +910,9 @@ export default function AdminDashboard() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={executeUpdateStatus}
-                  className={`w-full rounded-xl py-3.5 text-sm font-bold tracking-wider text-white shadow-lg transition-all ${
-                    confirmModal.status === 'Accept' ? 'bg-emerald-600 hover:bg-emerald-700' :
+                  className={`w-full rounded-xl py-3.5 text-sm font-bold tracking-wider text-white shadow-lg transition-all ${confirmModal.status === 'Accept' ? 'bg-emerald-600 hover:bg-emerald-700' :
                     confirmModal.status === 'Reject' ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'
-                  }`}
+                    }`}
                 >
                   PROCEED
                 </motion.button>
