@@ -43,9 +43,15 @@ const formatDateTime = (value) => {
 
 const formatDateOnly = (value) => {
   if (!value) return '-';
-  // Handles both YYYY-MM-DD and ISO strings
-  const d = new Date(value.includes('T') ? value : `${value}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return value;
+  let d;
+  if (value instanceof Date) {
+    d = value;
+  } else {
+    // Handles both YYYY-MM-DD and ISO strings
+    const str = String(value);
+    d = new Date(str.includes('T') ? str : `${str}T00:00:00`);
+  }
+  if (Number.isNaN(d.getTime())) return String(value);
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const year = d.getFullYear();
@@ -226,7 +232,7 @@ export default function AdminDashboard() {
       sortedBookings.map((booking) => ({
         id: booking.id,
         bookingId: booking['Booking ID'] || booking.id,
-        requestDate: formatDateTime(booking.Timestamp),
+        requestDate: formatDateOnly(booking.Timestamp),
         name: booking.Name || '',
         email: booking.Email || '',
         phone: booking.Phone || '',
@@ -323,7 +329,8 @@ export default function AdminDashboard() {
     // Generate CSV
     const buffer = await workbook.csv.writeBuffer();
     const blob = new Blob([buffer], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, `bookings-report-${new Date().toISOString().slice(0, 10)}.csv`);
+    const fileDate = formatDateOnly(new Date());
+    saveAs(blob, `bookings-report-${fileDate}.csv`);
   };
 
   const handleDownloadExcel = async () => {
@@ -421,7 +428,8 @@ export default function AdminDashboard() {
     // Write to buffer and trigger download
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `bookings-report-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    const fileDate = formatDateOnly(new Date());
+    saveAs(blob, `bookings-report-${fileDate}.xlsx`);
   };
 
 
