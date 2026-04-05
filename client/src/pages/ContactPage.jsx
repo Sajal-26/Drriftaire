@@ -23,7 +23,7 @@ const staggerContainer = {
 
 function ContactPage() {
   return (
-    <main className="relative w-full min-h-[calc(100vh-96px)] bg-[#f6f4ee] text-[#243328] overflow-hidden">
+    <main className="relative w-full min-h-[calc(100vh-96px)] bg-[#f6f4ee] text-[#243328] overflow-hidden cursor-default">
       {/* Background Accent */}
       <div className="absolute inset-x-0 top-0 h-[600px] pointer-events-none opacity-40">
         <img src="/contact-accent.png" alt="" className="w-full h-full object-cover blur-3xl" />
@@ -53,7 +53,7 @@ function ContactPage() {
                 <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#28593b]/10 text-lg sm:text-xl">✉️</div>
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Email Us</p>
-                  <a href="mailto:support.drriftaire@gmail.com" className="mt-1 block text-base sm:text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors break-words">
+                  <a href="mailto:support.drriftaire@gmail.com" className="mt-1 block text-base sm:text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors break-words cursor-pointer">
                     support.drriftaire@gmail.com
                   </a>
                 </div>
@@ -63,7 +63,7 @@ function ContactPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Regional Presence</p>
                   <p className="mt-1 text-lg sm:text-2xl font-bold text-[#18241c] leading-tight">
-                    Serving 12+ States Across India
+                    Serving X+ States Across India
                   </p>
                 </div>
               </div>
@@ -81,7 +81,7 @@ function ContactPage() {
                   <label className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60 ml-1">Name</label>
                   <input 
                     type="text" 
-                    placeholder="John Doe"
+                    placeholder="Enter your name"
                     className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none transition-all duration-300"
                   />
                 </div>
@@ -89,7 +89,7 @@ function ContactPage() {
                   <label className="text-xs font-bold uppercase tracking-widest text-[#28593b]/60 ml-1">Email</label>
                   <input 
                     type="email" 
-                    placeholder="john@example.com"
+                    placeholder="Enter your email"
                     className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none transition-all duration-300"
                   />
                 </div>

@@ -20,8 +20,21 @@ h1, h2, h3, h4, h5, h6, p, span, label {
   cursor: default;
 }
 
-a, button, [role="button"], input, textarea, select {
-  cursor: auto;
+/* Ensure links and buttons always show pointer, including their text content */
+a, 
+button, 
+[role="button"],
+a *, 
+button * {
+  cursor: pointer !important;
+}
+
+input, textarea, select {
+  cursor: text;
+}
+
+select {
+  cursor: pointer;
 }
 
 .app-shell {

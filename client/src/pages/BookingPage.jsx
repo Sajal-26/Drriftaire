@@ -416,7 +416,7 @@ export default function BookingPage() {
               <div className={styles.row2}>
                 <label className={styles.field}>
                   <span className={styles.label}>Email Address</span>
-                  <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="farmer@example.com" required />
+                  <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required />
                 </label>
                 <label className={styles.field}>
                   <span className={styles.label}>Crop Type</span>
