@@ -8,7 +8,7 @@ import API_URL from "../config/api";
 const STATE_DISTRICT_DATA_URL = "/data/state-districts.json";
 const PINCODE_LOOKUP_URL = "https://api.postalpincode.in/pincode";
 
-const cropOptions = ["Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Pulses", "Vegetables", "Fruits", "Other"];
+const cropOptions = ["Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Pulses", "Vegetables", "Fruits", "Flowers", "Tea", "Coffee", "Groundnut", "Other"];
 const weekdayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const initialFormData = {
@@ -20,6 +20,7 @@ const initialFormData = {
   pinCode: "",
   acres: "",
   cropType: "",
+  otherCropType: "",
   date: "",
 };
 
@@ -80,6 +81,12 @@ export default function BookingPage() {
     return now;
   }, []);
 
+  const maxDate = useMemo(() => {
+    const d = new Date(todayDate);
+    d.setMonth(d.getMonth() + 2);
+    return d;
+  }, [todayDate]);
+
   const [visibleMonth, setVisibleMonth] = useState(
     new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
   );
@@ -93,8 +100,8 @@ export default function BookingPage() {
   const sanitizedPhone = sanitizePhone(formData.phone);
   const isFormComplete =
     formData.name.trim() !== "" &&
-    formData.email.trim() !== "" &&
     formData.cropType.trim() !== "" &&
+    (formData.cropType !== "Other" || formData.otherCropType.trim() !== "") &&
     formData.state.trim() !== "" &&
     formData.district.trim() !== "" &&
     formData.pinCode.trim().length === 6 &&
@@ -197,7 +204,7 @@ export default function BookingPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const normalizedPhone = sanitizePhone(formData.phone);
-    const normalizedAcres = Number(formData.acres);
+    const normalizedAcres = Math.ceil(Number(formData.acres));
     const payload = {
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
@@ -206,11 +213,11 @@ export default function BookingPage() {
       district: formData.district.trim(),
       pinCode: String(formData.pinCode || "").trim(),
       acres: normalizedAcres,
-      cropType: formData.cropType.trim(),
+      cropType: formData.cropType === "Other" ? formData.otherCropType.trim() : formData.cropType.trim(),
       date: formData.date.trim(),
     };
 
-    if (!payload.name || !payload.email || !payload.phone || !payload.state || !payload.district || !payload.pinCode || !payload.cropType || !payload.date) {
+    if (!payload.name || !payload.phone || !payload.state || !payload.district || !payload.pinCode || !payload.cropType || !payload.date) {
       showToast("All booking fields are required.", "error");
       return;
     }
@@ -228,8 +235,18 @@ export default function BookingPage() {
     setLoading(true);
     try {
       await axios.post(`${API_URL}/bookings/book`, payload);
-      showToast("Booking submitted successfully!");
       setFormData(initialFormData);
+      setOpenMenu(null);
+      setIsDatePickerOpen(false);
+      setToast({ message: "Booking submitted successfully!", type: "success" });
+      
+      // Show confirmation overlay
+      const overlay = document.getElementById("confirmation-overlay");
+      if (overlay) overlay.style.display = "flex";
+      setTimeout(() => {
+        if (overlay) overlay.style.display = "none";
+      }, 5000);
+
     } catch (error) {
       showToast(error.response?.data?.message || "Booking failed", "error");
     } finally {
@@ -389,7 +406,7 @@ export default function BookingPage() {
           <div className={styles.formShell}>
             <div className={styles.formHeader}>
               <h2 className={styles.formTitle}>Service Request</h2>
-              <p className={styles.formHint}>All fields are mandatory for scheduling.</p>
+              <p className={styles.formHint}>Tell us about your farm to get started.</p>
             </div>
 
             <form className={styles.form} onSubmit={handleSubmit}>
@@ -415,15 +432,30 @@ export default function BookingPage() {
 
               <div className={styles.row2}>
                 <label className={styles.field}>
-                  <span className={styles.label}>Email Address</span>
-                  <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required />
+                  <span className={styles.label}>Email Address <span className={styles.labelOptional}>(Optional)</span></span>
+                  <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" />
                 </label>
                 <label className={styles.field}>
                   <span className={styles.label}>Crop Type</span>
                   {renderSelect("cropType", "Select Crop", cropOptions)}
                 </label>
               </div>
-
+              <AnimatePresence>
+                {formData.cropType === "Other" && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0, scaleY: 0 }}
+                    animate={{ height: "auto", opacity: 1, scaleY: 1 }}
+                    exit={{ height: 0, opacity: 0, scaleY: 0 }}
+                    className={styles.row1}
+                    style={{ overflow: 'hidden', transformOrigin: 'top' }}
+                  >
+                    <label className={styles.field}>
+                      <span className={styles.label}>Specify Crop</span>
+                      <input className={styles.input} name="otherCropType" value={formData.otherCropType} onChange={handleChange} placeholder="Crop name" required />
+                    </label>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <div className={styles.row3}>
                 <label className={styles.field}>
                   <span className={styles.label}>State</span>
@@ -450,6 +482,11 @@ export default function BookingPage() {
                     step="0.1"
                     value={formData.acres}
                     onChange={handleChange}
+                    onBlur={() => {
+                      if (formData.acres) {
+                        setFormData(prev => ({ ...prev, acres: Math.ceil(Number(prev.acres)) }));
+                      }
+                    }}
                     placeholder="e.g. 2.5"
                     required
                   />
@@ -486,7 +523,7 @@ export default function BookingPage() {
                       </div>
                       <div className={styles.calendarGrid}>
                         {calendarDays.map((date) => {
-                          const isDisabled = date < todayDate;
+                          const isDisabled = date < todayDate || date > maxDate;
                           const isSelected = formData.date && isSameDay(date, parseDateValue(formData.date));
                           return (
                             <button
@@ -508,20 +545,60 @@ export default function BookingPage() {
                   )}
                 </label>
 
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={styles.submitButton} 
-                    type="submit" 
-                    disabled={loading || !isFormComplete}
-                  >
-                    {loading ? "Submitting..." : "Confirm Booking"}
-                  </motion.button>
-                </div>
-              </form>
+                <motion.button 
+                  whileHover={{ scale: 1.01, translateY: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={styles.submitButton} 
+                  type="submit" 
+                  disabled={loading || !isFormComplete}
+                >
+                  {loading ? (
+                    <span className={styles.btnContent}>
+                      <span className={styles.spinner} /> Submitting...
+                    </span>
+                  ) : (
+                    <span className={styles.btnContent}>
+                      CONFIRM BOOKING <span className={styles.btnArrow}>→</span>
+                    </span>
+                  )}
+                </motion.button>
+              </div>
+            </form>
+          </div>
+        </motion.section>
+      </main>
+      
+      <AnimatePresence>
+        <div id="confirmation-overlay" className={styles.confirmationOverlay} style={{ display: 'none' }}>
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            className={styles.confirmationCard}
+          >
+            <div className={styles.confirmationIcon}>
+              <motion.svg 
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+              >
+                <path d="M20 6L9 17L4 12" strokeLinecap="round" strokeLinejoin="round"/>
+              </motion.svg>
             </div>
-          </motion.section>
-        </main>
-      </motion.div>
+            <h2 className={styles.confirmationTitle}>Booking Received!</h2>
+            <p className={styles.confirmationText}>We've received your request. Our team will contact you within 24 hours to confirm your slot.</p>
+            <div className={styles.confirmationActions}>
+              <button 
+                className={styles.homeButton}
+                onClick={() => window.location.href = '/'}
+              >
+                Back to Home
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </AnimatePresence>
+    </motion.div>
   );
 }

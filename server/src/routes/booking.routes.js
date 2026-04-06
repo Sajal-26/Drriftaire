@@ -21,12 +21,12 @@ const validateBooking = (req, res, next) => {
     date: typeof req.body.date === "string" ? req.body.date.trim() : "",
   };
 
-  if (!fields.name || !fields.email || !fields.phone || !fields.state || !fields.district || !fields.pinCode || !fields.acres || !fields.cropType || !fields.date) {
+  if (!fields.name || !fields.phone || !fields.state || !fields.district || !fields.pinCode || !fields.acres || !fields.cropType || !fields.date) {
     return res.status(400).json({ message: "All booking fields are required." });
   }
 
   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-  if (!emailRegex.test(fields.email)) {
+  if (fields.email && !emailRegex.test(fields.email)) {
     return res.status(400).json({ message: "Please enter a valid email address." });
   }
 

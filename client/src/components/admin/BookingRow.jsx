@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Droplets, Clock, IndianRupee, TrendingUp, XOctagon, CheckCircle2 } from 'lucide-react';
+import { Users, Droplets, Clock, XOctagon, CheckCircle2, Wind } from 'lucide-react';
 
 const BookingRow = memo(({ 
   booking, 
@@ -72,20 +72,9 @@ const BookingRow = memo(({
         </div>
       </div>
 
-      {/* Financials & Remarks */}
-      <div className="lg:w-[18%] flex flex-col justify-center gap-2">
-        {booking.Sales > 0 ? (
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-center px-3 py-1.5 rounded-xl bg-[#1b4a36] text-[10px] font-bold text-white shadow-sm">
-              <span>SALES</span>
-              <span className="font-mono">₹{booking.Sales.toLocaleString('en-IN')}</span>
-            </div>
-            <div className="flex justify-between items-center px-3 py-1.5 rounded-xl bg-white border border-green-900/5 text-[10px] font-bold">
-              <span className="text-[#60796d]">PROFIT</span>
-              <span className="text-emerald-600 font-mono">₹{booking.Profit.toLocaleString('en-IN')}</span>
-            </div>
-          </div>
-        ) : booking.Remarks ? (
+      {/* Remarks Section */}
+      <div className="lg:w-[18%] flex flex-col justify-center">
+        {booking.Remarks ? (
           <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-2.5 italic text-[10px] text-[#76877d] line-clamp-2">
             "{booking.Remarks}"
           </div>
@@ -121,28 +110,14 @@ const BookingRow = memo(({
             </div>
           </div>
         ) : booking.Status === 'Accept' ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-              <input
-                type="number"
-                placeholder="Sales"
-                value={pendingFinancials[booking.id]?.sales || ''}
-                onChange={(e) => handleFinancialChange(booking.id, 'sales', e.target.value)}
-                className="flex-1 min-w-0 rounded-xl border border-green-900/10 bg-white px-2.5 py-2 text-[10px] lg:text-[11px] focus:ring-4 focus:ring-indigo-700/5 outline-none"
-              />
-              <input
-                type="number"
-                placeholder="Profit"
-                value={pendingFinancials[booking.id]?.profit || ''}
-                onChange={(e) => handleFinancialChange(booking.id, 'profit', e.target.value)}
-                className="flex-1 min-w-0 rounded-xl border border-green-900/10 bg-white px-2.5 py-2 text-[10px] lg:text-[11px] focus:ring-4 focus:ring-indigo-700/5 outline-none"
-              />
-            </div>
+          <div className="flex flex-col gap-2 pt-2">
+            <p className="text-[10px] font-bold text-[#60796d] uppercase tracking-wider text-center mb-1">Mission in Progress</p>
             <button 
               onClick={() => handleUpdateStatus(booking.id, 'Completed')}
-              className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2 lg:py-2.5 text-[9px] lg:text-[10px] font-bold tracking-widest text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-[10px] font-bold tracking-widest text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95"
             >
-              FINALIZE
+              <CheckCircle2 className="h-4 w-4" />
+              FINISH MISSION
             </button>
           </div>
         ) : (

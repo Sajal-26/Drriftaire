@@ -24,10 +24,9 @@ const logEmail = (step, details = {}) => {
 };
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
-  family: 4,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -35,8 +34,6 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
 });
 
 transporter.verify((err, success) => {
@@ -56,7 +53,7 @@ const escapeHtml = (value) =>
     .replace(/'/g, "&#39;");
 
 const formatFromAddress = () =>
-  `"Drriftaire" <${process.env.EMAIL_USER}>`;
+  `"Drriftaire" <drriftaire@gmail.com>`;
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
@@ -77,28 +74,28 @@ const formatDate = (value) => {
 };
 
 const sendMailWithLogging = async ({ label, to, subject, html }) => {
-  logEmail(`${label} queued`, { to, subject });
+  logEmail(`${label} attempt`, { to, subject });
 
   try {
+    const fromAddr = formatFromAddress();
     const result = await transporter.sendMail({
-      from: formatFromAddress(),
+      from: fromAddr,
       to,
       subject,
       html,
     });
 
-    logEmail(`${label} sent`, {
+    logEmail(`${label} response`, {
       to,
-      subject,
       messageId: result.messageId,
-      accepted: result.accepted,
-      rejected: result.rejected,
       response: result.response,
+      envelope: result.envelope,
+      accepted: result.accepted,
     });
 
     return result;
   } catch (error) {
-    console.error(`[email] ${label} failed`, serializeError(error));
+    console.error(`[email] ${label} critical error`, serializeError(error));
     throw error;
   }
 };
@@ -219,7 +216,7 @@ const sendBookingEmails = async ({
     logEmail("sendBookingEmails building items", { email });
 
     const results = await Promise.allSettled([
-      sendMailWithLogging({
+      ...(email ? [sendMailWithLogging({
         label: "booking confirmation",
         to: email,
         subject: "Your Drone Spraying Booking",
@@ -233,7 +230,7 @@ const sendBookingEmails = async ({
             <p>Our operational team will review the details and contact you shortly at <strong>${escapeHtml(formattedPhone)}</strong> to confirm scheduling. No further action is required from your side at this moment.</p>
           `
         ),
-      }),
+      })] : []),
       sendMailWithLogging({
         label: "admin booking notification",
         to: process.env.ADMIN_EMAIL,
@@ -265,6 +262,11 @@ const sendBookingEmails = async ({
 
 const sendStatusChangeEmail = async ({ name, email, status }) => {
   logEmail("sendStatusChangeEmail start", { email, status });
+
+  if (!email) {
+    logEmail("sendStatusChangeEmail skipped: no email", { status });
+    return;
+  }
 
   try {
     let subject = "Status Update: Your Drone Booking";
@@ -320,6 +322,11 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
 
 const sendDuplicateBookingEmail = async ({ name, email }) => {
   logEmail("sendDuplicateBookingEmail start", { email });
+
+  if (!email) {
+    logEmail("sendDuplicateBookingEmail skipped: no email");
+    return;
+  }
 
   try {
     await sendMailWithLogging({

@@ -16,7 +16,7 @@ const createBooking = async (req, res) => {
 
   try {
     const { name, email, phone, state, district, pinCode, acres, cropType, date } = req.body;
-    lockKey = `${email}:${phone}`;
+    lockKey = `${email || 'anon'}:${phone}`;
 
     if (activeBookingLocks.has(lockKey)) {
       return res.status(429).json({
@@ -29,11 +29,16 @@ const createBooking = async (req, res) => {
 
     const allBookings = await getAllBookings();
 
-    const existingPending = allBookings.find((booking) =>
-      (String(booking.Email || "").trim().toLowerCase() === email ||
-        String(booking.Phone || "").replace(/\D/g, "") === phone) &&
-      (!booking.Status || String(booking.Status).toLowerCase() === "pending")
-    );
+    const existingPending = allBookings.find((booking) => {
+      const dbEmail = String(booking.Email || "").trim().toLowerCase();
+      const dbPhone = String(booking.Phone || "").replace(/\D/g, "");
+      const isPending = !booking.Status || String(booking.Status).toLowerCase() === "pending";
+
+      const emailMatch = email && dbEmail === email;
+      const phoneMatch = dbPhone === phone;
+
+      return (emailMatch || phoneMatch) && isPending;
+    });
 
     if (existingPending) {
       fireAndForget("Duplicate Email Background Error", () =>

@@ -71,7 +71,7 @@ const getBookings = async (req, res) => {
 const changeBookingStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, remarks, sales, profit } = req.body;
+    const { status, remarks } = req.body;
 
     const validStatuses = ["Pending", "Accept", "Reject", "Completed"];
     if (!validStatuses.includes(status)) {
@@ -79,7 +79,7 @@ const changeBookingStatus = async (req, res) => {
     }
 
     const sanitizedRemarks = typeof remarks === "string" ? remarks.trim().slice(0, 500) : undefined;
-    const updatedRow = await updateBookingStatus(id, status, sanitizedRemarks, sales, profit);
+    const updatedRow = await updateBookingStatus(id, status, sanitizedRemarks);
 
     if (updatedRow) {
       if (status !== "Pending") {
@@ -108,9 +108,7 @@ const getAnalytics = async (req, res) => {
       pending: 0,
       accept: 0,
       reject: 0,
-      completed: 0,
-      totalSales: 0,
-      totalProfit: 0
+      completed: 0
     };
 
     bookings.forEach(b => {
@@ -118,8 +116,6 @@ const getAnalytics = async (req, res) => {
       if (analytics[stat] !== undefined) {
         analytics[stat]++;
       }
-      analytics.totalSales += Number(b.Sales) || 0;
-      analytics.totalProfit += Number(b.Profit) || 0;
     });
 
     res.json(analytics);

@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import BookingRow from '../components/admin/BookingRow';
 
-const ADMIN_EMAIL = 'support.drriftaire@gmail.com';
+const ADMIN_EMAIL = 'drriftaire@gmail.com';
 
 const formatDateTime = (value) => {
   const d = new Date(value);
@@ -78,7 +78,6 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [pendingRemarks, setPendingRemarks] = useState({});
-  const [pendingFinancials, setPendingFinancials] = useState({}); // { [id]: { sales: '', profit: '' } }
   const [sortConfig, setSortConfig] = useState({ key: 'Timestamp', direction: 'desc' });
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,7 +160,7 @@ export default function AdminDashboard() {
       let valB = b[key];
 
       // Numeric parsing for financials
-      if (key === 'Sales' || key === 'Profit' || key === 'Acres') {
+      if (key === 'Acres') {
         valA = Number(valA) || 0;
         valB = Number(valB) || 0;
       }
@@ -244,8 +243,6 @@ export default function AdminDashboard() {
         preferredDate: formatDateOnly(booking.Date),
         status: booking.Status || 'Pending',
         remarks: booking.Remarks || '',
-        sales: booking.Sales || 0,
-        profit: booking.Profit || 0,
       })),
     [sortedBookings]
   );
@@ -271,12 +268,7 @@ export default function AdminDashboard() {
     setPendingRemarks((prev) => ({ ...prev, [id]: text }));
   }, []);
 
-  const handleFinancialChange = useCallback((id, field, value) => {
-    setPendingFinancials((prev) => ({
-      ...prev,
-      [id]: { ...(prev[id] || { sales: '', profit: '' }), [field]: value },
-    }));
-  }, []);
+  // Financial logic removed
 
   const handleUpdateStatus = useCallback((id, status) => {
     setConfirmModal({ isOpen: true, id, status });
@@ -285,16 +277,15 @@ export default function AdminDashboard() {
   const executeUpdateStatus = useCallback(async () => {
     const { id, status } = confirmModal;
     const remarkToSend = pendingRemarks[id] || '';
-    const financials = pendingFinancials[id] || {};
 
     setConfirmModal({ isOpen: false, id: null, status: null });
 
-    toast.promise(updateBookingStatus(id, status, remarkToSend, financials.sales, financials.profit), {
+    toast.promise(updateBookingStatus(id, status, remarkToSend), {
       loading: 'Updating record...',
       success: `Record updated to ${status}`,
       error: 'Update failed',
     });
-  }, [confirmModal, pendingRemarks, pendingFinancials, updateBookingStatus]);
+  }, [confirmModal, pendingRemarks, updateBookingStatus]);
 
   const handleDownloadCsv = async () => {
     if (!exportRows.length) {
@@ -319,8 +310,6 @@ export default function AdminDashboard() {
       { header: 'Preferred Date', key: 'preferredDate' },
       { header: 'Status', key: 'status' },
       { header: 'Remarks', key: 'remarks' },
-      { header: 'Sales (₹)', key: 'sales' },
-      { header: 'Profit (₹)', key: 'profit' },
     ];
 
     worksheet.columns = columns;
@@ -357,8 +346,6 @@ export default function AdminDashboard() {
       { header: 'Preferred Date', key: 'preferredDate', width: 15 },
       { header: 'Status', key: 'status', width: 12 },
       { header: 'Remarks', key: 'remarks', width: 30 },
-      { header: 'Sales (₹)', key: 'sales', width: 15 },
-      { header: 'Profit (₹)', key: 'profit', width: 15 },
     ];
 
     worksheet.columns = columns;
@@ -388,8 +375,6 @@ export default function AdminDashboard() {
         row.preferredDate,
         row.status,
         row.remarks,
-        row.sales,
-        row.profit,
       ]),
     });
 
@@ -569,15 +554,13 @@ export default function AdminDashboard() {
               transition: { staggerChildren: 0.1 }
             }
           }}
-          className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6"
+          className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-4 lg:gap-6"
         >
           {[
             { label: 'Inquiries', value: analytics.total || 0, icon: Users, color: 'text-[#2f6a47]', bg: 'bg-green-100/70', border: 'border-green-700/20' },
             { label: 'Pending', value: analytics.pending || 0, icon: Clock, color: 'text-amber-700', bg: 'bg-amber-100/70', border: 'border-amber-700/20' },
             { label: 'Accepted', value: analytics.accept || 0, icon: Droplets, color: 'text-emerald-700', bg: 'bg-emerald-100/70', border: 'border-emerald-700/20' },
             { label: 'Finished', value: analytics.completed || 0, icon: CheckCircle2, color: 'text-lime-700', bg: 'bg-lime-100/70', border: 'border-lime-700/20' },
-            { label: 'Total Sales', value: `₹${(analytics.totalSales || 0).toLocaleString('en-IN')}`, icon: IndianRupee, color: 'text-blue-700', bg: 'bg-blue-100/70', border: 'border-blue-700/20' },
-            { label: 'Total Profit', value: `₹${(analytics.totalProfit || 0).toLocaleString('en-IN')}`, icon: TrendingUp, color: 'text-indigo-700', bg: 'bg-indigo-100/70', border: 'border-indigo-700/20' },
           ].map((stat) => (
             <motion.div
               key={stat.label}
@@ -805,7 +788,6 @@ export default function AdminDashboard() {
                     { label: 'Name', key: 'Name' },
                     { label: 'Booking', key: 'Timestamp' },
                     { label: 'Schedule', key: 'Date' },
-                    { label: 'Profit', key: 'Profit' },
                     { label: 'Acres', key: 'Acres' },
                   ].map((sort) => (
                     <button
@@ -854,8 +836,6 @@ export default function AdminDashboard() {
                     pendingRemarks={pendingRemarks}
                     handleRemarkChange={handleRemarkChange}
                     handleUpdateStatus={handleUpdateStatus}
-                    pendingFinancials={pendingFinancials}
-                    handleFinancialChange={handleFinancialChange}
                   />
                 ))}
               </AnimatePresence>
