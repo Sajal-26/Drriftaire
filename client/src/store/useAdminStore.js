@@ -2,14 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import axios from 'axios';
 import API_URL, { HEALTHCHECK_URL } from '../config/api';
-
 const api = axios.create({
   baseURL: API_URL,
 });
-
 const getErrorMessage = (error, fallbackMessage) =>
   error.response?.data?.message || fallbackMessage;
-
 const useAdminStore = create(
   persist(
     (set, get) => ({
@@ -30,11 +27,9 @@ const useAdminStore = create(
         checkedAt: null,
         message: null,
       },
-
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
-
       login: async (email, password) => {
         set({ isLoading: true, error: null });
         try {
@@ -47,7 +42,6 @@ const useAdminStore = create(
           return { success: false, message };
         }
       },
-
       logout: () => {
         set({
           adminToken: null,
@@ -63,7 +57,6 @@ const useAdminStore = create(
           error: null,
         });
       },
-
       checkHealth: async () => {
         set((state) => ({
           health: {
@@ -72,12 +65,10 @@ const useAdminStore = create(
             message: null,
           },
         }));
-
         try {
           const res = await axios.get(HEALTHCHECK_URL);
           const checkedAt = new Date().toISOString();
           const isHealthy = res.data?.status === 'ok';
-
           set({
             health: {
               status: isHealthy ? 'ok' : 'error',
@@ -86,7 +77,6 @@ const useAdminStore = create(
               message: isHealthy ? 'Backend reachable' : 'Backend health check returned an unexpected response',
             },
           });
-
           return { success: isHealthy, data: res.data };
         } catch (error) {
           const message = getErrorMessage(error, 'Backend health check failed');
@@ -101,27 +91,22 @@ const useAdminStore = create(
           return { success: false, message };
         }
       },
-
       getAuthConfig: () => {
         const token = get().adminToken;
         return token
           ? { headers: { Authorization: `Bearer ${token}` } }
           : null;
       },
-
       handleAuthFailure: (error, fallbackMessage) => {
         if (error.response?.status === 401 || error.response?.status === 403) {
           get().logout();
           return 'Session expired. Please log in again.';
         }
-
         return getErrorMessage(error, fallbackMessage);
       },
-
       fetchBookings: async () => {
         const authConfig = get().getAuthConfig();
         if (!authConfig) return { success: false, message: 'Not authenticated' };
-
         set({ isLoading: true, error: null });
         try {
           const res = await api.get('/admin/bookings', authConfig);
@@ -133,11 +118,9 @@ const useAdminStore = create(
           return { success: false, message };
         }
       },
-
       fetchAnalytics: async () => {
         const authConfig = get().getAuthConfig();
         if (!authConfig) return { success: false, message: 'Not authenticated' };
-
         try {
           const res = await api.get('/admin/analytics', authConfig);
           set({ analytics: res.data });
@@ -148,11 +131,9 @@ const useAdminStore = create(
           return { success: false, message };
         }
       },
-
       updateBookingStatus: async (id, newStatus, remarks) => {
         const authConfig = get().getAuthConfig();
         if (!authConfig) return { success: false, message: 'Not authenticated' };
-
         set({ isLoading: true, error: null });
         try {
           await api.patch(
@@ -160,7 +141,6 @@ const useAdminStore = create(
             { status: newStatus, remarks },
             authConfig
           );
-
           set((state) => ({
             bookings: state.bookings.map((booking) =>
               booking.id === id
@@ -173,9 +153,7 @@ const useAdminStore = create(
             ),
             isLoading: false,
           }));
-
           await get().fetchAnalytics();
-
           return { success: true };
         } catch (error) {
           const message = get().handleAuthFailure(error, 'Failed to update status');
@@ -190,5 +168,4 @@ const useAdminStore = create(
     }
   )
 );
-
 export default useAdminStore;

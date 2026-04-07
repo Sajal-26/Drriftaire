@@ -6,7 +6,6 @@
   font-family: system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
-
 .fxLayer {
   position: fixed;
   inset: 0;
@@ -14,7 +13,6 @@
   overflow: hidden;
   z-index: 0;
 }
-
 .fxTop {
   position: absolute;
   inset: 0;
@@ -23,13 +21,11 @@
     radial-gradient(circle at 88% 8%, rgba(67, 136, 76, 0.08), transparent 36%),
     linear-gradient(180deg, rgba(79, 123, 63, 0.08) 0%, rgba(79, 123, 63, 0.04) 28%, rgba(79, 123, 63, 0) 72%);
 }
-
 .fxPointer {
   position: absolute;
   inset: 0;
   transition: opacity 0.35s ease;
 }
-
 .toast {
   position: fixed;
   top: 1.5rem;
@@ -43,27 +39,22 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   animation: popDown 0.3s ease;
 }
-
 .toastSuccess {
   background: #059669;
 }
-
 .toastError {
   background: #dc2626;
 }
-
 @keyframes popDown {
   from {
     opacity: 0;
     transform: translate(-50%, -1rem);
   }
-
   to {
     opacity: 1;
     transform: translate(-50%, 0);
   }
 }
-
 .layout {
   position: relative;
   z-index: 1;
@@ -74,12 +65,10 @@
   gap: 2rem;
   grid-template-columns: 1fr;
 }
-
 .leftPanel {
   display: grid;
   gap: 1.7rem;
 }
-
 .pill {
   display: inline-block;
   width: fit-content;
@@ -92,20 +81,17 @@
   font-weight: 800;
   font-size: 0.66rem;
 }
-
 .title {
   margin: 0.65rem 0 0;
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  line-height: 0.95;
+  font-size: clamp(2.2rem, 8vw, 4.5rem);
+  line-height: 1.05;
   letter-spacing: -0.04em;
   font-weight: 900;
   color: #163c2f;
 }
-
 .titleAccent {
   color: #2f7c52;
 }
-
 .lead {
   margin: 1.25rem 0 0;
   max-width: 42rem;
@@ -113,13 +99,11 @@
   line-height: 1.8;
   color: #547063;
 }
-
 .stats {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
-
 .stat {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.9);
@@ -129,7 +113,6 @@
   box-shadow: 0 4px 12px -2px rgba(22, 60, 47, 0.08);
   transition: all 0.3s ease;
 }
-
 .statValue {
   margin: 0;
   font-size: 2.25rem;
@@ -137,7 +120,6 @@
   font-weight: 900;
   color: #2e6a47;
 }
-
 .statLabel {
   margin: 0.5rem 0 0;
   font-size: 0.75rem;
@@ -146,7 +128,6 @@
   color: #60796d;
   font-weight: 800;
 }
-
 .guideCard {
   background: #163c2f;
   color: #edf7ef;
@@ -154,7 +135,6 @@
   padding: 2rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
-
 .guideTitle {
   margin: 0;
   text-transform: uppercase;
@@ -163,7 +143,6 @@
   color: #8ec38f;
   font-weight: 800;
 }
-
 .guideList {
   margin: 1.5rem 0 0;
   padding: 0;
@@ -171,13 +150,11 @@
   display: grid;
   gap: 1.25rem;
 }
-
 .guideItem {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
 }
-
 .guideIndex {
   width: 1.75rem;
   height: 1.75rem;
@@ -191,33 +168,28 @@
   flex-shrink: 0;
   color: #a7f3d0;
 }
-
 .guideText {
   margin: 0;
   color: #cee7d2;
   font-size: 0.95rem;
   line-height: 1.6;
 }
-
 .formPanel {
   border-radius: 3.5rem;
   padding: 0;
   overflow: visible;
 }
-
 .formShell {
   border: 1px solid rgba(47, 98, 67, 0.12);
-  border-radius: 2rem;
+  border-radius: 1.5rem;
   background: #fff;
-  padding: 2rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   overflow: visible;
   box-shadow: 0 30px 60px -15px rgba(22, 60, 47, 0.12);
 }
-
 .formHeader {
   margin-bottom: 1.25rem;
 }
-
 .formTitle {
   margin: 0;
   font-size: 1.75rem;
@@ -226,19 +198,16 @@
   letter-spacing: -0.03em;
   line-height: 1;
 }
-
 .formHint {
   margin: 0.35rem 0 0;
   color: #64748b;
   font-size: 0.85rem;
 }
-
 .form {
   display: grid;
   gap: 1.25rem;
   isolation: isolate;
 }
-
 .row1,
 .row2,
 .row3 {
@@ -246,13 +215,11 @@
   gap: 1rem;
   align-items: start;
 }
-
 .field {
   display: grid;
   gap: 0.35rem;
   position: relative;
 }
-
 .label {
   margin: 0;
   font-size: 0.68rem;
@@ -264,20 +231,17 @@
   display: flex;
   align-items: center;
 }
-
 .labelOptional {
   color: #94a3b8;
   font-weight: 500;
   font-size: 0.6rem;
   margin-left: 4px;
 }
-
 .fieldGroup {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
 .input {
   width: 100%;
   height: 3.5rem;
@@ -290,13 +254,11 @@
   outline: none;
   transition: all 0.2s;
 }
-
 .input:focus {
   border-color: #10b981;
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   background: #fff;
 }
-
 .phoneWrap {
   display: flex;
   align-items: center;
@@ -307,12 +269,10 @@
   padding: 0.25rem;
   transition: all 0.2s;
 }
-
 .phoneWrap:focus-within {
   border-color: #10b981;
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
-
 .phonePrefix {
   border-radius: 0.75rem 0 0 0.75rem;
   background: #f8fafc;
@@ -324,12 +284,10 @@
   height: calc(100% - 2px);
   margin: 1px;
 }
-
 .phoneCode {
   font-weight: 800;
   color: #064e3b;
 }
-
 .phoneInput {
   border: 0;
   outline: none;
@@ -338,7 +296,6 @@
   font-size: 1.125rem;
   padding: 0 1.25rem;
 }
-
 .flagIndia {
   width: 1.25rem;
   height: 1.25rem;
@@ -347,7 +304,6 @@
   position: relative;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
-
 .flagBandSaffron {
   height: 33%;
   background: #ff9933;
@@ -355,7 +311,6 @@
   position: absolute;
   width: 100%;
 }
-
 .flagBandWhite {
   height: 34%;
   background: #fff;
@@ -363,7 +318,6 @@
   position: absolute;
   width: 100%;
 }
-
 .flagBandGreen {
   height: 33%;
   background: #138808;
@@ -371,7 +325,6 @@
   position: absolute;
   width: 100%;
 }
-
 .flagChakra {
   width: 0.35rem;
   height: 0.35rem;
@@ -382,16 +335,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 .selectWrap {
   position: relative;
   z-index: 20;
 }
-
 .selectWrapOpen {
   z-index: 300;
 }
-
 .selectButton {
   width: 100%;
   height: 3.5rem;
@@ -406,16 +356,13 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .selectButtonOpen {
   border-color: #10b981;
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
-
 .selectPlaceholder {
   color: #94a3b8;
 }
-
 .selectArrow {
   width: 0.5rem;
   height: 0.5rem;
@@ -425,12 +372,10 @@
   transition: transform 0.2s;
   margin-bottom: 3px;
 }
-
 .selectArrowOpen {
   transform: rotate(-135deg);
   margin-bottom: -3px;
 }
-
 .selectMenu {
   position: absolute;
   top: calc(100% + 0.5rem);
@@ -448,24 +393,20 @@
   animation: scaleIn 0.2s ease;
   scrollbar-width: none;
 }
-
 .selectMenuUp {
   top: auto;
   bottom: calc(100% + 0.5rem);
 }
-
 @keyframes scaleIn {
   from {
     opacity: 0;
     transform: scale(0.95);
   }
-
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
-
 .selectOption {
   width: 100%;
   border: 0;
@@ -476,34 +417,28 @@
   cursor: pointer;
   color: #475569;
 }
-
 .selectMenu::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
-
 .selectMenu::-webkit-scrollbar-button {
   display: none;
   width: 0;
   height: 0;
 }
-
 .selectOption:hover {
   background: #f0fdf4;
   color: #166534;
 }
-
 .selectOptionActive {
   background: #dcfce7;
   color: #166534;
   font-weight: 700;
 }
-
 .dateWrap {
   position: relative;
   z-index: 120;
 }
-
 .dateButton {
   width: 100%;
   height: 3.5rem;
@@ -519,12 +454,10 @@
   transition: all 0.2s;
   outline: none;
 }
-
 .dateButtonOpen {
   border-color: #10b981;
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
-
 .calendarIcon {
   width: 1.72rem;
   height: 1.72rem;
@@ -537,7 +470,6 @@
   justify-content: center;
   flex-shrink: 0;
 }
-
 .calendarIconTop {
   width: 0.64rem;
   height: 0.14rem;
@@ -546,7 +478,6 @@
   position: absolute;
   top: 0.3rem;
 }
-
 .calendarIconBody {
   width: 0.74rem;
   height: 0.66rem;
@@ -554,7 +485,6 @@
   border-top-width: 0.2rem;
   border-radius: 3px;
 }
-
 .calendarPopover {
   position: absolute;
   left: 0;
@@ -569,14 +499,12 @@
   z-index: 100;
   animation: scaleIn 0.3s ease;
 }
-
 .calendarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
-
 .calendarNav {
   border: 0;
   background: #f8fafc;
@@ -585,7 +513,6 @@
   font-weight: 700;
   cursor: pointer;
 }
-
 .calendarMonth {
   margin: 0;
   font-weight: 900;
@@ -594,14 +521,12 @@
   letter-spacing: 0.05em;
   color: #1e293b;
 }
-
 .calendarWeekdays,
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
 }
-
 .calendarWeekday {
   font-size: 10px;
   font-weight: 800;
@@ -609,7 +534,6 @@
   text-align: center;
   margin-bottom: 8px;
 }
-
 .calendarDay {
   aspect-ratio: 1;
   border: 0;
@@ -620,39 +544,32 @@
   cursor: pointer;
   color: #475569;
 }
-
 .calendarDay:hover:not(:disabled) {
   background: #f0fdf4;
   color: #059669;
 }
-
 .calendarDaySelected {
   background: #059669 !important;
   color: #fff !important;
 }
-
 .calendarDayToday {
   color: #059669;
   font-weight: 900;
   box-shadow: inset 0 0 0 2px #d1fae5;
 }
-
 .calendarDayOutside {
   opacity: 0.2;
 }
-
 .calendarDay:disabled {
   opacity: 0.1;
   cursor: not-allowed;
 }
-
 .submitRow {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
   align-items: end;
 }
-
 .submitButton {
   height: 3.5rem;
   border: 0;
@@ -669,17 +586,14 @@
   position: relative;
   overflow: hidden;
 }
-
 .submitButton:hover:not(:disabled) {
   background: linear-gradient(135deg, #059669 0%, #065f46 100%);
   transform: translateY(-2px);
   box-shadow: 0 20px 40px -10px rgba(5, 150, 105, 0.5);
 }
-
 .submitButton:active {
   transform: scale(0.95);
 }
-
 .submitButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -687,23 +601,19 @@
   background: #94a3b8;
   box-shadow: none;
 }
-
 .btnContent {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
 }
-
 .btnArrow {
   font-size: 1.2rem;
   transition: transform 0.2s;
 }
-
 .submitButton:hover .btnArrow {
   transform: translateX(4px);
 }
-
 .spinner {
   width: 1.25rem;
   height: 1.25rem;
@@ -712,18 +622,15 @@
   border-radius: 50%;
   animation: rotate 0.8s linear infinite;
 }
-
 @keyframes rotate {
   to { transform: rotate(360deg); }
 }
-
 @media (min-width: 768px) {
   .layout {
     gap: 3rem;
     padding: 3rem 2rem;
   }
 }
-
 @media (min-width: 1024px) {
   .layout {
     grid-template-columns: 0.9fr 1.1fr;
@@ -731,59 +638,47 @@
     padding: 6rem 4rem;
     align-items: start;
   }
-
   .leftPanel {
     position: sticky;
     top: 8rem;
     text-align: left;
   }
-
   .title {
     font-size: 3.5rem;
   }
-
   .lead {
     font-size: 1.1rem;
     max-width: 100%;
   }
-
   .stats {
     grid-template-columns: repeat(3, 1fr);
   }
-
   .formShell {
     padding: 3rem;
   }
-
   .row2 {
     grid-template-columns: 1fr 1fr;
   }
-
   .row3 {
     grid-template-columns: 1.2fr 1fr 0.8fr;
   }
-
   .submitRow {
     grid-template-columns: 1fr auto;
     align-items: flex-end;
   }
-
   .submitButton {
     min-width: 16rem;
   }
 }
-
 @media (min-width: 1280px) {
   .layout {
     gap: 8rem;
     padding: 8rem 6rem;
   }
-
   .title {
     font-size: 4.5rem;
   }
 }
-
 .confirmationOverlay {
   position: fixed;
   inset: 0;
@@ -795,17 +690,15 @@
   justify-content: center;
   padding: 2rem;
 }
-
 .confirmationCard {
   background: #fff;
-  padding: 3rem 2rem;
-  border-radius: 3rem;
+  padding: 2.5rem 1.5rem;
+  border-radius: 2rem;
   text-align: center;
   max-width: 420px;
   width: 100%;
   box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
 }
-
 .confirmationIcon {
   width: 5rem;
   height: 5rem;
@@ -817,12 +710,10 @@
   justify-content: center;
   margin: 0 auto 1.5rem;
 }
-
 .confirmationIcon svg {
   width: 2.5rem;
   height: 2.5rem;
 }
-
 .confirmationTitle {
   font-size: 2rem;
   font-weight: 950;
@@ -830,14 +721,12 @@
   margin: 0 0 1rem;
   letter-spacing: -0.03em;
 }
-
 .confirmationText {
   color: #547063;
   line-height: 1.6;
   margin: 0 0 2rem;
   font-size: 1.1rem;
 }
-
 .homeButton {
   background: #065f46;
   color: #fff;
@@ -853,17 +742,14 @@
   font-size: 0.9rem;
   box-shadow: 0 10px 25px -5px rgba(6, 95, 70, 0.4);
 }
-
 .homeButton:hover {
   background: #064e3b;
   transform: translateY(-3px);
   box-shadow: 0 15px 30px -5px rgba(6, 95, 70, 0.5);
 }
-
 .homeButton:active {
   transform: scale(0.96);
 }
-
 .confirmationActions {
   display: flex;
   justify-content: center;

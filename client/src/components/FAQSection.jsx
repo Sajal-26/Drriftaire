@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
 const faqData = [
   {
     question: "What exactly is a Spraying Drone?",
@@ -27,14 +26,11 @@ const faqData = [
     answer: "Pricing is calculated based on the acreage and the type of application required. We offer competitive per-acre rates that are significantly more efficient than traditional manual spraying. Contact us for a custom quote based on your specific farm size."
   }
 ];
-
 const FAQSection = () => {
   const [activeIndex, setActiveIndex] = useState(null);
-
   const toggleFAQ = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
-
   return (
     <section className="bg-[#f6f4ee] py-24 px-6 lg:px-10">
       <div className="mx-auto max-w-4xl">
@@ -49,7 +45,6 @@ const FAQSection = () => {
           </h2>
           <div className="mt-4 h-1.5 w-24 bg-[#28593b] mx-auto rounded-full" />
         </motion.div>
-
         <div className="space-y-4">
           {faqData.map((faq, index) => (
             <motion.div
@@ -71,7 +66,6 @@ const FAQSection = () => {
                   +
                 </span>
               </button>
-
               <AnimatePresence>
                 {activeIndex === index && (
                   <motion.div
@@ -95,5 +89,4 @@ const FAQSection = () => {
     </section>
   );
 };
-
 export default FAQSection;

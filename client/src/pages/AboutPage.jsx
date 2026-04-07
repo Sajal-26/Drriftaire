@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-
-/* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { 
@@ -10,7 +8,6 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
   },
 };
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -21,11 +18,10 @@ const staggerContainer = {
     },
   },
 };
-
 function AboutPage() {
   return (
     <main className="w-full bg-white text-[#243328]">
-      {/* Story Section */}
+      {}
       <section className="relative py-24 px-6 lg:px-10 bg-[#f6f4ee] overflow-hidden">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -54,7 +50,6 @@ function AboutPage() {
                 the precision of the airborne era.
               </p>
             </motion.div>
-
             <motion.div
               variants={fadeInUp}
               className="relative aspect-[4/5] lg:aspect-square overflow-hidden rounded-[3rem] shadow-2xl"
@@ -65,8 +60,7 @@ function AboutPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Mission & Vision */}
+      {}
       <section className="py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -97,8 +91,7 @@ function AboutPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Partners Section */}
+      {}
       <section className="py-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -115,7 +108,6 @@ function AboutPage() {
               <img src="/rural-pilot.png" alt="Smiling Indian Farmer" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/40 to-transparent" />
             </motion.div>
-
             <motion.div variants={fadeInUp} className="order-1 lg:order-2">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#e2ebd8]">Our Vision</p>
               <h2 className="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl leading-[1.1]">
@@ -140,5 +132,4 @@ function AboutPage() {
     </main>
   );
 }
-
 export default AboutPage;

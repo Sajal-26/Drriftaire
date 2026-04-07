@@ -1,10 +1,8 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
 * {
   box-sizing: border-box;
 }
-
 html,
 body {
   margin: 0;
@@ -15,12 +13,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 h1, h2, h3, h4, h5, h6, p, span, label {
   cursor: default;
 }
-
-/* Ensure links and buttons always show pointer, including their text content */
 a, 
 button, 
 [role="button"],
@@ -28,15 +23,12 @@ a *,
 button * {
   cursor: pointer !important;
 }
-
 input, textarea, select {
   cursor: text;
 }
-
 select {
   cursor: pointer;
 }
-
 .app-shell {
   height: 100vh;
   display: flex;
@@ -45,7 +37,6 @@ select {
   background: #f6f4ee;
   min-height: 100vh;
 }
-
 .app-content {
   flex: 1;
   overflow-y: auto;
@@ -56,47 +47,37 @@ select {
   scrollbar-width: none;
   position: relative;
 }
-
 @media (min-width: 640px) {
   .app-content {
     padding-top: 80px;
   }
 }
-
 @media (min-width: 1024px) {
   .app-content {
     padding-top: 100px;
   }
 }
-
 .app-content::-webkit-scrollbar {
   width: 14px;
 }
-
 .app-content::-webkit-scrollbar-track {
   background: linear-gradient(180deg, #f5f2ea 0%, #ece7dc 100%);
 }
-
 .app-content::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #2f5b34 0%, #4f7b3f 42%, #6f9a4d 72%, #3f6b45 100%);
   border-radius: 999px;
   border: 4px solid #f6f4ee;
 }
-
 .app-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #36663c 0%, #5b8a49 42%, #7eab58 72%, #49784f 100%);
 }
-
 #root {
   width: 100%;
   height: 100%;
 }
-
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

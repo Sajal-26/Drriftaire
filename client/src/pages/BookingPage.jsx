@@ -3,15 +3,11 @@ import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from "fram
 import axios from "axios";
 import styles from "../styles/BookingPage.module.css";
 import API_URL from "../config/api";
-
-// --- Configuration & Constants ---
 const STATE_DISTRICT_DATA_URL = "/data/state-districts.json";
 const PINCODE_LOOKUP_URL = "https://api.postalpincode.in/pincode";
-
 const cropOptions = ["Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Pulses", "Vegetables", "Fruits", "Flowers", "Tea", "Coffee", "Groundnut", "Other"];
 const pesticideOptions = ["Insecticides", "Herbicides", "Fungicides", "Rodenticides", "Bio-pesticides", "Plant Growth Regulators"];
 const weekdayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
 const initialFormData = {
   name: "",
   email: "",
@@ -25,8 +21,6 @@ const initialFormData = {
   pesticideType: "",
   date: "",
 };
-
-// --- Helper Functions ---
 const formatDateValue = (date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -39,7 +33,6 @@ const parseDateValue = (value) => {
 };
 const isSameDay = (a, b) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-
 const createMonthGrid = (monthDate) => {
   const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
   const startDate = new Date(firstDay);
@@ -50,60 +43,47 @@ const createMonthGrid = (monthDate) => {
     return date;
   });
 };
-
 const normalizeLocationName = (value) => value?.trim().toLowerCase() ?? "";
 const sanitizePhone = (value) => value.replace(/^0+/, "");
 const normalizePhoneInput = (value) => {
   const digits = value.replace(/\D/g, "");
-
-  // If more than 10 digits (e.g. including country code or extra zeros), 
-  // take only the last 10 digits as requested.
   if (digits.length > 10) {
     return digits.slice(-10);
   }
-
   return digits;
 };
-
 export default function BookingPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
-  
   const mouseX = useMotionValue("50%");
   const mouseY = useMotionValue("20%");
   const pointerOpacity = useMotionValue(0);
   const backgroundGlow = useMotionTemplate`radial-gradient(420px circle at ${mouseX} ${mouseY}, rgba(79, 123, 63, 0.14), transparent 70%)`;
-
   const [openMenu, setOpenMenu] = useState(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [stateDistrictMap, setStateDistrictMap] = useState({});
   const [stateOptions, setStateOptions] = useState([]);
   const [locationStatus, setLocationStatus] = useState({ states: "idle", pincode: "idle" });
   const [manualLocationOverride, setManualLocationOverride] = useState(false);
-
   const todayDate = useMemo(() => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return now;
   }, []);
-
   const maxDate = useMemo(() => {
     const d = new Date(todayDate);
     d.setMonth(d.getMonth() + 2);
     return d;
   }, [todayDate]);
-
   const [visibleMonth, setVisibleMonth] = useState(
     new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
   );
-
   const calendarDays = useMemo(() => createMonthGrid(visibleMonth), [visibleMonth]);
   const monthLabel = useMemo(
     () => visibleMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" }),
     [visibleMonth]
   );
-
   const sanitizedPhone = sanitizePhone(formData.phone);
   const isFormComplete =
     formData.name.trim() !== "" &&
@@ -116,12 +96,10 @@ export default function BookingPage() {
     Number(formData.acres) > 0 &&
     formData.date.trim() !== "" &&
     sanitizedPhone.length === 10;
-
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
-
   useEffect(() => {
     const handleOutside = (event) => {
       if (!event.target.closest(`.${styles.selectWrap}`) && !event.target.closest(`.${styles.dateWrap}`)) {
@@ -130,8 +108,6 @@ export default function BookingPage() {
       }
     };
     document.addEventListener("pointerdown", handleOutside);
-
-    // Auto-scroll to form if hash is present
     if (window.location.hash === '#form') {
       const formElement = document.getElementById('booking-form-section');
       if (formElement) {
@@ -140,10 +116,8 @@ export default function BookingPage() {
         }, 300);
       }
     }
-
     return () => document.removeEventListener("pointerdown", handleOutside);
   }, []);
-
   useEffect(() => {
     const loadStateDistricts = async () => {
       try {
@@ -172,7 +146,6 @@ export default function BookingPage() {
     };
     loadStateDistricts();
   }, []);
-
   useEffect(() => {
     if (formData.pinCode.length !== 6 || manualLocationOverride) return;
     const lookupTimeout = setTimeout(async () => {
@@ -195,7 +168,6 @@ export default function BookingPage() {
     }, 400);
     return () => clearTimeout(lookupTimeout);
   }, [formData.pinCode, manualLocationOverride, stateDistrictMap, stateOptions]);
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     let nextValue = value;
@@ -204,11 +176,9 @@ export default function BookingPage() {
     if (name === "pinCode") nextValue = value.replace(/\D/g, "").slice(0, 6);
     setFormData((prev) => ({ ...prev, [name]: nextValue, ...(name === "state" ? { district: "" } : {}) }));
   };
-
   const handlePhoneBlur = () => {
     setFormData((prev) => ({ ...prev, phone: sanitizePhone(prev.phone) }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const normalizedPhone = sanitizePhone(formData.phone);
@@ -225,44 +195,35 @@ export default function BookingPage() {
       pesticideType: formData.pesticideType.trim(),
       date: formData.date.trim(),
     };
-
     if (!payload.name || !payload.phone || !payload.state || !payload.district || !payload.pinCode || !payload.cropType || !payload.pesticideType || !payload.date) {
       showToast("All booking fields are required.", "error");
       return;
     }
-
     if (payload.phone.length !== 10) {
       showToast("Enter a valid 10-digit phone number.", "error");
       return;
     }
-
     if (!Number.isFinite(payload.acres) || payload.acres <= 0) {
       showToast("Enter a valid farm size in acres.", "error");
       return;
     }
-
     setLoading(true);
     try {
       await axios.post(`${API_URL}/bookings/book`, payload);
       setFormData(initialFormData);
       setOpenMenu(null);
       setIsDatePickerOpen(false);
-      setToast({ message: "Booking submitted successfully!", type: "success" });
-
-      // Show confirmation overlay
       const overlay = document.getElementById("confirmation-overlay");
       if (overlay) overlay.style.display = "flex";
       setTimeout(() => {
         if (overlay) overlay.style.display = "none";
       }, 5000);
-
     } catch (error) {
       showToast(error.response?.data?.message || "Booking failed", "error");
     } finally {
       setLoading(false);
     }
   };
-
   const renderSelect = (name, placeholder, options, disabled = false, openUp = false) => {
     const isOpen = openMenu === name;
     return (
@@ -302,7 +263,6 @@ export default function BookingPage() {
       </div>
     );
   };
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -326,7 +286,6 @@ export default function BookingPage() {
           }}
         />
       </div>
-
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -339,7 +298,6 @@ export default function BookingPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <main className={styles.layout}>
         <motion.section
           initial={{ opacity: 0, x: -30 }}
@@ -364,7 +322,6 @@ export default function BookingPage() {
             </motion.h1>
             <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.lead}>High-precision spraying and mapping at your fingertips. Fill out the form to secure your slot.</motion.p>
           </motion.div>
-
           <motion.div
             initial="hidden"
             animate="visible"
@@ -384,7 +341,6 @@ export default function BookingPage() {
               </motion.div>
             ))}
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -402,7 +358,6 @@ export default function BookingPage() {
             </ul>
           </motion.div>
         </motion.section>
-
         <motion.section
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -415,7 +370,6 @@ export default function BookingPage() {
               <h2 className={styles.formTitle}>Booking Request</h2>
               <p className={styles.formHint}>Tell us about your farm to get started.</p>
             </div>
-
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.row2}>
                 <label className={styles.field}>
@@ -436,14 +390,12 @@ export default function BookingPage() {
                   </div>
                 </label>
               </div>
-
               <div className={styles.row1}>
                 <label className={styles.field}>
                   <span className={styles.label}>Email Address <span className={styles.labelOptional}>(Optional)</span></span>
                   <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" />
                 </label>
               </div>
-
               <div className={styles.row2}>
                 <label className={styles.field}>
                   <span className={styles.label}>Crop Type</span>
@@ -484,7 +436,6 @@ export default function BookingPage() {
                   <input className={styles.input} name="pinCode" value={formData.pinCode} onChange={handleChange} placeholder="6 digits" required />
                 </label>
               </div>
-
               <div className={styles.row1}>
                 <label className={styles.field}>
                   <span className={styles.label}>Farm Size (Acres)</span>
@@ -506,7 +457,6 @@ export default function BookingPage() {
                   />
                 </label>
               </div>
-
               <div className={styles.submitRow}>
                 <label className={`${styles.field} ${styles.dateWrap}`}>
                   <span className={styles.label}>Preferred Date</span>
@@ -558,7 +508,6 @@ export default function BookingPage() {
                     </div>
                   )}
                 </label>
-
                 <motion.button
                   whileHover={{ scale: 1.01, translateY: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -581,7 +530,6 @@ export default function BookingPage() {
           </div>
         </motion.section>
       </main>
-
       <AnimatePresence>
         <div id="confirmation-overlay" className={styles.confirmationOverlay} style={{ display: 'none' }}>
           <motion.div

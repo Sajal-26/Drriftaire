@@ -1,4 +1,4 @@
-/* ─── Hero Section ─── */
+
 .hero {
   position: relative;
   min-height: 88vh;
@@ -7,7 +7,6 @@
   justify-content: center;
   overflow: hidden;
 }
-
 .heroBg {
   position: absolute;
   inset: 0;
@@ -18,7 +17,6 @@
   filter: brightness(0.5) saturate(0.9);
   will-change: transform;
 }
-
 .heroOverlay {
   position: absolute;
   inset: 0;
@@ -31,7 +29,6 @@
   );
   pointer-events: none;
 }
-
 .heroContent {
   position: relative;
   z-index: 2;
@@ -39,7 +36,6 @@
   max-width: 780px;
   padding: 2rem 1.5rem 3rem;
 }
-
 .heroTag {
   display: inline-block;
   position: relative;
@@ -65,8 +61,6 @@
     color 0.35s ease,
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
-/* Shimmer sweep pseudo-element */
 .heroTag::after {
   content: "";
   position: absolute;
@@ -86,8 +80,6 @@
   pointer-events: none;
   border-radius: inherit;
 }
-
-/* ── iOS 26 Liquid Glass Hover ── */
 .heroTag:hover {
   color: rgba(255, 255, 255, 0.95);
   background:
@@ -109,11 +101,9 @@
     0 0 20px -4px rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
 }
-
 .heroTag:hover::after {
   animation: glassShimmer 0.8s ease forwards;
 }
-
 @keyframes glassShimmer {
   0% {
     left: -100%;
@@ -122,7 +112,6 @@
     left: 100%;
   }
 }
-
 .heroTitle {
   margin-top: 1.6rem;
   font-size: clamp(2rem, 5vw, 3.6rem);
@@ -131,7 +120,6 @@
   color: #fff;
   letter-spacing: -0.025em;
 }
-
 .heroSubtitle {
   margin-top: 1.2rem;
   font-size: 1.05rem;
@@ -141,19 +129,15 @@
   margin-left: auto;
   margin-right: auto;
 }
-
-/* ─── Services Grid ─── */
 .servicesSection {
   background: #f6f4ee;
   padding: 4.5rem 1.5rem 3.5rem;
   position: relative;
 }
-
 .servicesInner {
   max-width: 1100px;
   margin: 0 auto;
 }
-
 .servicesHeader {
   display: grid;
   grid-template-columns: 1fr;
@@ -161,33 +145,27 @@
   align-items: center;
   margin-bottom: 2.5rem;
 }
-
 @media (min-width: 768px) {
   .servicesHeader {
     grid-template-columns: 1fr 320px;
     gap: 3rem;
   }
 }
-
-
 .servicesHeaderImage {
   border-radius: 1.8rem;
   overflow: hidden;
   aspect-ratio: 4 / 3;
   box-shadow: 0 20px 50px -16px rgba(40, 89, 59, 0.18);
 }
-
 .servicesHeaderImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 .servicesHeaderImage:hover img {
   transform: scale(1.04);
 }
-
 .sectionLabel {
   font-size: 0.68rem;
   font-weight: 600;
@@ -195,7 +173,6 @@
   text-transform: uppercase;
   color: #28593b;
 }
-
 .sectionTitle {
   margin-top: 0.6rem;
   font-size: clamp(1.7rem, 3.2vw, 2.5rem);
@@ -204,7 +181,6 @@
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
-
 .sectionSubtext {
   margin-top: 0.8rem;
   font-size: 0.95rem;
@@ -212,27 +188,23 @@
   color: #6b7d6f;
   max-width: 500px;
 }
-
 .servicesGrid {
   margin-top: 2.5rem;
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
 }
-
 @media (min-width: 640px) {
   .servicesGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
 @media (min-width: 1024px) {
   .servicesGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 0.9rem;
   }
 }
-
 .serviceCard {
   position: relative;
   padding: 1.5rem 1.4rem;
@@ -242,7 +214,6 @@
   transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
 }
-
 .serviceCard::before {
   content: "";
   position: absolute;
@@ -254,11 +225,9 @@
   opacity: 0;
   transition: opacity 0.35s ease;
 }
-
 .serviceCard:hover::before {
   opacity: 1;
 }
-
 .serviceIcon {
   width: 40px;
   height: 40px;
@@ -271,28 +240,23 @@
   color: #28593b;
   margin-bottom: 1rem;
 }
-
 .serviceCardTitle {
   font-size: 1.05rem;
   font-weight: 700;
   color: #1d2b21;
   letter-spacing: -0.01em;
 }
-
 .serviceCardDesc {
   margin-top: 0.45rem;
   font-size: 0.84rem;
   line-height: 1.6;
   color: #7a8d7f;
 }
-
-/* ─── Process / How It Works ─── */
 .processSection {
   position: relative;
   padding: 5rem 1.5rem;
   overflow: hidden;
 }
-
 .processBg {
   position: absolute;
   inset: 0;
@@ -302,7 +266,6 @@
   z-index: 0;
   filter: brightness(0.65) saturate(0.85);
 }
-
 .processOverlay {
   position: absolute;
   inset: 0;
@@ -314,19 +277,16 @@
   );
   pointer-events: none;
 }
-
 .processInner {
   position: relative;
   z-index: 2;
   max-width: 1100px;
   margin: 0 auto;
 }
-
 .processHeader {
   text-align: center;
   margin-bottom: 3rem;
 }
-
 .processLabel {
   font-size: 0.68rem;
   font-weight: 600;
@@ -334,7 +294,6 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
 }
-
 .processTitle {
   margin-top: 0.6rem;
   font-size: clamp(1.7rem, 3.2vw, 2.5rem);
@@ -342,20 +301,17 @@
   color: #fff;
   letter-spacing: -0.02em;
 }
-
 .processSteps {
   display: grid;
   gap: 1rem;
   grid-template-columns: 1fr;
 }
-
 @media (min-width: 768px) {
   .processSteps {
     grid-template-columns: repeat(4, 1fr);
     gap: 0.9rem;
   }
 }
-
 .processStep {
   padding: 1.5rem 1.3rem;
   border-radius: 1rem;
@@ -364,39 +320,32 @@
   backdrop-filter: blur(14px);
   transition: all 0.4s ease;
 }
-
 .processStep:hover {
   background: rgba(255, 255, 255, 0.09);
   border-color: rgba(255, 255, 255, 0.14);
 }
-
 .stepNumber {
   font-size: 0.72rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.3);
   letter-spacing: 0.15em;
 }
-
 .stepTitle {
   margin-top: 0.6rem;
   font-size: 1.05rem;
   font-weight: 700;
   color: #fff;
 }
-
 .stepDesc {
   margin-top: 0.4rem;
   font-size: 0.82rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.5);
 }
-
-/* ─── Feature Highlight (image + text split) ─── */
 .featureSection {
   background: #f6f4ee;
   padding: 5rem 1.5rem;
 }
-
 .featureInner {
   max-width: 1100px;
   margin: 0 auto;
@@ -405,43 +354,36 @@
   align-items: center;
   grid-template-columns: 1fr;
 }
-
 @media (min-width: 768px) {
   .featureInner {
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
   }
 }
-
 .featureImage {
   border-radius: 1.5rem;
   overflow: hidden;
   position: relative;
   aspect-ratio: 4 / 3;
 }
-
 .featureImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 .featureImage:hover img {
   transform: scale(1.04);
 }
-
 .featureImageOverlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(40, 89, 59, 0.08), transparent);
   pointer-events: none;
 }
-
 .featureText {
   padding: 0.5rem 0;
 }
-
 .featureLabel {
   font-size: 0.68rem;
   font-weight: 600;
@@ -449,7 +391,6 @@
   text-transform: uppercase;
   color: #28593b;
 }
-
 .featureTitle {
   margin-top: 0.6rem;
   font-size: clamp(1.5rem, 2.8vw, 2.2rem);
@@ -458,7 +399,6 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
-
 .featureDesc {
   margin-top: 0.8rem;
   font-size: 0.95rem;
@@ -466,58 +406,48 @@
   color: #6b7d6f;
   max-width: 440px;
 }
-
 .featureStats {
   margin-top: 1.8rem;
   display: flex;
   gap: 2.2rem;
 }
-
 .stat {
   display: flex;
   flex-direction: column;
 }
-
 .statValue {
   font-size: 1.8rem;
   font-weight: 800;
   color: #28593b;
   letter-spacing: -0.02em;
 }
-
 .statLabel {
   font-size: 0.74rem;
   color: #7a8d7f;
   letter-spacing: 0.04em;
   margin-top: 0.15rem;
 }
-
-/* ─── CTA Section ─── */
 .ctaSection {
   background: #18241c;
   padding: 4.5rem 1.5rem;
   text-align: center;
 }
-
 .ctaInner {
   max-width: 580px;
   margin: 0 auto;
 }
-
 .ctaTitle {
   font-size: clamp(1.5rem, 2.8vw, 2.2rem);
   font-weight: 800;
   color: #fff;
   letter-spacing: -0.02em;
 }
-
 .ctaSubtext {
   margin-top: 0.8rem;
   font-size: 0.95rem;
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.5);
 }
-
 .ctaButton {
   display: inline-block;
   margin-top: 1.8rem;
@@ -532,13 +462,10 @@
   background: linear-gradient(135deg, #e2ebd8, #f6f4ee);
   transition: all 0.35s ease;
 }
-
 .ctaButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px -12px rgba(40, 89, 59, 0.4);
 }
-
-/* ─── Divider ─── */
 .sectionDivider {
   width: 40px;
   height: 1px;

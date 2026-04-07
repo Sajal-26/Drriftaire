@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import styles from "../styles/Footer.module.css";
-
 const footerGroups = [
   {
     title: "Navigate",
@@ -21,14 +20,11 @@ const footerGroups = [
     ],
   },
 ];
-
 function Footer() {
   const location = useLocation();
-
   if (location.pathname === "/admin") {
     return null;
   }
-
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -45,7 +41,6 @@ function Footer() {
             <a href="tel:+919831122651" className={styles.metaLink}>+91 98311 22651</a>
           </div>
         </div>
-
         <div className={styles.linkColumns}>
           {footerGroups.map((group) => (
             <section key={group.title} className={styles.group}>
@@ -63,7 +58,6 @@ function Footer() {
           ))}
         </div>
       </div>
-
       <div className={styles.bottomBar}>
         <p className={styles.copyright}>
           Copyright {new Date().getFullYear()} Drriftaire. Built for modern agricultural operations.
@@ -72,5 +66,4 @@ function Footer() {
     </footer>
   );
 }
-
 export default Footer;

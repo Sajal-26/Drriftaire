@@ -15,10 +15,8 @@ import PageWrapper from "./components/PageWrapper";
 import BackToTop from "./components/BackToTop";
 import BookNowFAB from "./components/BookNowFAB";
 import ScrollToTop from "./components/ScrollToTop";
-
 function App() {
   const location = useLocation();
-
   return (
     <div className="app-shell">
       <Navbar />
@@ -44,5 +42,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

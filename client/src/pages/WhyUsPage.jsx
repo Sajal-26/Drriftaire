@@ -1,6 +1,4 @@
 import { motion } from "framer-motion";
-
-/* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { 
@@ -9,7 +7,6 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
   },
 };
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -20,7 +17,6 @@ const staggerContainer = {
     },
   },
 };
-
 const float = {
   animate: {
     y: [0, -15, 0],
@@ -31,13 +27,11 @@ const float = {
     },
   },
 };
-
 const stats = [
   { value: "90%", label: "Water Savings" },
   { value: "30%", label: "Chemical Reduction" },
   { value: "10x", label: "Faster Coverage" },
 ];
-
 const advantages = [
   { 
     title: "Industrial Precision", 
@@ -55,11 +49,10 @@ const advantages = [
     icon: "⚡"
   }
 ];
-
 function WhyUsPage() {
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328]">
-      {/* Redesigned Hero Section */}
+      {}
       <section className="relative overflow-hidden pt-20 pb-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -68,7 +61,7 @@ function WhyUsPage() {
             variants={staggerContainer}
             className="grid gap-20 lg:grid-cols-[1fr_1.1fr] items-center"
           >
-            {/* Left Column: Text Content */}
+            {}
             <div className="text-left">
               <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]">
                 Why Choose Us
@@ -92,10 +85,9 @@ function WhyUsPage() {
                 </div>
               </motion.div>
             </div>
-
-            {/* Right Column: Visual Collage */}
+            {}
             <div className="relative">
-              {/* Main Illustration */}
+              {}
               <motion.div
                 variants={fadeInUp}
                 className="relative z-10 aspect-square overflow-hidden rounded-[3rem] shadow-2xl border border-white/20"
@@ -103,8 +95,7 @@ function WhyUsPage() {
                 <img src="/tea-plantation-india.png" alt="Indian Tea Plantation" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1a3a24]/20 to-transparent" />
               </motion.div>
-
-              {/* Cinematic Detail Image (Floating) - Desktop Only */}
+              {}
               <motion.div
                 variants={float}
                 animate="animate"
@@ -112,8 +103,7 @@ function WhyUsPage() {
               >
                 <img src="/drone-tech-detail.png" alt="Drone Sensor" className="h-full w-full object-cover" />
               </motion.div>
-
-              {/* Insight Card 1 (Floating) - Desktop Only */}
+              {}
               <motion.div
                 variants={float}
                 animate="animate"
@@ -128,8 +118,7 @@ function WhyUsPage() {
                   </div>
                 </div>
               </motion.div>
-
-              {/* Insight Card 2 (Bottom Right) - Desktop Only */}
+              {}
               <motion.div
                 variants={fadeInUp}
                 className="absolute right-12 -bottom-6 z-20 rounded-[1.5rem] bg-white p-5 shadow-xl border border-gray-100 hidden lg:block"
@@ -143,8 +132,7 @@ function WhyUsPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Stats Section */}
+      {}
       <section className="bg-[#18241c] py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -163,8 +151,7 @@ function WhyUsPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Advantages Grid */}
+      {}
       <section className="py-32 px-6 lg:px-10 bg-white">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -192,5 +179,4 @@ function WhyUsPage() {
     </main>
   );
 }
-
 export default WhyUsPage;

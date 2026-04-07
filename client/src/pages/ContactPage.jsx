@@ -1,6 +1,4 @@
 import { motion } from "framer-motion";
-
-/* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -9,7 +7,6 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
   },
 };
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -20,15 +17,13 @@ const staggerContainer = {
     },
   },
 };
-
 function ContactPage() {
   return (
     <main className="relative w-full min-h-[calc(100vh-96px)] bg-[#f6f4ee] text-[#243328] overflow-hidden cursor-default">
-      {/* Background Accent */}
+      {}
       <div className="absolute inset-x-0 top-0 h-[600px] pointer-events-none opacity-40">
         <img src="/contact-accent.png" alt="" className="w-full h-full object-cover blur-3xl" />
       </div>
-
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 lg:px-10">
         <motion.div
           initial="hidden"
@@ -36,7 +31,7 @@ function ContactPage() {
           variants={staggerContainer}
           className="grid gap-20 lg:grid-cols-[1fr_1.2fr]"
         >
-          {/* Left: Contact Info */}
+          {}
           <motion.div variants={fadeInUp}>
             <p className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.3em] text-[#28593b]">Get in Touch</p>
             <h1 className="mt-4 sm:mt-6 text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-6xl leading-[1.1]">
@@ -47,7 +42,6 @@ function ContactPage() {
               entrepreneur interested in our drone pilot network, we're ready
               to discuss how we can grow together.
             </p>
-
             <div className="mt-12 sm:mt-16 space-y-8 sm:space-y-12">
               <div className="flex gap-4 sm:gap-6">
                 <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#28593b]/10 text-lg sm:text-xl">✉️</div>
@@ -69,26 +63,22 @@ function ContactPage() {
               </div>
             </div>
           </motion.div>
-
-          {/* Right: Contact Form */}
+          {}
           <motion.div
             variants={fadeInUp}
             className="relative group rounded-[2.5rem] sm:rounded-[4rem] bg-gradient-to-br from-white to-[#fcfdfa] p-6 sm:p-12 shadow-[0_45px_100px_-25px_rgba(40,89,59,0.15),0_10px_20px_-5px_rgba(40,89,59,0.05)] border border-[#28593b]/5 overflow-hidden"
           >
-            {/* Decorative Top Bar */}
+            {}
             <div className="absolute top-0 inset-x-0 h-2 bg-[#28593b]" />
-            
-            {/* Subtle Brand Watermark */}
+            {}
             <div className="absolute -bottom-10 -right-10 text-[12rem] font-black text-[#18241c]/[0.02] pointer-events-none select-none italic">
               D
             </div>
-
             <div className="relative z-10">
               <div className="mb-10">
                 <h3 className="text-2xl font-bold text-[#18241c]">Send us a message</h3>
                 <p className="mt-2 text-sm text-[#55665a]">We typically respond within 24 hours.</p>
               </div>
-
               <form className="grid gap-8">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div className="space-y-2 group/input">
@@ -110,7 +100,6 @@ function ContactPage() {
                     />
                   </div>
                 </div>
-                
                 <div className="space-y-2 group/input">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Phone Number</label>
                   <div className="relative">
@@ -126,7 +115,6 @@ function ContactPage() {
                     />
                   </div>
                 </div>
-                
                 <div className="space-y-2 group/input">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Message</label>
                   <textarea
@@ -136,7 +124,6 @@ function ContactPage() {
                     className="w-full rounded-3xl border border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300 resize-none"
                   ></textarea>
                 </div>
-                
                 <motion.button
                   whileHover={{ 
                     scale: 1.02, 
@@ -156,5 +143,4 @@ function ContactPage() {
     </main>
   );
 }
-
 export default ContactPage;

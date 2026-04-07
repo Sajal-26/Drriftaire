@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import FAQSection from "../components/FAQSection";
-
 const highlights = [
   {
     title: "Precision spraying",
@@ -16,8 +15,6 @@ const highlights = [
     description: "Built for real farm workflows, not generic logistics dashboards.",
   },
 ];
-
-/* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { 
@@ -26,7 +23,6 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
   },
 };
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -37,7 +33,6 @@ const staggerContainer = {
     },
   },
 };
-
 const revealRight = {
   hidden: { opacity: 0, x: 40 },
   visible: { 
@@ -46,7 +41,6 @@ const revealRight = {
     transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } 
   },
 };
-
 const revealLeft = {
   hidden: { opacity: 0, x: -40 },
   visible: { 
@@ -55,7 +49,6 @@ const revealLeft = {
     transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } 
   },
 };
-
 const float = {
   animate: {
     y: [0, -12, 0],
@@ -66,11 +59,10 @@ const float = {
     },
   },
 };
-
 function HomePage() {
   return (
     <main className="w-full text-[#243328]">
-      {/* Hero with video background */}
+      {}
       <div className="relative min-h-[680px] lg:min-h-[calc(100vh-96px)] overflow-hidden bg-[#f6f4ee]">
         <video
           autoPlay
@@ -82,10 +74,9 @@ function HomePage() {
         >
           <source src="/0404.mp4" type="video/mp4" />
         </video>
-        {/* Cinematic Deep Overlay for Contrast */}
+        {}
         <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#18241c]/80 via-[#18241c]/40 to-transparent pointer-events-none" />
         <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-[#18241c]/10 to-[#f6f4ee] pointer-events-none" />
-        
         <section className="relative z-10 mx-auto grid min-h-[680px] lg:min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
           <motion.div 
             initial="hidden"
@@ -112,7 +103,6 @@ function HomePage() {
               Drriftaire helps farms book drone operations with less friction, better
               planning, and a cleaner digital workflow from inquiry to completion.
             </motion.p>
-
             <motion.div 
               variants={fadeInUp}
               className="mt-12 flex flex-col gap-4 items-center sm:flex-row sm:justify-start"
@@ -135,7 +125,6 @@ function HomePage() {
               </motion.div>
             </motion.div>
           </motion.div>
-
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -170,11 +159,9 @@ function HomePage() {
           </motion.div>
         </section>
       </div>
-
-      {/* What is Drriftaire Section */}
+      {}
       <section className="relative z-10 bg-[#f6f4ee] pt-2 pb-24 lg:pt-28 px-6 lg:px-10 -mt-0.5 outline-none border-none">
         <div className="mx-auto max-w-7xl grid gap-12 items-center lg:grid-cols-[380px_1fr]">
-          
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -200,7 +187,6 @@ function HomePage() {
               </div>
             </motion.div>
           </motion.div>
-
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -221,8 +207,7 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Technology in Action: Hexadrone Section */}
+      {}
       <section className="relative overflow-hidden bg-[#18241c] py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 items-center">
@@ -245,10 +230,9 @@ function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/60 to-transparent" />
               </motion.div>
-              {/* Decorative accent */}
+              {}
               <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-[#28593b]/20 blur-[80px] pointer-events-none" />
             </motion.div>
-
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -267,7 +251,6 @@ function HomePage() {
                 ensure that every operation is safe, repeatable, and optimized for 
                 your specific crop varieties.
               </motion.p>
-              
               <motion.div variants={staggerContainer} className="mt-8 sm:mt-12 grid grid-cols-2 gap-6 sm:gap-10 border-t border-white/10 pt-8 sm:pt-10">
                 <motion.div variants={fadeInUp}>
                   <p className="text-3xl sm:text-4xl font-extrabold text-white">10 Litre</p>
@@ -282,8 +265,7 @@ function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Empowering Farmers Section */}
+      {}
       <section className="bg-white py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -298,7 +280,6 @@ function HomePage() {
               Results you can trust.
             </motion.h2>
           </motion.div>
-
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -335,7 +316,6 @@ function HomePage() {
                 </div>
                 <h3 className="text-2xl font-bold text-[#18241c]">{card.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-[#55665a]">{card.desc}</p>
-                
                 <div className="mt-8 flex items-center justify-between">
                   <p className={`text-[10px] font-black uppercase tracking-[0.3em] ${card.color}`}>— {card.label}</p>
                   <Link 
@@ -347,7 +327,6 @@ function HomePage() {
                 </div>
               </motion.div>
             ))}
-
             <motion.div
               variants={fadeInUp}
               whileHover={{ y: -8 }}
@@ -377,10 +356,8 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
-
       <FAQSection />
-
-      {/* Future of Farming: Final CTA Expansion */}
+      {}
       <section className="relative overflow-hidden bg-[#f6f4ee] py-32 px-6 lg:px-10">
         <div className="absolute top-0 right-0 -mr-24 -mt-24 h-[500px] w-[500px] rounded-full bg-[#28593b]/5 blur-3xl" />
         <div className="mx-auto max-w-4xl text-center">
@@ -421,5 +398,4 @@ function HomePage() {
     </main>
   );
 }
-
 export default HomePage;

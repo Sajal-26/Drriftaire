@@ -1,7 +1,5 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-
-/* ─── Animation Variants ─── */
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { 
@@ -10,7 +8,6 @@ const fadeInUp = {
     transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
   }
 };
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -21,14 +18,12 @@ const staggerContainer = {
     }
   }
 };
-
 const stats = [
   { value: "1,000+", label: "Guaranteed Acres/Yr", icon: "🌾" },
   { value: "24/7", label: "Operational Support", icon: "🛠️" },
   { value: "0", label: "Upfront Friction", icon: "⚡" },
   { value: "100%", label: "Expert Guidance", icon: "🤝" }
 ];
-
 const benefits = [
   {
     title: "Guaranteed Income",
@@ -51,26 +46,22 @@ const benefits = [
     icon: "🎓"
   }
 ];
-
 const steps = [
   { number: "01", title: "Join the Network", desc: "Submit your interest and pass our initial partner evaluation." },
   { number: "02", title: "Onboarding & Training", desc: "Complete our specialized drone flight and maintenance program." },
   { number: "03", title: "Connect with Farmers", desc: "Start receiving spraying requests through our managed dispatch network." },
   { number: "04", title: "Scale Your Business", desc: "Focus on flying while we handle the logistics, payments, and support." }
 ];
-
 function PartnerPage() {
   const [formStatus, setFormStatus] = useState("idle");
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormStatus("submitting");
     setTimeout(() => setFormStatus("success"), 1500);
   };
-
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
-      {/* ─── Hero Section ─── */}
+      {}
       <section className="relative pt-24 pb-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <img 
@@ -80,7 +71,6 @@ function PartnerPage() {
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#18241c]/40 via-[#18241c] to-[#18241c] pointer-events-none" />
-        
         <div className="relative z-10 mx-auto max-w-7xl text-center">
           <motion.p 
             initial={{ opacity: 0, y: 10 }}
@@ -121,8 +111,7 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ─── Stats Bar ─── */}
+      {}
       <section className="relative z-20 -mt-12 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div 
@@ -142,8 +131,7 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ─── Why Partner Section ─── */}
+      {}
       <section className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -162,7 +150,6 @@ function PartnerPage() {
                 From government regulations to finding consistent work, 
                 we've built the infrastructure so you can focus on scale.
               </motion.p>
-              
               <motion.div variants={staggerContainer} className="mt-12 grid gap-8">
                 {benefits.map((b) => (
                   <motion.div key={b.title} variants={fadeInUp} className="flex gap-6">
@@ -177,7 +164,6 @@ function PartnerPage() {
                 ))}
               </motion.div>
             </motion.div>
-
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -195,15 +181,13 @@ function PartnerPage() {
           </div>
         </div>
       </section>
-
-      {/* ─── Process Steps Section ─── */}
+      {}
       <section className="bg-[#18241c] py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-20">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400">The Journey</p>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">Join in 4 steps.</h2>
           </div>
-          
           <motion.div 
             initial="hidden"
             whileInView="visible"
@@ -221,8 +205,7 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ─── Partner Form Section ─── */}
+      {}
       <section id="apply" className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-[1fr_1.2fr] gap-20">
           <div>
@@ -234,7 +217,6 @@ function PartnerPage() {
               Complete the form below and our partnership team will reach 
               out within 48 hours for an initial screening.
             </p>
-            
             <div className="mt-12 space-y-8">
               <div className="flex items-center gap-6">
                 <div className="h-14 w-14 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-emerald-900/20">📞</div>
@@ -252,7 +234,6 @@ function PartnerPage() {
               </div>
             </div>
           </div>
-
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -315,5 +296,4 @@ function PartnerPage() {
     </main>
   );
 }
-
 export default PartnerPage;

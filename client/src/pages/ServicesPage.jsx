@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import styles from "../styles/ServicesPage.module.css";
-
 const services = [
   {
     icon: "🌾",
@@ -41,7 +40,6 @@ const services = [
       "We train local operators so drone services reach every taluk, not just cities.",
   },
 ];
-
 const processSteps = [
   {
     number: "01",
@@ -64,8 +62,6 @@ const processSteps = [
     description: "Spray log with coverage maps, volume & photo proof delivered.",
   },
 ];
-
-/* Framer Motion helpers */
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
@@ -82,16 +78,12 @@ const stagger = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
-
 function ServicesPage() {
   const heroRef = useRef(null);
   const containerRef = useRef(null);
-
-  // grab .app-content scroll container for parallax
   React.useEffect(() => {
     containerRef.current = document.querySelector(".app-content");
   }, []);
-
   const { scrollYProgress } = useScroll({
     target: heroRef,
     container: containerRef,
@@ -99,10 +91,9 @@ function ServicesPage() {
   });
   const heroScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.15]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
   return (
     <main className="w-full">
-      {/* ─── Hero ─── */}
+      {}
       <section className={styles.hero} ref={heroRef}>
         <motion.img
           src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80&auto=format"
@@ -112,7 +103,6 @@ function ServicesPage() {
           style={{ scale: heroScale }}
         />
         <div className={styles.heroOverlay} />
-
         <motion.div
           className={styles.heroContent}
           style={{ opacity: heroOpacity }}
@@ -147,11 +137,10 @@ function ServicesPage() {
           </motion.p>
         </motion.div>
       </section>
-
-      {/* ─── Services Grid ─── */}
+      {}
       <section className={styles.servicesSection}>
         <div className={styles.servicesInner}>
-          {/* Header: text left + image right */}
+          {}
           <div className={styles.servicesHeader}>
             <motion.div
               className={styles.servicesHeaderText}
@@ -174,7 +163,6 @@ function ServicesPage() {
                 fragmented holdings, diverse crops, and rural logistics.
               </motion.p>
             </motion.div>
-
             <motion.div
               className={styles.servicesHeaderImage}
               initial={{ opacity: 0, x: 30, scale: 0.96 }}
@@ -189,8 +177,7 @@ function ServicesPage() {
               />
             </motion.div>
           </div>
-
-          {/* Cards grid */}
+          {}
           <motion.div
             className={styles.servicesGrid}
             initial="hidden"
@@ -233,8 +220,7 @@ function ServicesPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ─── How It Works ─── */}
+      {}
       <section className={styles.processSection}>
         <img
           src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80&auto=format"
@@ -243,7 +229,6 @@ function ServicesPage() {
           loading="lazy"
         />
         <div className={styles.processOverlay} />
-
         <motion.div
           className={styles.processInner}
           initial="hidden"
@@ -259,7 +244,6 @@ function ServicesPage() {
               Four steps from booking to field.
             </motion.h2>
           </div>
-
           <motion.div
             className={styles.processSteps}
             variants={{
@@ -296,8 +280,7 @@ function ServicesPage() {
           </motion.div>
         </motion.div>
       </section>
-
-      {/* ─── Feature Highlight ─── */}
+      {}
       <section className={styles.featureSection}>
         <div className={styles.featureInner}>
           <motion.div
@@ -314,7 +297,6 @@ function ServicesPage() {
             />
             <div className={styles.featureImageOverlay} />
           </motion.div>
-
           <motion.div
             className={styles.featureText}
             initial="hidden"
@@ -372,8 +354,7 @@ function ServicesPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ─── CTA ─── */}
+      {}
       <section className={styles.ctaSection}>
         <motion.div
           className={styles.ctaInner}
@@ -410,5 +391,4 @@ function ServicesPage() {
     </main>
   );
 }
-
 export default ServicesPage;

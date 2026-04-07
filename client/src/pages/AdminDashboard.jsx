@@ -25,9 +25,7 @@ import {
   FilterX,
 } from 'lucide-react';
 import BookingRow from '../components/admin/BookingRow';
-
 const ADMIN_EMAIL = 'drriftaire@gmail.com';
-
 const formatDateTime = (value) => {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value || '-';
@@ -40,14 +38,12 @@ const formatDateTime = (value) => {
   hours = hours % 12 || 12;
   return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
 };
-
 const formatDateOnly = (value) => {
   if (!value) return '-';
   let d;
   if (value instanceof Date) {
     d = value;
   } else {
-    // Handles both YYYY-MM-DD and ISO strings
     const str = String(value);
     d = new Date(str.includes('T') ? str : `${str}T00:00:00`);
   }
@@ -57,7 +53,6 @@ const formatDateOnly = (value) => {
   const year = d.getFullYear();
   return `${day}-${month}-${year}`;
 };
-
 export default function AdminDashboard() {
   const {
     adminToken,
@@ -74,7 +69,6 @@ export default function AdminDashboard() {
     error,
     clearError,
   } = useAdminStore();
-
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [pendingRemarks, setPendingRemarks] = useState({});
@@ -82,40 +76,33 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: null, end: null });
-  const [dateFilterType, setDateFilterType] = useState('Scheduling'); // 'Scheduling' or 'Booking'
+  const [dateFilterType, setDateFilterType] = useState('Scheduling');
   const calendarRef = useRef(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, status: null });
-
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   useEffect(() => {
     if (error) {
       toast.error(error);
       clearError();
     }
   }, [error, clearError]);
-
   useEffect(() => {
     checkHealth();
   }, [checkHealth]);
-
   useEffect(() => {
     if (adminToken) {
       fetchBookings();
       fetchAnalytics();
     }
   }, [adminToken, fetchBookings, fetchAnalytics]);
-
   const sortedBookings = useMemo(() => {
     let list = [...bookings];
-
-
     if (statusFilter !== 'All') {
       list = list.filter((b) => (b.Status || 'Pending') === statusFilter);
     }
-
-
     if (searchTerm.trim()) {
       const q = searchTerm.toLowerCase();
       list = list.filter((b) => {
@@ -126,55 +113,51 @@ export default function AdminDashboard() {
           (b.State || '').toLowerCase().includes(q) ||
           (b.District || '').toLowerCase().includes(q) ||
           (b['Crop Type'] || '').toLowerCase().includes(q) ||
+          (b['Pesticide Type'] || '').toLowerCase().includes(q) ||
           (b.Remarks || '').toLowerCase().includes(q) ||
           (b['Booking ID'] || '').toLowerCase().includes(q)
         );
       });
     }
-
-
     if (dateRange.start) {
       const start = new Date(dateRange.start);
       start.setHours(0, 0, 0, 0);
       const end = dateRange.end ? new Date(dateRange.end) : new Date(start);
       end.setHours(23, 59, 59, 999);
-
       list = list.filter((b) => {
         let target;
         if (dateFilterType === 'Scheduling') {
-          // booking.Date is YYYY-MM-DD
           target = new Date(`${b.Date}T00:00:00`);
         } else {
-          // booking.Timestamp is ISO
           target = new Date(b.Timestamp);
         }
         return target >= start && target <= end;
       });
     }
-
-
     const { key, direction } = sortConfig;
-
     return list.sort((a, b) => {
       let valA = a[key];
       let valB = b[key];
-
-      // Numeric parsing for financials
       if (key === 'Acres') {
         valA = Number(valA) || 0;
         valB = Number(valB) || 0;
       }
-
       if (valA < valB) return direction === 'asc' ? -1 : 1;
       if (valA > valB) return direction === 'asc' ? 1 : -1;
       return 0;
     });
   }, [bookings, sortConfig, statusFilter, searchTerm, dateRange, dateFilterType]);
-
+  const totalPages = useMemo(() => Math.ceil(sortedBookings.length / pageSize), [sortedBookings.length]);
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return sortedBookings.slice(start, start + pageSize);
+  }, [sortedBookings, currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchTerm, dateRange, sortConfig]);
   const scheduledDatesSet = useMemo(() => {
     return new Set(bookings.filter(b => b.Date).map(b => b.Date));
   }, [bookings]);
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (calendarRef.current && !calendarRef.current.contains(event.target)) {
@@ -186,7 +169,6 @@ export default function AdminDashboard() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isCalendarOpen]);
-
   const handleDateSelect = (date) => {
     const dStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     if (!dateRange.start || (dateRange.start && dateRange.end)) {
@@ -200,32 +182,26 @@ export default function AdminDashboard() {
       }
     }
   };
-
   const handleClearFilters = () => {
     setSearchTerm('');
     setStatusFilter('All');
     setSortConfig({ key: 'Timestamp', direction: 'desc' });
     setDateRange({ start: null, end: null });
   };
-
   const getCalendarDays = () => {
     const year = calendarMonth.getFullYear();
     const month = calendarMonth.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-
     const days = [];
-
     for (let i = 0; i < firstDay.getDay(); i++) {
       days.push(null);
     }
-
     for (let i = 1; i <= lastDay.getDate(); i++) {
       days.push(new Date(year, month, i));
     }
     return days;
   };
-
   const exportRows = useMemo(
     () =>
       sortedBookings.map((booking) => ({
@@ -240,13 +216,13 @@ export default function AdminDashboard() {
         pinCode: booking['Pin Code'] || '',
         acres: booking.Acres || '',
         cropType: booking['Crop Type'] || '',
+        pesticideType: booking['Pesticide Type'] || '',
         preferredDate: formatDateOnly(booking.Date),
         status: booking.Status || 'Pending',
         remarks: booking.Remarks || '',
       })),
     [sortedBookings]
   );
-
   const handleLogin = async (event) => {
     event.preventDefault();
     setIsLoggingIn(true);
@@ -256,46 +232,44 @@ export default function AdminDashboard() {
     }
     setIsLoggingIn(false);
   };
-
   const toggleSort = useCallback((key) => {
     setSortConfig((prev) => ({
       key,
       direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
     }));
   }, []);
-
   const handleRemarkChange = useCallback((id, text) => {
     setPendingRemarks((prev) => ({ ...prev, [id]: text }));
   }, []);
-
-  // Financial logic removed
-
+  const handleUpdateRemark = useCallback(async (id, currentStatus) => {
+    const remark = pendingRemarks[id];
+    if (remark === undefined) return;
+    toast.promise(updateBookingStatus(id, currentStatus, remark), {
+      loading: 'Saving remark...',
+      success: 'Remark updated!',
+      error: 'Failed to update',
+    });
+  }, [pendingRemarks, updateBookingStatus]);
   const handleUpdateStatus = useCallback((id, status) => {
     setConfirmModal({ isOpen: true, id, status });
   }, []);
-
   const executeUpdateStatus = useCallback(async () => {
     const { id, status } = confirmModal;
     const remarkToSend = pendingRemarks[id] || '';
-
     setConfirmModal({ isOpen: false, id: null, status: null });
-
     toast.promise(updateBookingStatus(id, status, remarkToSend), {
       loading: 'Updating record...',
       success: `Record updated to ${status}`,
       error: 'Update failed',
     });
   }, [confirmModal, pendingRemarks, updateBookingStatus]);
-
   const handleDownloadCsv = async () => {
     if (!exportRows.length) {
       toast.error('No bookings to export');
       return;
     }
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Bookings');
-
     const columns = [
       { header: 'Booking ID', key: 'bookingId' },
       { header: 'Request Date', key: 'requestDate' },
@@ -307,31 +281,25 @@ export default function AdminDashboard() {
       { header: 'Pin Code', key: 'pinCode' },
       { header: 'Acres', key: 'acres' },
       { header: 'Crop Type', key: 'cropType' },
+      { header: 'Pesticide / Fertilizer', key: 'pesticideType' },
       { header: 'Preferred Date', key: 'preferredDate' },
       { header: 'Status', key: 'status' },
       { header: 'Remarks', key: 'remarks' },
     ];
-
     worksheet.columns = columns;
     worksheet.addRows(exportRows);
-
-    // Generate CSV
     const buffer = await workbook.csv.writeBuffer();
     const blob = new Blob([buffer], { type: 'text/csv;charset=utf-8;' });
     const fileDate = formatDateOnly(new Date());
     saveAs(blob, `bookings-report-${fileDate}.csv`);
   };
-
   const handleDownloadExcel = async () => {
     if (!exportRows.length) {
       toast.error('No bookings to export');
       return;
     }
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Bookings');
-
-
     const columns = [
       { header: 'Booking ID', key: 'bookingId', width: 25 },
       { header: 'Request Date', key: 'requestDate', width: 20 },
@@ -343,14 +311,12 @@ export default function AdminDashboard() {
       { header: 'Pin Code', key: 'pinCode', width: 10 },
       { header: 'Acres', key: 'acres', width: 10 },
       { header: 'Crop Type', key: 'cropType', width: 15 },
+      { header: 'Pesticide / Fertilizer', key: 'pesticideType', width: 20 },
       { header: 'Preferred Date', key: 'preferredDate', width: 15 },
       { header: 'Status', key: 'status', width: 12 },
       { header: 'Remarks', key: 'remarks', width: 30 },
     ];
-
     worksheet.columns = columns;
-
-
     worksheet.addTable({
       name: 'BookingsTable',
       ref: 'A1',
@@ -372,19 +338,18 @@ export default function AdminDashboard() {
         row.pinCode,
         row.acres,
         row.cropType,
+        row.pesticideType,
         row.preferredDate,
         row.status,
         row.remarks,
       ]),
     });
-
-
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF1B4A36' }, // Brand Deep Green
+        fgColor: { argb: 'FF1B4A36' },
       };
       cell.font = {
         bold: true,
@@ -393,37 +358,28 @@ export default function AdminDashboard() {
       };
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
     });
-
-
     worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber > 1) { // Skip header
-        const statusCell = row.getCell(12); // L column
+      if (rowNumber > 1) {
+        const statusCell = row.getCell(13);
         const status = statusCell.value;
-
-        let color = 'FF60796D'; // Default Gray
-        if (status === 'Accept') color = 'FF10B981'; // Emerald
-        if (status === 'Completed') color = 'FF6366F1'; // Indigo
-        if (status === 'Reject') color = 'FFEF4444'; // Red
-        if (status === 'Pending') color = 'FFF59E0B'; // Amber
-
+        let color = 'FF60796D';
+        if (status === 'Accept') color = 'FF10B981';
+        if (status === 'Completed') color = 'FF6366F1';
+        if (status === 'Reject') color = 'FFEF4444';
+        if (status === 'Pending') color = 'FFF59E0B';
         statusCell.font = { color: { argb: color }, bold: true };
       }
     });
-
-    // Write to buffer and trigger download
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const fileDate = formatDateOnly(new Date());
     saveAs(blob, `bookings-report-${fileDate}.xlsx`);
   };
-
-
   if (!adminToken) {
     return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#f6f4ee] p-4 selection:bg-green-200">
         <div className="pointer-events-none absolute left-1/4 top-1/4 h-[30rem] w-[30rem] rounded-full bg-green-600/10 blur-[120px]" />
         <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[30rem] w-[30rem] rounded-full bg-lime-600/10 blur-[120px]" />
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -445,7 +401,6 @@ export default function AdminDashboard() {
               Authorized Personnel Only
             </p>
           </div>
-
           <form onSubmit={handleLogin} className="space-y-5">
             <input
               type="password"
@@ -466,7 +421,6 @@ export default function AdminDashboard() {
             </motion.button>
           </form>
         </motion.div>
-
         <Toaster
           position="bottom-center"
           toastOptions={{
@@ -480,11 +434,9 @@ export default function AdminDashboard() {
       </div>
     );
   }
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f6f4ee] pb-20 font-sans text-[#243328] selection:bg-green-200">
       <div className="pointer-events-none absolute -right-60 -top-60 h-[50rem] w-[50rem] rounded-full bg-green-500/10 blur-[100px]" />
-
       <Toaster
         position="top-right"
         toastOptions={{
@@ -496,7 +448,6 @@ export default function AdminDashboard() {
           },
         }}
       />
-
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-green-900/5 sm:border-green-900/10 bg-[#f6f4ee]/90 px-4 sm:px-8 py-3 sm:py-5 shadow-sm backdrop-blur-xl">
         <div className="flex items-center gap-3 sm:gap-4">
           <div className="rounded-xl border border-green-700/10 sm:border-green-700/20 bg-gradient-to-br from-green-500/10 to-lime-500/5 p-2 sm:p-2.5 text-green-700">
@@ -542,7 +493,6 @@ export default function AdminDashboard() {
           </button>
         </div>
       </nav>
-
       <main className="relative z-10 w-full mt-10 space-y-12 px-4 sm:px-10 lg:px-16">
         <motion.div
           initial="hidden"
@@ -584,7 +534,6 @@ export default function AdminDashboard() {
             </motion.div>
           ))}
         </motion.div>
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -615,13 +564,11 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
-
-          {/* Advanced Controls Bar */}
+          {}
           <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:px-8 overflow-visible">
-            {/* Row 1: Search & Date */}
+            {}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
-
-              {/* Search Bar */}
+              {}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -637,8 +584,7 @@ export default function AdminDashboard() {
                   className="w-full rounded-xl border border-green-900/10 bg-[#f9faf9] pl-10 pr-4 py-2.5 text-[10px] font-bold tracking-wide text-[#1b4a36] placeholder-[#8aa095] transition-all focus:border-green-900/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-900/5"
                 />
               </motion.div>
-
-              {/* Actions: Clear & Date */}
+              {}
               <div className="flex items-center gap-3">
                 <AnimatePresence>
                   {(searchTerm || statusFilter !== 'All' || dateRange.start || sortConfig.key !== 'Timestamp') && (
@@ -655,8 +601,7 @@ export default function AdminDashboard() {
                     </motion.button>
                   )}
                 </AnimatePresence>
-
-                {/* Date Filter & Calendar */}
+                {}
                 <div className="relative z-30" ref={calendarRef}>
                   <button
                     onClick={() => setIsCalendarOpen(!isCalendarOpen)}
@@ -680,7 +625,6 @@ export default function AdminDashboard() {
                       </div>
                     )}
                   </button>
-
                   <AnimatePresence>
                     {isCalendarOpen && (
                       <motion.div
@@ -701,7 +645,6 @@ export default function AdminDashboard() {
                             <ChevronRight className="h-4 w-4 text-[#1b4a36]" />
                           </button>
                         </div>
-
                         <div className="mb-3 flex gap-1 rounded-xl bg-[#f6f4ee] p-1">
                           {['Scheduling', 'Booking'].map(type => (
                             <button
@@ -714,7 +657,6 @@ export default function AdminDashboard() {
                             </button>
                           ))}
                         </div>
-
                         <div className="grid grid-cols-7 gap-1 text-center mb-1">
                           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, idx) => (
                             <span key={`${d}-${idx}`} className="text-[8px] font-black text-[#8aa095] uppercase">{d}</span>
@@ -727,7 +669,6 @@ export default function AdminDashboard() {
                             const isScheduled = scheduledDatesSet.has(dStr);
                             const isSelected = dateRange.start === dStr || dateRange.end === dStr;
                             const isInRange = dateRange.start && dateRange.end && dStr > dateRange.start && dStr < dateRange.end;
-
                             return (
                               <button
                                 key={dStr}
@@ -751,10 +692,9 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-
-            {/* Row 2: Status & Sorting */}
+            {}
             <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 w-full">
-              {/* Status Filters */}
+              {}
               <div className="flex items-center gap-3 w-full xl:w-auto min-w-0 flex-1">
                 <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Status:</span>
                 <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
@@ -779,8 +719,7 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-
-              {/* Sorting Controls */}
+              {}
               <div className="flex items-center gap-3 w-full xl:w-auto xl:justify-end min-w-0">
                 <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
                 <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
@@ -819,15 +758,14 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-
           <div className="w-full lg:px-8 lg:py-8">
-            {/* Premium Horizontal List Layout */}
+            {}
             <motion.div
               layout
               className="flex flex-col gap-4 lg:gap-5"
             >
               <AnimatePresence mode="popLayout" initial={false}>
-                {sortedBookings.map((booking) => (
+                {paginatedBookings.map((booking) => (
                   <BookingRow
                     key={booking.id}
                     booking={booking}
@@ -836,10 +774,61 @@ export default function AdminDashboard() {
                     pendingRemarks={pendingRemarks}
                     handleRemarkChange={handleRemarkChange}
                     handleUpdateStatus={handleUpdateStatus}
+                    handleUpdateRemark={handleUpdateRemark}
                   />
                 ))}
               </AnimatePresence>
-
+              {}
+              {totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 px-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">
+                    Showing <span className="text-[#1b4a36]">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-[#1b4a36]">{Math.min(currentPage * pageSize, sortedBookings.length)}</span> of <span className="text-[#1b4a36]">{sortedBookings.length}</span> records
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-green-900/10 bg-white transition-all hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                    >
+                      <ChevronLeft className="h-4 w-4 text-[#1b4a36]" />
+                    </button>
+                    <div className="flex items-center gap-1 mx-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                        if (
+                          page === 1 ||
+                          page === totalPages ||
+                          (page >= currentPage - 1 && page <= currentPage + 1)
+                        ) {
+                          return (
+                            <button
+                              key={page}
+                              onClick={() => setCurrentPage(page)}
+                              className={`h-9 w-9 rounded-xl text-[10px] font-black transition-all ${
+                                currentPage === page
+                                  ? 'bg-[#1b4a36] text-white shadow-md'
+                                  : 'bg-white text-[#60796d] border border-green-900/5 hover:border-green-900/10 hover:bg-green-50'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          );
+                        }
+                        if (page === currentPage - 2 || page === currentPage + 2) {
+                          return <span key={page} className="text-[#60796d] text-[10px]">...</span>;
+                        }
+                        return null;
+                      })}
+                    </div>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-green-900/10 bg-white transition-all hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                    >
+                      <ChevronRight className="h-4 w-4 text-[#1b4a36]" />
+                    </button>
+                  </div>
+                </div>
+              )}
               <AnimatePresence>
                 {(!sortedBookings || sortedBookings.length === 0) && !isLoading && (
                   <motion.div
@@ -857,8 +846,7 @@ export default function AdminDashboard() {
           </div>
         </motion.div>
       </main>
-
-      {/* Confirmation Modal */}
+      {}
       <AnimatePresence>
         {confirmModal.isOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

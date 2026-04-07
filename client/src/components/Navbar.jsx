@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from '../styles/Navbar.module.css';
-
 const navSections = [
   {
     id: 'primary',
@@ -23,23 +22,18 @@ const navSections = [
     ],
   },
 ];
-
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
   useEffect(() => {
     const scrollContainer = document.querySelector('.app-content');
     if (!scrollContainer) return;
-
     let ticking = false;
-
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = scrollContainer.scrollTop;
-          
           if (currentScrollY < 10) {
             setIsVisible(true);
           } else if (currentScrollY > lastScrollY && currentScrollY > 70) {
@@ -47,18 +41,15 @@ const Navbar = () => {
           } else {
             setIsVisible(true);
           }
-          
           setLastScrollY(currentScrollY);
           ticking = false;
         });
         ticking = true;
       }
     };
-
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
-
   const renderNavItems = (items) =>
     items.map((item) => (
       <li key={item.to}>
@@ -74,7 +65,6 @@ const Navbar = () => {
         </NavLink>
       </li>
     ));
-
   return (
     <motion.header 
       className={styles.shell}
@@ -87,13 +77,11 @@ const Navbar = () => {
           <img src="/logo.png" alt="Drriftaire Logo" className={styles.navLogo} />
           <span className={styles.logoText}>Drriftaire</span>
         </Link>
-
         <div className={styles.actions}>
           <ul className={`${styles.linkGroup} ${styles.rightLinks}`}>
             {renderNavItems(navSections[0].items)}
             {renderNavItems(navSections[1].items)}
           </ul>
-
           <button
             type="button"
             className={styles.menuButton}
@@ -108,7 +96,6 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
-
       <div
         id="mobile-navigation"
         className={`${styles.mobilePanel} ${isMenuOpen ? styles.mobilePanelOpen : ''}`}
@@ -124,5 +111,4 @@ const Navbar = () => {
     </motion.header>
   );
 };
-
 export default Navbar;

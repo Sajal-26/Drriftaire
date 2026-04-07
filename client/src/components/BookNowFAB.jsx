@@ -7,7 +7,6 @@ export default function BookNowFAB() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hide the FAB if we are already on the booking page or admin dashboard
   const isExcludedPage = ['/booking', '/admin'].includes(location.pathname);
   if (isExcludedPage) return null;
 
