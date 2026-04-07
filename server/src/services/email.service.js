@@ -166,7 +166,9 @@ const sendBookingEmails = async ({
   pinCode,
   acres,
   cropType,
+  pesticideType,
   date,
+  bookingId,
 }) => {
   logEmail("sendBookingEmails start", {
     email,
@@ -184,6 +186,7 @@ const sendBookingEmails = async ({
       { label: "Pin Code", value: pinCode },
       { label: "Acreage", value: `${acres} Acres` },
       { label: "Crop Type", value: cropType },
+      { label: "Pesticide / Fertilizer", value: pesticideType },
     ];
 
     const customerItems = [
@@ -219,7 +222,7 @@ const sendBookingEmails = async ({
       ...(email ? [sendMailWithLogging({
         label: "booking confirmation",
         to: email,
-        subject: "Your Drone Spraying Booking",
+        subject: `Your Drone Spraying Booking [Ref: ${bookingId || 'New'}]`,
         html: wrapTemplate(
           "Booking Received",
           "We've received your booking.",
@@ -234,7 +237,7 @@ const sendBookingEmails = async ({
       sendMailWithLogging({
         label: "admin booking notification",
         to: process.env.ADMIN_EMAIL,
-        subject: `New Booking from ${name}`,
+        subject: `New Booking: ${name} [Ref: ${bookingId || 'New'}]`,
         html: wrapTemplate(
           "New Booking!",
           "A new customer has submitted an inquiry.",
@@ -260,7 +263,7 @@ const sendBookingEmails = async ({
   }
 };
 
-const sendStatusChangeEmail = async ({ name, email, status }) => {
+const sendStatusChangeEmail = async ({ name, email, status, bookingId }) => {
   logEmail("sendStatusChangeEmail start", { email, status });
 
   if (!email) {
@@ -298,10 +301,12 @@ const sendStatusChangeEmail = async ({ name, email, status }) => {
       return;
     }
 
+    const refSuffix = bookingId ? ` [Ref: ${bookingId}]` : "";
+
     await sendMailWithLogging({
       label: `status change ${status.toLowerCase()}`,
       to: email,
-      subject,
+      subject: `${subject}${refSuffix}`,
       html: wrapTemplate(
         title,
         activeStatus,

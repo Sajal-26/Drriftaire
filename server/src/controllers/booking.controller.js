@@ -15,7 +15,7 @@ const createBooking = async (req, res) => {
   let lockKey;
 
   try {
-    const { name, email, phone, state, district, pinCode, acres, cropType, date } = req.body;
+    const { name, email, phone, state, district, pinCode, acres, cropType, pesticideType, date } = req.body;
     lockKey = `${email || 'anon'}:${phone}`;
 
     if (activeBookingLocks.has(lockKey)) {
@@ -62,13 +62,17 @@ const createBooking = async (req, res) => {
       'Pin Code': pinCode,
       Acres: acres,
       'Crop Type': cropType,
+      'Pesticide Type': pesticideType,
       Date: date,
       Status: "Pending",
       Remarks: ""
     };
 
     await insertBooking(bookingData);
-    await sendBookingEmails({ name, email, phone, state, district, pinCode, acres, cropType, date });
+    await sendBookingEmails({ 
+      ...req.body, 
+      bookingId: bookingData["Booking ID"] 
+    });
 
     res.status(201).json({
       success: true,

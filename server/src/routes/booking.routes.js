@@ -18,10 +18,11 @@ const validateBooking = (req, res, next) => {
     pinCode: typeof req.body.pinCode === "string" ? req.body.pinCode.trim() : String(req.body.pinCode || "").trim(),
     acres: Number(req.body.acres),
     cropType: typeof req.body.cropType === "string" ? req.body.cropType.trim() : "",
+    pesticideType: typeof req.body.pesticideType === "string" ? req.body.pesticideType.trim() : "",
     date: typeof req.body.date === "string" ? req.body.date.trim() : "",
   };
 
-  if (!fields.name || !fields.phone || !fields.state || !fields.district || !fields.pinCode || !fields.acres || !fields.cropType || !fields.date) {
+  if (!fields.name || !fields.phone || !fields.state || !fields.district || !fields.pinCode || !fields.acres || !fields.cropType || !fields.pesticideType || !fields.date) {
     return res.status(400).json({ message: "All booking fields are required." });
   }
 
