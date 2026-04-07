@@ -100,7 +100,7 @@ function WhyUsPage() {
                 variants={fadeInUp}
                 className="relative z-10 aspect-square overflow-hidden rounded-[3rem] shadow-2xl border border-white/20"
               >
-                <img src="/why-us-illustration.png" alt="Agritech Illustration" className="h-full w-full object-cover" />
+                <img src="/tea-plantation-india.png" alt="Indian Tea Plantation" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1a3a24]/20 to-transparent" />
               </motion.div>
 

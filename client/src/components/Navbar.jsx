@@ -83,16 +83,14 @@ const Navbar = () => {
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
       <nav className={styles.navbar} aria-label="Primary navigation">
-        <ul className={`${styles.linkGroup} ${styles.leftLinks}`}>
-          {renderNavItems(navSections[0].items)}
-        </ul>
-
         <Link to="/" className={styles.logoContainer} aria-label="Drriftaire home">
+          <img src="/logo.png" alt="Drriftaire Logo" className={styles.navLogo} />
           <span className={styles.logoText}>Drriftaire</span>
         </Link>
 
         <div className={styles.actions}>
           <ul className={`${styles.linkGroup} ${styles.rightLinks}`}>
+            {renderNavItems(navSections[0].items)}
             {renderNavItems(navSections[1].items)}
           </ul>
 

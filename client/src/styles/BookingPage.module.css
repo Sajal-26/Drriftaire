@@ -559,7 +559,8 @@
   position: absolute;
   left: 0;
   bottom: calc(100% + 0.5rem);
-  width: min(100%, 20rem);
+  width: 20rem;
+  max-width: calc(100vw - 2rem);
   background: #fff;
   border: 1px solid #f1f5f9;
   border-radius: 2rem;

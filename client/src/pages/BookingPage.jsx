@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from "framer-motion";
 import axios from "axios";
 import styles from "../styles/BookingPage.module.css";
 import API_URL from "../config/api";
@@ -9,6 +9,7 @@ const STATE_DISTRICT_DATA_URL = "/data/state-districts.json";
 const PINCODE_LOOKUP_URL = "https://api.postalpincode.in/pincode";
 
 const cropOptions = ["Rice", "Wheat", "Cotton", "Sugarcane", "Maize", "Pulses", "Vegetables", "Fruits", "Flowers", "Tea", "Coffee", "Groundnut", "Other"];
+const pesticideOptions = ["Insecticides", "Herbicides", "Fungicides", "Rodenticides", "Bio-pesticides", "Plant Growth Regulators"];
 const weekdayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const initialFormData = {
@@ -21,6 +22,7 @@ const initialFormData = {
   acres: "",
   cropType: "",
   otherCropType: "",
+  pesticideType: "",
   date: "",
 };
 
@@ -53,7 +55,7 @@ const normalizeLocationName = (value) => value?.trim().toLowerCase() ?? "";
 const sanitizePhone = (value) => value.replace(/^0+/, "");
 const normalizePhoneInput = (value) => {
   const digits = value.replace(/\D/g, "");
-  
+
   // If more than 10 digits (e.g. including country code or extra zeros), 
   // take only the last 10 digits as requested.
   if (digits.length > 10) {
@@ -67,7 +69,12 @@ export default function BookingPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
-  const [pointerGlow, setPointerGlow] = useState({ x: "50%", y: "20%", active: false });
+  
+  const mouseX = useMotionValue("50%");
+  const mouseY = useMotionValue("20%");
+  const pointerOpacity = useMotionValue(0);
+  const backgroundGlow = useMotionTemplate`radial-gradient(420px circle at ${mouseX} ${mouseY}, rgba(79, 123, 63, 0.14), transparent 70%)`;
+
   const [openMenu, setOpenMenu] = useState(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [stateDistrictMap, setStateDistrictMap] = useState({});
@@ -102,6 +109,7 @@ export default function BookingPage() {
     formData.name.trim() !== "" &&
     formData.cropType.trim() !== "" &&
     (formData.cropType !== "Other" || formData.otherCropType.trim() !== "") &&
+    formData.pesticideType.trim() !== "" &&
     formData.state.trim() !== "" &&
     formData.district.trim() !== "" &&
     formData.pinCode.trim().length === 6 &&
@@ -214,10 +222,11 @@ export default function BookingPage() {
       pinCode: String(formData.pinCode || "").trim(),
       acres: normalizedAcres,
       cropType: formData.cropType === "Other" ? formData.otherCropType.trim() : formData.cropType.trim(),
+      pesticideType: formData.pesticideType.trim(),
       date: formData.date.trim(),
     };
 
-    if (!payload.name || !payload.phone || !payload.state || !payload.district || !payload.pinCode || !payload.cropType || !payload.date) {
+    if (!payload.name || !payload.phone || !payload.state || !payload.district || !payload.pinCode || !payload.cropType || !payload.pesticideType || !payload.date) {
       showToast("All booking fields are required.", "error");
       return;
     }
@@ -231,7 +240,7 @@ export default function BookingPage() {
       showToast("Enter a valid farm size in acres.", "error");
       return;
     }
-    
+
     setLoading(true);
     try {
       await axios.post(`${API_URL}/bookings/book`, payload);
@@ -239,7 +248,7 @@ export default function BookingPage() {
       setOpenMenu(null);
       setIsDatePickerOpen(false);
       setToast({ message: "Booking submitted successfully!", type: "success" });
-      
+
       // Show confirmation overlay
       const overlay = document.getElementById("confirmation-overlay");
       if (overlay) overlay.style.display = "flex";
@@ -301,28 +310,26 @@ export default function BookingPage() {
       className={styles.page}
       onPointerMove={(event) => {
         const bounds = event.currentTarget.getBoundingClientRect();
-        setPointerGlow({
-          x: `${event.clientX - bounds.left}px`,
-          y: `${event.clientY - bounds.top}px`,
-          active: true,
-        });
+        mouseX.set(`${event.clientX - bounds.left}px`);
+        mouseY.set(`${event.clientY - bounds.top}px`);
+        pointerOpacity.set(1);
       }}
-      onPointerLeave={() => setPointerGlow((prev) => ({ ...prev, active: false }))}
+      onPointerLeave={() => pointerOpacity.set(0)}
     >
       <div className={styles.fxLayer}>
         <div className={styles.fxTop} />
-        <div
+        <motion.div
           className={styles.fxPointer}
           style={{
-            opacity: pointerGlow.active ? 1 : 0,
-            background: `radial-gradient(420px circle at ${pointerGlow.x} ${pointerGlow.y}, rgba(79, 123, 63, 0.14), transparent 70%)`,
+            opacity: pointerOpacity,
+            background: backgroundGlow,
           }}
         />
       </div>
 
       <AnimatePresence>
         {toast && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 20, x: '-50%' }}
@@ -334,7 +341,7 @@ export default function BookingPage() {
       </AnimatePresence>
 
       <main className={styles.layout}>
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -358,7 +365,7 @@ export default function BookingPage() {
             <motion.p variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className={styles.lead}>High-precision spraying and mapping at your fingertips. Fill out the form to secure your slot.</motion.p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={{
@@ -370,7 +377,7 @@ export default function BookingPage() {
             }}
             className={styles.stats}
           >
-            {[{v: "Easy", l: "Process"}, {v: "Clear", l: "Pricing"}, {v: "Direct", l: "Support"}].map(s => (
+            {[{ v: "Easy", l: "Process" }, { v: "Clear", l: "Pricing" }, { v: "Direct", l: "Support" }].map(s => (
               <motion.div key={s.l} variants={{ hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1 } }} className={styles.stat}>
                 <p className={styles.statValue}>{s.v}</p>
                 <p className={styles.statLabel}>{s.l}</p>
@@ -378,7 +385,7 @@ export default function BookingPage() {
             ))}
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -396,7 +403,7 @@ export default function BookingPage() {
           </motion.div>
         </motion.section>
 
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
@@ -405,7 +412,7 @@ export default function BookingPage() {
         >
           <div className={styles.formShell}>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>Service Request</h2>
+              <h2 className={styles.formTitle}>Booking Request</h2>
               <p className={styles.formHint}>Tell us about your farm to get started.</p>
             </div>
 
@@ -430,19 +437,26 @@ export default function BookingPage() {
                 </label>
               </div>
 
-              <div className={styles.row2}>
+              <div className={styles.row1}>
                 <label className={styles.field}>
                   <span className={styles.label}>Email Address <span className={styles.labelOptional}>(Optional)</span></span>
                   <input className={styles.input} name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" />
                 </label>
+              </div>
+
+              <div className={styles.row2}>
                 <label className={styles.field}>
                   <span className={styles.label}>Crop Type</span>
                   {renderSelect("cropType", "Select Crop", cropOptions)}
                 </label>
+                <label className={styles.field}>
+                  <span className={styles.label}>Pesticide / Fertilizer</span>
+                  {renderSelect("pesticideType", "Select Type", pesticideOptions)}
+                </label>
               </div>
               <AnimatePresence>
                 {formData.cropType === "Other" && (
-                  <motion.div 
+                  <motion.div
                     initial={{ height: 0, opacity: 0, scaleY: 0 }}
                     animate={{ height: "auto", opacity: 1, scaleY: 1 }}
                     exit={{ height: 0, opacity: 0, scaleY: 0 }}
@@ -487,7 +501,7 @@ export default function BookingPage() {
                         setFormData(prev => ({ ...prev, acres: Math.ceil(Number(prev.acres)) }));
                       }
                     }}
-                    placeholder="e.g. 2.5"
+                    placeholder="e.g. 2"
                     required
                   />
                 </label>
@@ -545,11 +559,11 @@ export default function BookingPage() {
                   )}
                 </label>
 
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.01, translateY: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className={styles.submitButton} 
-                  type="submit" 
+                  className={styles.submitButton}
+                  type="submit"
                   disabled={loading || !isFormComplete}
                 >
                   {loading ? (
@@ -567,29 +581,29 @@ export default function BookingPage() {
           </div>
         </motion.section>
       </main>
-      
+
       <AnimatePresence>
         <div id="confirmation-overlay" className={styles.confirmationOverlay} style={{ display: 'none' }}>
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.8, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 20 }}
             className={styles.confirmationCard}
           >
             <div className={styles.confirmationIcon}>
-              <motion.svg 
+              <motion.svg
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
               >
-                <path d="M20 6L9 17L4 12" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M20 6L9 17L4 12" strokeLinecap="round" strokeLinejoin="round" />
               </motion.svg>
             </div>
             <h2 className={styles.confirmationTitle}>Booking Received!</h2>
             <p className={styles.confirmationText}>We've received your request. Our team will contact you within 24 hours to confirm your slot.</p>
             <div className={styles.confirmationActions}>
-              <button 
+              <button
                 className={styles.homeButton}
                 onClick={() => window.location.href = '/'}
               >
