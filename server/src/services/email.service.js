@@ -20,7 +20,9 @@ const serializeError = (error) => {
 };
 
 const logEmail = (step, details = {}) => {
-  console.log(`[email] ${step}`, details);
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[email] ${step}`, details);
+  }
 };
 
 const transporter = nodemailer.createTransport({
@@ -38,7 +40,9 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((err, success) => {
   if (err) {
-    console.error("[email] transporter.verify failed", serializeError(err));
+    if (process.env.NODE_ENV !== "production") {
+      console.error("[email] transporter.verify failed", serializeError(err));
+    }
   } else {
     logEmail("transporter.verify success", { success: Boolean(success) });
   }

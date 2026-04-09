@@ -6,6 +6,7 @@ const adminRoutes = require("./routes/admin.routes");
 const partnerRoutes = require("./routes/partner.routes");
 const contactRoutes = require("./routes/contact.routes");
 const careerRoutes = require("./routes/career.routes");
+const { getAllowedOrigins } = require("./config/env");
 const {
   requestIdMiddleware,
   securityHeadersMiddleware,
@@ -19,7 +20,7 @@ app.set("trust proxy", 1);
 app.use(requestIdMiddleware);
 app.use(securityHeadersMiddleware);
 app.use(cors({
-  origin: true,
+  origin: process.env.NODE_ENV === "production" ? getAllowedOrigins() : true,
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
