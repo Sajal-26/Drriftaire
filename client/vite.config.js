@@ -10,10 +10,18 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-excel': ['exceljs', 'file-saver'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-icons': ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('exceljs') || id.includes('file-saver')) {
+            return 'vendor-excel'
+          }
+
+          if (id.includes('framer-motion')) {
+            return 'vendor-motion'
+          }
+
+          if (id.includes('lucide-react')) {
+            return 'vendor-icons'
+          }
         }
       }
     },
