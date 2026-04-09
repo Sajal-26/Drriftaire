@@ -192,7 +192,7 @@ const sendBookingEmails = async ({
       { label: "Pin Code", value: pinCode },
       { label: "Acreage", value: `${acres} Acres` },
       { label: "Crop Type", value: cropType },
-      { label: "Pesticide / Fertilizer", value: pesticideType },
+      { label: "Pesticide Type", value: pesticideType },
     ];
 
     const customerItems = [
