@@ -20,7 +20,6 @@ const BookingRow = memo(({
       transition={{ duration: 0.2 }}
       className="group relative flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6 overflow-hidden rounded-[2rem] border border-green-900/10 bg-white/70 p-5 md:p-3.5 backdrop-blur-3xl transition-all duration-300 hover:border-green-900/20 hover:shadow-[0_15px_40px_-10px_rgba(22,60,47,0.12)] hover:bg-white/90"
     >
-      {}
       <div className="flex md:flex-col items-center md:items-start justify-between md:justify-center gap-2 md:w-[13%] md:pl-4 border-b md:border-b-0 md:border-r border-green-900/5 pb-4 md:pb-0">
         <div className="flex flex-col">
           <span className="font-mono text-[10px] font-bold text-green-700/60 uppercase tracking-tighter">
@@ -37,8 +36,6 @@ const BookingRow = memo(({
           {booking.Status || 'Pending'}
         </div>
       </div>
-
-      {}
       <div className="flex items-center gap-3 md:w-[22%] min-w-0">
         <div className="flex h-10 w-10 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-green-700 transition-colors group-hover:bg-[#1b4a36] group-hover:text-white">
           <Users className="h-5 w-5" />
@@ -51,8 +48,6 @@ const BookingRow = memo(({
           </a>
         </div>
       </div>
-
-      {}
       <div className="md:w-[24%] flex flex-col gap-1.5">
         <div className="flex items-center gap-2 text-[#355f48]">
           <Droplets className="h-3.5 w-3.5 lg:h-4 lg:w-4 opacity-50 shrink-0" />
@@ -73,8 +68,6 @@ const BookingRow = memo(({
           </div>
         </div>
       </div>
-
-      {}
       <div className="lg:w-[15%] flex flex-col justify-center">
         {booking.Remarks ? (
           <div className="rounded-xl bg-amber-50/50 border border-amber-500/10 p-2.5 italic text-[10px] text-[#76877d] line-clamp-3">
@@ -84,8 +77,6 @@ const BookingRow = memo(({
           <div className="text-[10px] text-[#b0bcaf] font-medium uppercase tracking-widest text-center opacity-40">No Log</div>
         )}
       </div>
-
-      {}
       <div className="md:w-[26%] md:pl-5 border-t md:border-t-0 md:border-l border-green-900/5 pt-4 md:pt-0">
         {(booking.Status === 'Accept' || !booking.Status || booking.Status === 'Pending') ? (
           <div className="flex flex-col gap-2.5">

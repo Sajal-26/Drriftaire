@@ -72,7 +72,6 @@ function ContactPage() {
   };
   return (
     <main className="relative w-full min-h-[calc(100vh-96px)] bg-[#f6f4ee] text-[#243328] overflow-hidden cursor-default">
-      {}
       <div className="absolute inset-x-0 top-0 h-[600px] pointer-events-none opacity-40">
         <img src="/contact-accent.png" alt="" className="w-full h-full object-cover blur-3xl" />
       </div>
@@ -83,7 +82,6 @@ function ContactPage() {
           variants={staggerContainer}
           className="grid gap-20 lg:grid-cols-[1fr_1.2fr]"
         >
-          {}
           <motion.div variants={fadeInUp}>
             <p className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.3em] text-[#28593b]">Get in Touch</p>
             <h1 className="mt-4 sm:mt-6 text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-6xl leading-[1.1]">
@@ -115,14 +113,11 @@ function ContactPage() {
               </div>
             </div>
           </motion.div>
-          {}
           <motion.div
             variants={fadeInUp}
             className="relative group rounded-[2.5rem] sm:rounded-[4rem] bg-gradient-to-br from-white to-[#fcfdfa] p-6 sm:p-12 shadow-[0_45px_100px_-25px_rgba(40,89,59,0.15),0_10px_20px_-5px_rgba(40,89,59,0.05)] border border-[#28593b]/5 overflow-hidden"
           >
-            {}
             <div className="absolute top-0 inset-x-0 h-2 bg-[#28593b]" />
-            {}
             <div className="absolute -bottom-10 -right-10 text-[12rem] font-black text-[#18241c]/[0.02] pointer-events-none select-none italic">
               D
             </div>

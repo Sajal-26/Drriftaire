@@ -22,7 +22,7 @@ const float = {
     y: [0, -15, 0],
     transition: {
       duration: 4,
-      repeat: Infinity,
+      repeat: 0,
       ease: "easeInOut",
     },
   },
@@ -52,7 +52,6 @@ const advantages = [
 function WhyUsPage() {
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328]">
-      {}
       <section className="relative overflow-hidden pt-20 pb-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -61,7 +60,6 @@ function WhyUsPage() {
             variants={staggerContainer}
             className="grid gap-20 lg:grid-cols-[1fr_1.1fr] items-center"
           >
-            {}
             <div className="text-left">
               <motion.p variants={fadeInUp} className="text-sm font-semibold uppercase tracking-[0.28em] text-[#28593b]">
                 Why Choose Us
@@ -78,10 +76,10 @@ function WhyUsPage() {
                 variants={fadeInUp} 
                 className="mt-10 h-36 relative w-full max-w-md rounded-[2rem] bg-gradient-to-b from-white to-[#f4f7f4] border border-[#28593b]/10 overflow-hidden shadow-lg shadow-emerald-900/5 flex items-end justify-between pb-6 px-8"
               >
-                {/* Sun/Horizon effect */}
+                
                 <div className="absolute top-4 right-8 w-12 h-12 rounded-full bg-orange-100/60 blur-md" />
 
-                {/* Drone Animation */}
+                
                 <motion.div 
                   className="absolute top-6 left-0 z-20 flex flex-col items-center"
                   animate={{
@@ -92,20 +90,20 @@ function WhyUsPage() {
                   transition={{
                     duration: 6.5,
                     ease: "easeInOut",
-                    repeat: Infinity,
+                    repeat: 0,
                     times: [0, 0.25, 0.75, 1]
                   }}
                 >
-                  {/* Sophisticated Drone Body */}
+                  
                   <svg width="68" height="26" viewBox="0 0 68 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
-                    <motion.line x1="4" y1="4" x2="22" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: Infinity }} />
-                    <motion.line x1="46" y1="4" x2="64" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: Infinity, delay: 0.05 }} />
+                    <motion.line x1="4" y1="4" x2="22" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: 0 }} />
+                    <motion.line x1="46" y1="4" x2="64" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: 0, delay: 0.05 }} />
                     <path d="M12 9 L56 9 C58.2 9 60 10.8 60 13 L52 19 L16 19 L8 13 C8 10.8 9.8 9 12 9 Z" fill="#28593b" />
                     <path d="M28 19 L40 19 L38 23 L30 23 Z" fill="#18241c" />
                     <circle cx="34" cy="13" r="2" fill="#4ade80" />
                   </svg>
                   
-                  {/* Spray Particles */}
+                  
                   <motion.div 
                     className="flex gap-[5px] mt-1"
                     animate={{
@@ -115,7 +113,7 @@ function WhyUsPage() {
                     transition={{
                       duration: 6.5,
                       ease: "easeInOut",
-                      repeat: Infinity,
+                      repeat: 0,
                       times: [0, 0.2, 0.25, 0.7, 0.75, 1]
                     }}
                     style={{ originY: 0 }}
@@ -125,13 +123,13 @@ function WhyUsPage() {
                         key={i} 
                         className="w-[2px] h-14 bg-emerald-400/80 rounded-full" 
                         animate={{ y: [0, 12, 0], opacity: [0.4, 1, 0.4] }}
-                        transition={{ duration: 0.25 + (i * 0.05), repeat: Infinity, delay: i * 0.1 }}
+                        transition={{ duration: 0.25 + (i * 0.05), repeat: 0, delay: i * 0.1 }}
                       />
                     ))}
                   </motion.div>
                 </motion.div>
 
-                {/* Crops */}
+                
                 <div className="relative z-10 flex w-full justify-between items-end px-2">
                   {[...Array(9)].map((_, i) => (
                     <motion.div
@@ -145,35 +143,35 @@ function WhyUsPage() {
                       }}
                       transition={{
                         duration: 6.5,
-                        repeat: Infinity,
+                        repeat: 0,
                         times: [0, 0.2 + (i * 0.06), 0.3 + (i * 0.06), 0.85, 1]
                       }}
                     >
                       <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-10 text-current overflow-visible relative z-10">
-                        {/* Main stem */}
+                        
                         <rect x="11" y="8" width="2" height="28" rx="1" fill="currentColor" />
                         
-                        {/* Leaves / Grains left */}
+                        
                         <path d="M11,14 C6.5,10 3,14 7,18 C8.5,15 11,14.5 11,14Z" fill="currentColor" />
                         <path d="M11,20 C6.5,16 3,20 7,24 C8.5,21 11,20.5 11,20Z" fill="currentColor" />
                         <path d="M11,26 C6.5,22 3,26 7,30 C8.5,27 11,26.5 11,26Z" fill="currentColor" />
 
-                        {/* Leaves / Grains right */}
+                        
                         <path d="M13,11 C17.5,7 21,11 17,15 C15.5,12 13,11.5 13,11Z" fill="currentColor" />
                         <path d="M13,17 C17.5,13 21,17 17,21 C15.5,18 13,17.5 13,17Z" fill="currentColor" />
                         <path d="M13,23 C17.5,19 21,23 17,27 C15.5,24 13,23.5 13,23Z" fill="currentColor" />
 
-                        {/* Top grain */}
+                        
                         <path d="M12,2 C9,5 8,9 12,13 C16,9 15,5 12,2 Z" fill="currentColor" />
                       </svg>
                       
-                      {/* Highly performant glow using opacity instead of drop-shadow filter */}
+                      
                       <motion.div 
                         className="absolute bottom-0 w-6 h-12 bg-emerald-500/30 blur-md rounded-full z-0"
                         animate={{ opacity: [0, 0, 1, 1, 0] }}
                         transition={{
                           duration: 6.5,
-                          repeat: Infinity,
+                          repeat: 0,
                           times: [0, 0.2 + (i * 0.06), 0.3 + (i * 0.06), 0.85, 1]
                         }}
                       />
@@ -182,9 +180,7 @@ function WhyUsPage() {
                 </div>
               </motion.div>
             </div>
-            {}
             <div className="relative">
-              {}
               <motion.div
                 variants={fadeInUp}
                 className="relative z-10 aspect-square overflow-hidden rounded-[3rem] shadow-2xl border border-white/20"
@@ -192,7 +188,6 @@ function WhyUsPage() {
                 <img src="/tea-plantation-india.png" alt="Indian Tea Plantation" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1a3a24]/20 to-transparent" />
               </motion.div>
-              {}
               <motion.div
                 variants={float}
                 animate="animate"
@@ -200,7 +195,6 @@ function WhyUsPage() {
               >
                 <img src="/drone-tech-detail.png" alt="Drone Sensor" className="h-full w-full object-cover" />
               </motion.div>
-              {}
               <motion.div
                 variants={float}
                 animate="animate"
@@ -215,7 +209,6 @@ function WhyUsPage() {
                   </div>
                 </div>
               </motion.div>
-              {}
               <motion.div
                 variants={fadeInUp}
                 className="absolute right-12 -bottom-6 z-20 rounded-[1.5rem] bg-white p-5 shadow-xl border border-gray-100 hidden lg:block"
@@ -229,7 +222,6 @@ function WhyUsPage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section className="bg-[#18241c] py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -248,7 +240,6 @@ function WhyUsPage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section className="py-32 px-6 lg:px-10 bg-white">
         <div className="mx-auto max-w-7xl">
           <motion.div

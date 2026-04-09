@@ -21,7 +21,6 @@ const staggerContainer = {
 function AboutPage() {
   return (
     <main className="w-full bg-white text-[#243328]">
-      { }
       <section className="relative py-24 px-6 lg:px-10 bg-[#f6f4ee] overflow-hidden">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -60,38 +59,79 @@ function AboutPage() {
           </motion.div>
         </div>
       </section>
-      { }
-      <section className="py-32 px-6 lg:px-10">
+      <section className="py-24 px-6 lg:px-10 bg-white">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid gap-12 md:grid-cols-2"
+            className="grid gap-12 md:grid-cols-2 mb-24"
           >
             <motion.div variants={fadeInUp} className="p-12 rounded-[3rem] bg-[#18241c] text-white">
               <div className="text-4xl mb-6">🚀</div>
               <h2 className="text-3xl font-bold">Our Mission</h2>
               <p className="mt-6 text-lg leading-relaxed text-[#a8b8ac]">
-                To democratize advanced agricultural technology by empowering
-                local entrepreneurs and providing farmers with the precision tools
-                they need to thrive in a changing climate.
+                To enable small and medium-scale farmers to access high-precision,
+                cost-effective drone spraying services by offering locally assembled
+                agricultural drones and a professional Drone-as-a-Service platform,
+                thereby improving farm productivity and reducing operational risk.
               </p>
             </motion.div>
             <motion.div variants={fadeInUp} className="p-12 rounded-[3rem] border border-[#28593b]/10 bg-[#f6f4ee]">
               <div className="text-4xl mb-6">👁️</div>
               <h2 className="text-3xl font-bold text-[#18241c]">Our Vision</h2>
               <p className="mt-6 text-lg leading-relaxed text-[#55665a]">
-                A future where every Indian farm is part of a connected,
-                data-driven ecosystem that maximizes yields, minimizes waste,
-                and restores the health of our natural environment.
+                To become a trusted, farmer-first drone services company that
+                empowers Indian agriculture through technology, safety, and
+                affordability.
               </p>
             </motion.div>
           </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="w-full"
+          >
+            <div className="text-center mb-16">
+              <motion.h2 variants={fadeInUp} className="text-4xl font-bold tracking-tight sm:text-5xl">
+                <span className="text-[#18241c]">Core</span> <span className="text-[#55665a]">Values</span>
+              </motion.h2>
+            </div>
+            
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              <motion.div variants={fadeInUp} className="p-8 rounded-[2rem] bg-[#f6f4ee] shadow-sm border border-[#28593b]/5">
+                <div className="text-3xl mb-6">🧑‍🌾</div>
+                <h3 className="text-2xl font-bold text-[#18241c] mb-4">Farmer-Centricity</h3>
+                <p className="text-[#55665a] leading-relaxed text-lg">Designing solutions that genuinely reduce farmer pain-points.</p>
+              </motion.div>
+              
+              <motion.div variants={fadeInUp} className="p-8 rounded-[2rem] bg-[#f6f4ee] shadow-sm border border-[#28593b]/5">
+                <div className="text-3xl mb-6">💡</div>
+                <h3 className="text-2xl font-bold text-[#18241c] mb-4">Innovation</h3>
+                <p className="text-[#55665a] leading-relaxed text-lg">Continuously improving drone performance, efficiency, and safety.</p>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="p-8 rounded-[2rem] bg-[#f6f4ee] shadow-sm border border-[#28593b]/5">
+                <div className="text-3xl mb-6">🤝</div>
+                <h3 className="text-2xl font-bold text-[#18241c] mb-4">Integrity</h3>
+                <p className="text-[#55665a] leading-relaxed text-lg">Transparent pricing, honest communication, and ethical operations.</p>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} className="p-8 rounded-[2rem] bg-[#f6f4ee] shadow-sm border border-[#28593b]/5">
+                <div className="text-3xl mb-6">🌱</div>
+                <h3 className="text-2xl font-bold text-[#18241c] mb-4">Sustainability</h3>
+                <p className="text-[#55665a] leading-relaxed text-lg">Promoting rational use of chemicals and environment-friendly practices.</p>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
-      { }
+
+      
       <section className="py-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
         <div className="mx-auto max-w-7xl">
           <motion.div

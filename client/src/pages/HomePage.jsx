@@ -50,19 +50,19 @@ const revealLeft = {
   },
 };
 const float = {
+  hidden: { opacity: 0, y: 30 },
   animate: {
-    y: [0, -12, 0],
+    opacity: 1,
+    y: 0,
     transition: {
-      duration: 5,
-      repeat: Infinity,
-      ease: "easeInOut",
+      duration: 1,
+      ease: "easeOut",
     },
   },
 };
 function HomePage() {
   return (
     <main className="w-full text-[#243328]">
-      {}
       <div className="relative min-h-[680px] lg:min-h-[calc(100vh-96px)] overflow-hidden bg-[#f6f4ee]">
         <video
           autoPlay
@@ -74,7 +74,6 @@ function HomePage() {
         >
           <source src="/0404.mp4" type="video/mp4" />
         </video>
-        {}
         <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#18241c]/80 via-[#18241c]/40 to-transparent pointer-events-none" />
         <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-[#18241c]/10 to-[#f6f4ee] pointer-events-none" />
         <section className="relative z-10 mx-auto grid min-h-[680px] lg:min-h-[calc(100vh-96px)] max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-20">
@@ -159,7 +158,6 @@ function HomePage() {
           </motion.div>
         </section>
       </div>
-      {}
       <section className="relative z-10 bg-[#f6f4ee] pt-2 pb-24 lg:pt-28 px-6 lg:px-10 -mt-0.5 outline-none border-none">
         <div className="mx-auto max-w-7xl grid gap-12 items-center lg:grid-cols-[380px_1fr]">
           <motion.div
@@ -207,16 +205,14 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section className="relative overflow-hidden bg-[#18241c] py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 items-center">
             <motion.div
               initial="hidden"
-              whileInView="visible"
+              whileInView="animate"
               viewport={{ once: true, amount: 0.3 }}
               variants={float}
-              animate="animate"
               className="relative"
             >
               <motion.div
@@ -230,7 +226,6 @@ function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a3a24]/60 to-transparent" />
               </motion.div>
-              {}
               <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-[#28593b]/20 blur-[80px] pointer-events-none" />
             </motion.div>
             <motion.div
@@ -265,7 +260,6 @@ function HomePage() {
           </div>
         </div>
       </section>
-      {}
       <section className="bg-white py-20 lg:py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -334,9 +328,9 @@ function HomePage() {
             >
               <div>
                 <motion.div 
-                  animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="mb-8 text-5xl"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ duration: 0.3 }}
+                  className="mb-8 text-5xl text-center inline-block"
                 >
                   🌱
                 </motion.div>
@@ -357,7 +351,6 @@ function HomePage() {
         </div>
       </section>
       <FAQSection />
-      {}
       <section className="relative overflow-hidden bg-[#f6f4ee] py-32 px-6 lg:px-10">
         <div className="absolute top-0 right-0 -mr-24 -mt-24 h-[500px] w-[500px] rounded-full bg-[#28593b]/5 blur-3xl" />
         <div className="mx-auto max-w-4xl text-center">

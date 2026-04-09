@@ -561,11 +561,8 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
-          {}
           <div className="relative z-20 flex flex-col gap-6 bg-white px-6 py-6 border-b border-green-900/10 lg:px-8 overflow-visible">
-            {}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full">
-              {}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -581,7 +578,6 @@ export default function AdminDashboard() {
                   className="w-full rounded-xl border border-green-900/10 bg-[#f9faf9] pl-10 pr-4 py-2.5 text-[10px] font-bold tracking-wide text-[#1b4a36] placeholder-[#8aa095] transition-all focus:border-green-900/20 focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-900/5"
                 />
               </motion.div>
-              {}
               <div className="flex items-center gap-3">
                 <AnimatePresence>
                   {(searchTerm || statusFilter !== 'All' || dateRange.start || sortConfig.key !== 'Timestamp') && (
@@ -598,7 +594,6 @@ export default function AdminDashboard() {
                     </motion.button>
                   )}
                 </AnimatePresence>
-                {}
                 <div className="relative z-30" ref={calendarRef}>
                   <button
                     onClick={() => setIsCalendarOpen(!isCalendarOpen)}
@@ -689,9 +684,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-            {}
             <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 w-full">
-              {}
               <div className="flex items-center gap-3 w-full xl:w-auto min-w-0 flex-1">
                 <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Status:</span>
                 <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
@@ -716,7 +709,6 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
-              {}
               <div className="flex items-center gap-3 w-full xl:w-auto xl:justify-end min-w-0">
                 <span className="hidden xl:inline text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#60796d]">Order by:</span>
                 <div className="flex gap-1 overflow-x-auto pb-1 sm:pb-0 no-scrollbar w-full">
@@ -756,7 +748,6 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="w-full lg:px-8 lg:py-8">
-            {}
             <motion.div
               layout
               className="flex flex-col gap-4 lg:gap-5"
@@ -775,7 +766,6 @@ export default function AdminDashboard() {
                   />
                 ))}
               </AnimatePresence>
-              {}
               {totalPages > 1 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 px-2">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#60796d]">
@@ -843,7 +833,6 @@ export default function AdminDashboard() {
           </div>
         </motion.div>
       </main>
-      {}
       <AnimatePresence>
         {confirmModal.isOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

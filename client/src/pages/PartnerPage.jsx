@@ -104,7 +104,6 @@ function PartnerPage() {
   };
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
-      { }
       <section className="relative pt-24 pb-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <img
@@ -154,7 +153,6 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      { }
       <section className="relative z-20 -mt-12 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <motion.div
@@ -174,7 +172,6 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      { }
       <section className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -224,7 +221,6 @@ function PartnerPage() {
           </div>
         </div>
       </section>
-      { }
       <section className="bg-[#18241c] py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-20">
@@ -248,7 +244,6 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      { }
       <section id="apply" className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-[1fr_1.2fr] gap-20">
           <div>

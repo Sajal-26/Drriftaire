@@ -93,7 +93,6 @@ function ServicesPage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
   return (
     <main className="w-full">
-      {}
       <section className={styles.hero} ref={heroRef}>
         <motion.img
           src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80&auto=format"
@@ -137,10 +136,8 @@ function ServicesPage() {
           </motion.p>
         </motion.div>
       </section>
-      {}
       <section className={styles.servicesSection}>
         <div className={styles.servicesInner}>
-          {}
           <div className={styles.servicesHeader}>
             <motion.div
               className={styles.servicesHeaderText}
@@ -177,7 +174,6 @@ function ServicesPage() {
               />
             </motion.div>
           </div>
-          {}
           <motion.div
             className={styles.servicesGrid}
             initial="hidden"
@@ -220,7 +216,6 @@ function ServicesPage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section className={styles.processSection}>
         <img
           src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80&auto=format"
@@ -280,7 +275,6 @@ function ServicesPage() {
           </motion.div>
         </motion.div>
       </section>
-      {}
       <section className={styles.featureSection}>
         <div className={styles.featureInner}>
           <motion.div
@@ -354,7 +348,6 @@ function ServicesPage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section className={styles.ctaSection}>
         <motion.div
           className={styles.ctaInner}

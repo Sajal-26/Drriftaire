@@ -163,7 +163,6 @@ function CareersPage() {
 
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
-      {}
       <section ref={heroRef} className="relative h-[85vh] flex items-center justify-center bg-[#18241c] overflow-hidden">
         <motion.div 
           style={{ y: heroBgY, opacity: heroOpacity }}
@@ -213,16 +212,14 @@ function CareersPage() {
             </a>
           </motion.div>
         </div>
-        {}
         <motion.div 
           animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          transition={{ duration: 2, repeat: 0 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/30"
         >
           <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-white/50 to-transparent" />
         </motion.div>
       </section>
-      {}
       <section className="py-32 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid lg:grid-cols-3 gap-8">
@@ -245,7 +242,6 @@ function CareersPage() {
           </div>
         </div>
       </section>
-      {}
       <section className="bg-[#18241c] py-32 px-6 lg:px-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-[#0f1a13] opacity-50" />
         <div className="relative z-10 mx-auto max-w-7xl">
@@ -260,7 +256,6 @@ function CareersPage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {}
             <div className="hidden md:block absolute top-[115px] left-[15%] right-[15%] h-[1px] bg-white/10" />
             {hiringSteps.map((s, i) => (
               <motion.div 
@@ -278,7 +273,6 @@ function CareersPage() {
           </motion.div>
         </div>
       </section>
-      {}
       <section id="talent" className="py-40 px-6 lg:px-10 text-center relative overflow-hidden bg-[#f1f5e9]">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
@@ -376,7 +370,6 @@ function CareersPage() {
             </motion.form>
           )}
         </motion.div>
-        {}
         <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 blur-[100px] rounded-full" />
         <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 blur-[100px] rounded-full" />
       </section>
