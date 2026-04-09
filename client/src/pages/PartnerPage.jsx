@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import API_BASE_URL from "../config/api";
+import { sanitizePhone, normalizePhoneInput } from "../utils/phone";
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -55,6 +56,16 @@ const steps = [
 ];
 function PartnerPage() {
   const [formStatus, setFormStatus] = useState("idle");
+  const [phone, setPhone] = useState("");
+
+  const handlePhoneChange = (e) => {
+    setPhone(normalizePhoneInput(e.target.value));
+  };
+
+  const handlePhoneBlur = () => {
+    setPhone(sanitizePhone(phone));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormStatus("submitting");
@@ -62,7 +73,7 @@ function PartnerPage() {
     const formData = new FormData(e.target);
     const data = {
       name: formData.get("name"),
-      phone: formData.get("phone"),
+      phone,
       email: formData.get("email"),
       address: formData.get("address"),
       pincode: formData.get("pincode"),
@@ -81,6 +92,7 @@ function PartnerPage() {
 
       if (response.ok) {
         setFormStatus("success");
+        setPhone("");
       } else {
         throw new Error(result.message || "Submission failed");
       }
@@ -277,7 +289,10 @@ function PartnerPage() {
                 <h3 className="text-2xl font-bold text-[#18241c]">Application Received!</h3>
                 <p className="mt-4 text-[#55665a]">We'll be in touch with you shortly.</p>
                 <button
-                  onClick={() => setFormStatus("idle")}
+                  onClick={() => {
+                    setFormStatus("idle");
+                    setPhone("");
+                  }}
                   className="mt-10 text-sm font-bold uppercase tracking-widest text-[#28593b]"
                 >
                   Send Another
@@ -292,7 +307,22 @@ function PartnerPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Phone</label>
-                    <input required type="tel" name="phone" placeholder="10-digit Mobile" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none border-r border-[#28593b]/10 pr-4 my-3">
+                        <span className="text-lg mr-2">🇮🇳</span>
+                        <span className="text-sm font-bold text-[#18241c]">+91</span>
+                      </div>
+                      <input
+                        required
+                        type="tel"
+                        name="phone"
+                        value={phone}
+                        onChange={handlePhoneChange}
+                        onBlur={handlePhoneBlur}
+                        placeholder="10-digit Mobile"
+                        className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] pl-28 pr-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2">

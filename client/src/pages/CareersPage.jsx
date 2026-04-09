@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import API_BASE_URL from "../config/api";
+import { sanitizePhone, normalizePhoneInput } from "../utils/phone";
 const MAX_RESUME_SIZE = 2 * 1024 * 1024; // 2 MB
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -83,7 +84,15 @@ function CareersPage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let nextValue = value;
+    if (name === "phone") {
+      nextValue = normalizePhoneInput(value);
+    }
+    setFormData((prev) => ({ ...prev, [name]: nextValue }));
+  };
+
+  const handlePhoneBlur = () => {
+    setFormData((prev) => ({ ...prev, phone: sanitizePhone(prev.phone) }));
   };
 
   const handleFileChange = (e) => {
@@ -118,15 +127,13 @@ function CareersPage() {
     }
 
     setIsSubmitting(true);
-    e.preventDefault();
-    setIsSubmitting(true);
 
-    const formData = new FormData(e.target);
+    const submissionData = new FormData(e.target);
 
     try {
       const response = await fetch(`${API_BASE_URL}/career/apply`, {
         method: "POST",
-        body: formData,
+        body: submissionData,
       });
 
       const result = await response.json();
@@ -321,7 +328,13 @@ function CareersPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Phone Number</label>
-                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="+91 98765 43210" />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none border-r border-[#28593b]/10 pr-4 my-3">
+                      <span className="text-lg mr-2">🇮🇳</span>
+                      <span className="text-sm font-bold text-[#18241c]">+91</span>
+                    </div>
+                    <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} onBlur={handlePhoneBlur} className="w-full rounded-xl border border-transparent bg-[#f6f4ee] pl-28 pr-4 py-3 focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="10-digit mobile" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Role of Interest</label>

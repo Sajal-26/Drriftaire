@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import API_BASE_URL from "../config/api";
+import { sanitizePhone, normalizePhoneInput } from "../utils/phone";
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -20,8 +21,17 @@ const staggerContainer = {
   },
 };
 function ContactPage() {
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const handlePhoneChange = (e) => {
+    setPhone(normalizePhoneInput(e.target.value));
+  };
+
+  const handlePhoneBlur = () => {
+    setPhone(sanitizePhone(phone));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +41,7 @@ function ContactPage() {
     const data = {
       name: formData.get("name"),
       email: formData.get("email"),
-      phone: formData.get("phone"),
+      phone,
       message: formData.get("message"),
     };
 
@@ -48,6 +58,7 @@ function ContactPage() {
 
       if (response.ok) {
         setIsSuccess(true);
+        setPhone("");
         e.target.reset();
       } else {
         throw new Error(result.message || "Submission failed");
@@ -170,7 +181,10 @@ function ContactPage() {
                       required
                       type="tel"
                       name="phone"
-                      placeholder="Enter your mobile number"
+                      value={phone}
+                      onChange={handlePhoneChange}
+                      onBlur={handlePhoneBlur}
+                      placeholder="10-digit mobile"
                       className="w-full rounded-2xl border border-[#28593b]/5 bg-[#f9faf9] pl-28 pr-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
                     />
                   </div>
