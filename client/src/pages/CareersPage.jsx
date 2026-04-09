@@ -1,5 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
+import API_BASE_URL from "../config/api";
+const MAX_RESUME_SIZE = 2 * 1024 * 1024; // 2 MB
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
   visible: { 
@@ -75,6 +77,7 @@ function CareersPage() {
     linkedin: "",
     resume: null,
   });
+  const [resumeError, setResumeError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -84,18 +87,71 @@ function CareersPage() {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, resume: e.target.files[0] }));
+    const file = e.target.files[0];
+    if (!file) {
+      setFormData((prev) => ({ ...prev, resume: null }));
+      setResumeError("");
+      return;
+    }
+
+    if (file.size > MAX_RESUME_SIZE) {
+      setFormData((prev) => ({ ...prev, resume: null }));
+      setResumeError("Resume must be 2 MB or smaller.");
+      e.target.value = null;
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, resume: file }));
+    setResumeError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.resume) {
+      setResumeError("Please upload a PDF or Word resume under 2 MB.");
+      return;
+    }
+
+    if (formData.resume.size > MAX_RESUME_SIZE) {
+      setResumeError("Resume must be 2 MB or smaller.");
+      return;
+    }
+
+    setIsSubmitting(true);
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
+
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/career/apply`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        e.target.reset();
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          role: "",
+          linkedin: "",
+          resume: null,
+        });
+      } else {
+        throw new Error(result.message || "Submission failed");
+      }
+    } catch (error) {
+      console.error("Career form error:", error);
+      alert("Failed to submit application. Please try again.");
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setTimeout(() => setIsSuccess(false), 5000);
-    }, 1500);
+    }
   };
 
   return (
@@ -281,6 +337,7 @@ function CareersPage() {
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Resume (PDF, Word) *</label>
+                  <p className="text-[11px] text-[#55665a] mb-2">Maximum file size: 2 MB.</p>
                   <input 
                     type="file" 
                     name="resume" 
@@ -289,6 +346,9 @@ function CareersPage() {
                     accept=".pdf,.doc,.docx"
                     className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-dashed border-[#55665a]/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-wider file:bg-[#28593b] file:text-white hover:file:bg-[#18241c] hover:border-[#28593b] transition-colors cursor-pointer text-[#55665a]" 
                   />
+                  {resumeError && (
+                    <p className="mt-3 text-sm text-red-600">{resumeError}</p>
+                  )}
                 </div>
               </div>
               <motion.button 

@@ -3,6 +3,9 @@ const cors = require("cors");
 
 const bookingRoutes = require("./routes/booking.routes");
 const adminRoutes = require("./routes/admin.routes");
+const partnerRoutes = require("./routes/partner.routes");
+const contactRoutes = require("./routes/contact.routes");
+const careerRoutes = require("./routes/career.routes");
 const {
   requestIdMiddleware,
   securityHeadersMiddleware,
@@ -29,6 +32,9 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/partner", partnerRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/career", careerRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });

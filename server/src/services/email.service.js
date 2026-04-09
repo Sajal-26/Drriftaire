@@ -53,7 +53,7 @@ const escapeHtml = (value) =>
     .replace(/'/g, "&#39;");
 
 const formatFromAddress = () =>
-  `"Drriftaire" <drriftaire@gmail.com>`;
+  `"Drriftaire" <support@drriftaire.com>`;
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return "";
@@ -73,17 +73,23 @@ const formatDate = (value) => {
   return `${day}-${month}-${year}`;
 };
 
-const sendMailWithLogging = async ({ label, to, subject, html }) => {
+const sendMailWithLogging = async ({ label, to, subject, html, attachments = [] }) => {
   logEmail(`${label} attempt`, { to, subject });
 
   try {
     const fromAddr = formatFromAddress();
-    const result = await transporter.sendMail({
+    const mailOptions = {
       from: fromAddr,
       to,
       subject,
       html,
-    });
+    };
+
+    if (attachments.length > 0) {
+      mailOptions.attachments = attachments;
+    }
+
+    const result = await transporter.sendMail(mailOptions);
 
     logEmail(`${label} response`, {
       to,
@@ -353,8 +359,217 @@ const sendDuplicateBookingEmail = async ({ name, email }) => {
   }
 };
 
+const sendPartnerInterestEmail = async ({
+  name,
+  phone,
+  email,
+  address,
+  pincode,
+}) => {
+  logEmail("sendPartnerInterestEmail start", { email, name });
+
+  try {
+    const dataItems = [
+      { label: "Name", value: name },
+      { label: "Phone", value: formatPhoneNumber(phone) },
+      { label: "Email", value: email },
+      { label: "Address", value: address },
+      { label: "Pincode", value: pincode },
+    ];
+
+    const dataHtml = `
+      <div class="data-grid">
+        ${dataItems.map(item => `
+          <div style="margin-bottom: 12px;">
+            <div class="data-label">${escapeHtml(item.label)}</div>
+            <div class="data-value">${escapeHtml(item.value)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    // Send to admin
+    await sendMailWithLogging({
+      label: "partner interest notification",
+      to: process.env.ADMIN_EMAIL,
+      subject: `New Partner Interest: ${name}`,
+      html: wrapTemplate(
+        "New Partner Interest!",
+        "Someone wants to join our drone pilot network.",
+        `
+          ${dataHtml}
+          <p style="text-align: center;">
+            <a href="https://drriftaire.com/admin" class="btn">OPEN MANAGEMENT PANEL</a>
+          </p>
+        `
+      ),
+    });
+
+    // Send confirmation to client
+    await sendMailWithLogging({
+      label: "partner interest confirmation",
+      to: email,
+      subject: "Thank You for Your Partnership Interest - Drriftaire",
+      html: wrapTemplate(
+        "Interest Received!",
+        "We'll contact you soon about partnership opportunities.",
+        `
+          <p>Hi ${escapeHtml(name)},</p>
+          <p>Thank you for your interest in partnering with Drriftaire! We've received your application and our team is excited to explore partnership opportunities with you.</p>
+          <p>Our partnership team will review your details and reach out within 48 hours to discuss next steps. In the meantime, feel free to call us at <strong>+91-7026983110</strong> if you have any immediate questions.</p>
+          <p>We're looking forward to potentially working together to revolutionize agriculture!</p>
+        `
+      ),
+    });
+  } catch (err) {
+    console.error("[email] sendPartnerInterestEmail crashed", serializeError(err));
+  }
+};
+
+const sendContactEmail = async ({
+  name,
+  email,
+  phone,
+  message,
+}) => {
+  logEmail("sendContactEmail start", { email, name });
+
+  try {
+    const dataItems = [
+      { label: "Name", value: name },
+      { label: "Email", value: email },
+      { label: "Phone", value: formatPhoneNumber(phone) },
+      { label: "Message", value: message },
+    ];
+
+    const dataHtml = `
+      <div class="data-grid">
+        ${dataItems.map(item => `
+          <div style="margin-bottom: 12px;">
+            <div class="data-label">${escapeHtml(item.label)}</div>
+            <div class="data-value">${escapeHtml(item.value)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    // Send to admin
+    await sendMailWithLogging({
+      label: "contact inquiry notification",
+      to: process.env.ADMIN_EMAIL,
+      subject: `New Contact Inquiry: ${name}`,
+      html: wrapTemplate(
+        "New Contact Inquiry!",
+        "Someone reached out via the contact form.",
+        `
+          ${dataHtml}
+          <p style="text-align: center;">
+            <a href="https://drriftaire.com/admin" class="btn">OPEN MANAGEMENT PANEL</a>
+          </p>
+        `
+      ),
+    });
+
+    // Send confirmation to client
+    await sendMailWithLogging({
+      label: "contact inquiry confirmation",
+      to: email,
+      subject: "Thank You for Contacting Drriftaire",
+      html: wrapTemplate(
+        "Message Received!",
+        "We'll get back to you soon.",
+        `
+          <p>Hi ${escapeHtml(name)},</p>
+          <p>Thank you for reaching out to Drriftaire! We've received your message and appreciate you taking the time to contact us.</p>
+          <p>Our team will review your inquiry and respond within 24 hours. If your matter is urgent, please call us directly at <strong>+91-7026983110</strong>.</p>
+          <p>We're here to help make your farming operations more efficient and sustainable!</p>
+        `
+      ),
+    });
+  } catch (err) {
+    console.error("[email] sendContactEmail crashed", serializeError(err));
+  }
+};
+
+const sendCareerApplicationEmail = async ({
+  name,
+  email,
+  phone,
+  address,
+  role,
+  linkedin,
+  attachment,
+}) => {
+  logEmail("sendCareerApplicationEmail start", { email, name });
+
+  try {
+    const dataItems = [
+      { label: "Name", value: name },
+      { label: "Email", value: email },
+      { label: "Phone", value: formatPhoneNumber(phone) },
+      { label: "Address", value: address },
+      { label: "Role of Interest", value: role },
+      { label: "LinkedIn", value: linkedin },
+    ];
+
+    const dataHtml = `
+      <div class="data-grid">
+        ${dataItems.map(item => `
+          <div style="margin-bottom: 12px;">
+            <div class="data-label">${escapeHtml(item.label)}</div>
+            <div class="data-value">${escapeHtml(item.value)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    const attachments = attachment ? [attachment] : [];
+
+    // Send to admin
+    await sendMailWithLogging({
+      label: "career application notification",
+      to: process.env.ADMIN_EMAIL,
+      subject: `New Career Application: ${name}`,
+      html: wrapTemplate(
+        "New Career Application!",
+        "Someone applied to join our talent network.",
+        `
+          ${dataHtml}
+          ${attachment ? '<p><strong>Resume attached.</strong></p>' : ''}
+          <p style="text-align: center;">
+            <a href="https://drriftaire.com/admin" class="btn">OPEN MANAGEMENT PANEL</a>
+          </p>
+        `
+      ),
+      attachments: attachments,
+    });
+
+    // Send confirmation to client
+    await sendMailWithLogging({
+      label: "career application confirmation",
+      to: email,
+      subject: "Thank You for Your Career Application - Drriftaire",
+      html: wrapTemplate(
+        "Application Received!",
+        "We'll review your profile and get back to you.",
+        `
+          <p>Hi ${escapeHtml(name)},</p>
+          <p>Thank you for applying to join the Drriftaire team! We've received your application and resume, and we're excited about the possibility of you contributing to our mission of revolutionizing agriculture.</p>
+          <p>Our recruitment team will carefully review your profile and qualifications. We'll reach out within 3-5 business days with next steps, whether that's an interview invitation or additional information we might need.</p>
+          <p>In the meantime, feel free to follow our journey and stay updated with our latest developments!</p>
+        `
+      ),
+    });
+  } catch (err) {
+    console.error("[email] sendCareerApplicationEmail crashed", serializeError(err));
+  }
+};
+
 module.exports = {
   sendBookingEmails,
   sendStatusChangeEmail,
   sendDuplicateBookingEmail,
+  sendPartnerInterestEmail,
+  sendContactEmail,
+  sendCareerApplicationEmail,
 };

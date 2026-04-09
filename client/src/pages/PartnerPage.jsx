@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import API_BASE_URL from "../config/api";
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -54,10 +55,40 @@ const steps = [
 ];
 function PartnerPage() {
   const [formStatus, setFormStatus] = useState("idle");
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormStatus("submitting");
-    setTimeout(() => setFormStatus("success"), 1500);
+
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      email: formData.get("email"),
+      address: formData.get("address"),
+      pincode: formData.get("pincode"),
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/partner/interest`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setFormStatus("success");
+      } else {
+        throw new Error(result.message || "Submission failed");
+      }
+    } catch (error) {
+      console.error("Partner form error:", error);
+      setFormStatus("idle");
+      alert("Failed to submit. Please try again.");
+    }
   };
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
@@ -257,24 +288,24 @@ function PartnerPage() {
                 <div className="grid sm:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Name</label>
-                    <input required type="text" placeholder="Your Name" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                    <input required type="text" name="name" placeholder="Your Name" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Phone</label>
-                    <input required type="tel" placeholder="10-digit Mobile" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                    <input required type="tel" name="phone" placeholder="10-digit Mobile" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Email Address</label>
-                  <input required type="email" placeholder="partner@example.com" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                  <input required type="email" name="email" placeholder="partner@example.com" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Address</label>
-                  <input required type="text" placeholder="Your full address" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                  <input required type="text" name="address" placeholder="Your full address" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Pincode</label>
-                  <input required type="text" placeholder="Enter Pincode" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                  <input required type="text" name="pincode" placeholder="Enter Pincode" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.02 }}

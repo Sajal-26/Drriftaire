@@ -36,6 +36,7 @@ select {
   overflow: hidden;
   background: #f6f4ee;
   min-height: 100vh;
+  position: relative;
 }
 .app-content {
   flex: 1;

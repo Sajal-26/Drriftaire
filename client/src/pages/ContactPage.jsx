@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
+import API_BASE_URL from "../config/api";
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -18,6 +20,45 @@ const staggerContainer = {
   },
 };
 function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/contact/inquiry`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setIsSuccess(true);
+        e.target.reset();
+      } else {
+        throw new Error(result.message || "Submission failed");
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <main className="relative w-full min-h-[calc(100vh-96px)] bg-[#f6f4ee] text-[#243328] overflow-hidden cursor-default">
       {}
@@ -78,14 +119,31 @@ function ContactPage() {
               <div className="mb-10">
                 <h3 className="text-2xl font-bold text-[#18241c]">Send us a message</h3>
                 <p className="mt-2 text-sm text-[#55665a]">We typically respond within 24 hours.</p>
+                {isSuccess && (
+                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-green-800">
+                          Message sent successfully! We'll get back to you soon.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-              <form className="grid gap-8">
+              <form onSubmit={handleSubmit} className="grid gap-8">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div className="space-y-2 group/input">
                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#28593b]/60 ml-2 transition-colors group-focus-within/input:text-[#28593b]">Name</label>
                     <input
                       required
                       type="text"
+                      name="name"
                       placeholder="Enter your name"
                       className="w-full rounded-2xl border border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
                     />
@@ -95,6 +153,7 @@ function ContactPage() {
                     <input
                       required
                       type="email"
+                      name="email"
                       placeholder="Enter your email"
                       className="w-full rounded-2xl border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
                     />
@@ -110,6 +169,7 @@ function ContactPage() {
                     <input
                       required
                       type="tel"
+                      name="phone"
                       placeholder="Enter your mobile number"
                       className="w-full rounded-2xl border border-[#28593b]/5 bg-[#f9faf9] pl-28 pr-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300"
                     />
@@ -120,6 +180,7 @@ function ContactPage() {
                   <textarea
                     required
                     rows="4"
+                    name="message"
                     placeholder="How can we help your farm?"
                     className="w-full rounded-3xl border border-[#28593b]/5 bg-[#f9faf9] px-6 py-4 text-sm focus:border-[#28593b]/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#28593b]/5 transition-all duration-300 resize-none"
                   ></textarea>
@@ -131,9 +192,10 @@ function ContactPage() {
                     boxShadow: "0 20px 40px -10px rgba(40,89,59,0.3)"
                   }}
                   whileTap={{ scale: 0.98 }}
+                  disabled={isSubmitting}
                   className="w-full rounded-2xl bg-[#28593b] py-6 text-sm font-bold uppercase tracking-[0.25em] text-white shadow-xl shadow-[#28593b]/20 transition-all duration-300"
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </motion.button>
               </form>
             </div>
