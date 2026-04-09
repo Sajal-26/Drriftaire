@@ -12,20 +12,17 @@ import {
   Clock,
   Download,
   Droplets,
-  ExternalLink,
   LayoutDashboard,
   Loader2,
   LogOut,
   Search,
-  TrendingUp,
-  IndianRupee,
   Users,
   Wind,
   XOctagon,
   FilterX,
 } from 'lucide-react';
 import BookingRow from '../components/admin/BookingRow';
-const ADMIN_EMAIL = 'drriftaire@gmail.com';
+const ADMIN_EMAIL = 'support@drriftaire.com';
 const formatDateTime = (value) => {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value || '-';
