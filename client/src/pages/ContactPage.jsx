@@ -47,8 +47,8 @@ function ContactPage() {
                 <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#28593b]/10 text-lg sm:text-xl">✉️</div>
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Email Us</p>
-                  <a href="mailto:drriftaire@gmail.com" className="mt-1 block text-base sm:text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors break-words cursor-pointer">
-                    drriftaire@gmail.com
+                  <a href="mailto:support@drriftaire.com" className="mt-1 block text-base sm:text-2xl font-bold text-[#18241c] hover:text-[#28593b] transition-colors break-words cursor-pointer">
+                    support@drriftaire.com
                   </a>
                 </div>
               </div>
@@ -57,7 +57,7 @@ function ContactPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#28593b]/60">Regional Presence</p>
                   <p className="mt-1 text-lg sm:text-2xl font-bold text-[#18241c] leading-tight">
-                    Serving Karnataka & West Bengal
+                    Serving across India
                   </p>
                 </div>
               </div>

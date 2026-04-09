@@ -37,8 +37,8 @@ function Footer() {
             operations.
           </p>
           <div className={styles.meta}>
-            <a href="mailto:drriftaire@gmail.com" className={styles.metaLink}>drriftaire@gmail.com</a>
-            <a href="tel:+919831122651" className={styles.metaLink}>+91 98311 22651</a>
+            <a href="mailto:support@drriftaire.com" className={styles.metaLink}>support@drriftaire.com</a>
+            <a href="tel:+917026983110" className={styles.metaLink}>+91-7026983110</a>
           </div>
         </div>
         <div className={styles.linkColumns}>

@@ -164,6 +164,7 @@
   }
   .actions {
     justify-content: flex-end;
+    margin-left: auto;
   }
   .menuButton {
     display: inline-flex;

@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
   }
 };
 const staggerContainer = {
@@ -19,7 +19,7 @@ const staggerContainer = {
   }
 };
 const stats = [
-  { value: "1,000+", label: "Guaranteed Acres/Yr", icon: "🌾" },
+  { value: "6,000+", label: "Guaranteed Acres/Yr", icon: "🌾" },
   { value: "24/7", label: "Operational Support", icon: "🛠️" },
   { value: "0", label: "Upfront Friction", icon: "⚡" },
   { value: "100%", label: "Expert Guidance", icon: "🤝" }
@@ -50,7 +50,7 @@ const steps = [
   { number: "01", title: "Join the Network", desc: "Submit your interest and pass our initial partner evaluation." },
   { number: "02", title: "Onboarding & Training", desc: "Complete our specialized drone flight and maintenance program." },
   { number: "03", title: "Connect with Farmers", desc: "Start receiving spraying requests through our managed dispatch network." },
-  { number: "04", title: "Scale Your Business", desc: "Focus on flying while we handle the logistics, payments, and support." }
+  { number: "04", title: "Scale Your Business", desc: "Focus on growth while we handle the flight operations, logistics, and payments." }
 ];
 function PartnerPage() {
   const [formStatus, setFormStatus] = useState("idle");
@@ -61,25 +61,25 @@ function PartnerPage() {
   };
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
-      {}
+      { }
       <section className="relative pt-24 pb-32 px-6 lg:px-10 bg-[#18241c] overflow-hidden">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <img 
-            src="https://images.unsplash.com/photo-1713952160156-bb59cac789a9?q=80&w=2000" 
-            alt="" 
+          <img
+            src="https://images.unsplash.com/photo-1713952160156-bb59cac789a9?q=80&w=2000"
+            alt=""
             className="w-full h-full object-cover grayscale"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#18241c]/40 via-[#18241c] to-[#18241c] pointer-events-none" />
         <div className="relative z-10 mx-auto max-w-7xl text-center">
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.4em] text-emerald-400"
           >
             Partner with Drriftaire
           </motion.p>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.8 }}
@@ -87,16 +87,16 @@ function PartnerPage() {
           >
             Powering the next generation<br />of <span className="text-emerald-400">Agri-Entrepreneurs.</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
             className="mt-10 mx-auto max-w-2xl text-lg sm:text-xl text-[#a8b8ac] leading-relaxed"
           >
-            Join our network and build a profitable drone service business with 
+            Join our network and build a profitable drone service business with
             guaranteed earnings, full technical support, and premium technology.
           </motion.p>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -111,10 +111,10 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      {}
+      { }
       <section className="relative z-20 -mt-12 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -131,11 +131,11 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      {}
+      { }
       <section className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <motion.div 
+            <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
@@ -143,11 +143,11 @@ function PartnerPage() {
             >
               <motion.p variants={fadeInUp} className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#28593b]">A Growth Ecosystem</motion.p>
               <motion.h2 variants={fadeInUp} className="mt-5 text-3xl font-extrabold tracking-tight text-[#18241c] sm:text-5xl leading-[1.1]">
-                We handle the complexity,<br />you handle the flight.
+                We handle the complexity,<br />you harvest the growth.
               </motion.h2>
               <motion.p variants={fadeInUp} className="mt-8 text-lg leading-relaxed text-[#55665a]">
-                Running a drone business in rural India is challenging. 
-                From government regulations to finding consistent work, 
+                Running a drone business in rural India is challenging.
+                From government regulations to finding consistent work,
                 we've built the infrastructure so you can focus on scale.
               </motion.p>
               <motion.div variants={staggerContainer} className="mt-12 grid gap-8">
@@ -164,16 +164,16 @@ function PartnerPage() {
                 ))}
               </motion.div>
             </motion.div>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
               viewport={{ once: true }}
               className="relative aspect-square rounded-[3rem] overflow-hidden shadow-2xl"
             >
-              <img 
-                src="/partner-field.png" 
-                alt="Partner working in field" 
+              <img
+                src="/partner-field.png"
+                alt="Partner working in field"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-[#18241c]/40 via-transparent to-transparent" />
@@ -181,14 +181,14 @@ function PartnerPage() {
           </div>
         </div>
       </section>
-      {}
+      { }
       <section className="bg-[#18241c] py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-20">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400">The Journey</p>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">Join in 4 steps.</h2>
           </div>
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
@@ -205,7 +205,7 @@ function PartnerPage() {
           </motion.div>
         </div>
       </section>
-      {}
+      { }
       <section id="apply" className="py-24 px-6 lg:px-10">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-[1fr_1.2fr] gap-20">
           <div>
@@ -214,7 +214,7 @@ function PartnerPage() {
               Ready to take flight?<br />Let's grow together.
             </h2>
             <p className="mt-8 text-lg leading-relaxed text-[#55665a]">
-              Complete the form below and our partnership team will reach 
+              Complete the form below and our partnership team will reach
               out within 48 hours for an initial screening.
             </p>
             <div className="mt-12 space-y-8">
@@ -222,19 +222,19 @@ function PartnerPage() {
                 <div className="h-14 w-14 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-emerald-900/20">📞</div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#28593b]/60">Call Directly</p>
-                  <p className="text-xl font-bold text-[#18241c]">+91 98765 43210</p>
+                  <p className="text-xl font-bold text-[#18241c]">+91-7026983110</p>
                 </div>
               </div>
               <div className="flex items-center gap-6">
                 <div className="h-14 w-14 rounded-full bg-[#18241c] flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-black/20">✉️</div>
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#28593b]/60">Email Inquiries</p>
-                  <p className="text-xl font-bold text-[#18241c]">partners@drriftaire.com</p>
+                  <p className="text-xl font-bold text-[#18241c]">support@drriftaire.com</p>
                 </div>
               </div>
             </div>
           </div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -245,8 +245,8 @@ function PartnerPage() {
                 <div className="text-6xl mb-6">🚀</div>
                 <h3 className="text-2xl font-bold text-[#18241c]">Application Received!</h3>
                 <p className="mt-4 text-[#55665a]">We'll be in touch with you shortly.</p>
-                <button 
-                  onClick={() => setFormStatus("idle")} 
+                <button
+                  onClick={() => setFormStatus("idle")}
                   className="mt-10 text-sm font-bold uppercase tracking-widest text-[#28593b]"
                 >
                   Send Another
@@ -269,18 +269,14 @@ function PartnerPage() {
                   <input required type="email" placeholder="partner@example.com" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Location (State/District)</label>
-                  <input required type="text" placeholder="Where are you based?" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Address</label>
+                  <input required type="text" placeholder="Your full address" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Existing Drone Hardware?</label>
-                  <select className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none transition-all appearance-none">
-                    <option>Yes, I own a drone</option>
-                    <option>No, I want to purchase one</option>
-                    <option>Interested in Pilot-only roles</option>
-                  </select>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#28593b]/60 ml-2">Pincode</label>
+                  <input required type="text" placeholder="Enter Pincode" className="w-full rounded-2xl border border-[#28593b]/10 bg-[#f9faf9] px-6 py-4 text-sm focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all" />
                 </div>
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   disabled={formStatus === "submitting"}

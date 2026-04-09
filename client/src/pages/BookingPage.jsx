@@ -402,7 +402,7 @@ export default function BookingPage() {
                   {renderSelect("cropType", "Select Crop", cropOptions)}
                 </label>
                 <label className={styles.field}>
-                  <span className={styles.label}>Pesticide / Fertilizer</span>
+                  <span className={styles.label}>Pesticide Type</span>
                   {renderSelect("pesticideType", "Select Type", pesticideOptions)}
                 </label>
               </div>

@@ -1,8 +1,8 @@
 .footer {
   background:
     linear-gradient(180deg, #f3f0e8 0%, #f8f6f0 30%, #ffffff 100%);
-  border-top: 1px solid rgba(40, 89, 59, 0.12);
-  color: #243328;
+  border-top: 1px solid rgba(75, 31, 138, 0.12);
+  color: #2A1A3F;
 }
 
 .inner {
@@ -19,7 +19,7 @@
 }
 
 .brand {
-  background: linear-gradient(90deg, #2f5b34, #4f7b3f, #6f9a4d, #3f6b45);
+  background: linear-gradient(90deg, #3F1A7C, #672DBA, #8F52E9, #4B1F8A);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -34,7 +34,7 @@
   margin: 1rem 0 0;
   font-size: 1rem;
   line-height: 1.85;
-  color: #5a6a5f;
+  color: #5C4D7D;
 }
 
 .meta {
@@ -43,7 +43,7 @@
   flex-wrap: wrap;
   gap: 0.75rem 1.5rem;
   font-size: 0.92rem;
-  color: #3f4f44;
+  color: #453366;
 }
 
 .metaLink {
@@ -55,7 +55,7 @@
 }
 
 .metaLink:hover {
-  color: #28593b;
+  color: #7B3FD3;
 }
 
 .linkColumns {
@@ -74,7 +74,7 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #28593b;
+  color: #4B1F8A;
 }
 
 .linkList {
@@ -86,7 +86,7 @@
 }
 
 .link {
-  color: #334238;
+  color: #2A1A3F;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease;
@@ -94,11 +94,11 @@
 
 .link:hover,
 .link:focus-visible {
-  color: #4f7b3f;
+  color: #7B3FD3;
 }
 
 .bottomBar {
-  border-top: 1px solid rgba(40, 89, 59, 0.1);
+  border-top: 1px solid rgba(75, 31, 138, 0.1);
   padding: 1rem clamp(1rem, 4vw, 4rem) 1.5rem;
 }
 
@@ -106,7 +106,7 @@
   width: min(100%, 120rem);
   margin: 0 auto;
   font-size: 0.86rem;
-  color: #66766b;
+  color: #6C5D8C;
 }
 
 @media (max-width: 900px) {

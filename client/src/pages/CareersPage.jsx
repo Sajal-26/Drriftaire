@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
   visible: { 
@@ -65,6 +65,39 @@ function CareersPage() {
   });
   const heroBgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    role: "",
+    linkedin: "",
+    resume: null,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({ ...prev, resume: e.target.files[0] }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 5000);
+    }, 1500);
+  };
+
   return (
     <main className="w-full bg-[#f6f4ee] text-[#243328] overflow-hidden">
       {}
@@ -89,8 +122,8 @@ function CareersPage() {
             Join the Revolution
           </motion.p>
           <motion.h1 
-            initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 1.2 }}
             className="mt-8 text-5xl font-extrabold tracking-tight text-white sm:text-8xl leading-[0.95]"
           >
@@ -201,14 +234,74 @@ function CareersPage() {
             We are always looking for missionaries, not mercenaries. 
             If you want to build the future of Indian agriculture, send your story to our talent pool.
           </p>
-          <motion.a 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            href="mailto:careers@drriftaire.com" 
-            className="inline-block rounded-full bg-[#18241c] text-white font-bold py-6 px-14 text-sm uppercase tracking-widest hover:bg-[#28593b] shadow-2xl transition-all"
-          >
-            Submit your story
-          </motion.a>
+          {isSuccess ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-12 mx-auto max-w-xl bg-[#18241c] text-white p-12 rounded-[2.5rem] shadow-2xl text-center"
+            >
+              <div className="text-5xl mb-6">✨</div>
+              <h3 className="text-3xl font-bold mb-4">Application Received!</h3>
+              <p className="text-[#a8b8ac] leading-relaxed">
+                Thank you for submitting your story. Our team will review your profile and reach out if there's a strong fit.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.form 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              onSubmit={handleSubmit}
+              className="mt-12 w-full mx-auto max-w-2xl bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl text-left border border-[#d1dbc1]"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Full Name *</label>
+                  <input type="text" name="name" required value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="Enter your name" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Email Address *</label>
+                  <input type="email" name="email" required value={formData.email} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="Enter your email" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Phone Number</label>
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="+91 98765 43210" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Role of Interest</label>
+                  <input type="text" name="role" value={formData.role} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="e.g. Drone Pilot, Agronomist" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Address / City</label>
+                  <input type="text" name="address" value={formData.address} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="Your City, State" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">LinkedIn URL</label>
+                  <input type="url" name="linkedin" value={formData.linkedin} onChange={handleInputChange} className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-transparent focus:border-[#28593b] focus:bg-white focus:outline-none transition-colors" placeholder="https://linkedin.com/in/..." />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#55665a] mb-2">Resume (PDF, Word) *</label>
+                  <input 
+                    type="file" 
+                    name="resume" 
+                    required 
+                    onChange={handleFileChange} 
+                    accept=".pdf,.doc,.docx"
+                    className="w-full px-4 py-3 rounded-xl bg-[#f6f4ee] border border-dashed border-[#55665a]/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-wider file:bg-[#28593b] file:text-white hover:file:bg-[#18241c] hover:border-[#28593b] transition-colors cursor-pointer text-[#55665a]" 
+                  />
+                </div>
+              </div>
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-8 w-full rounded-full bg-[#18241c] text-white font-bold py-5 px-8 text-sm uppercase tracking-widest hover:bg-[#28593b] shadow-xl disabled:opacity-70 transition-all flex items-center justify-center"
+              >
+                {isSubmitting ? "Submitting..." : "Submit Application"}
+              </motion.button>
+            </motion.form>
+          )}
         </motion.div>
         {}
         <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 blur-[100px] rounded-full" />
