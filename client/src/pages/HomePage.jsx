@@ -51,7 +51,7 @@ const revealLeft = {
 };
 const float = {
   hidden: { opacity: 0, y: 30 },
-  animate: {
+  visible: {
     opacity: 1,
     y: 0,
     transition: {
@@ -210,7 +210,7 @@ function HomePage() {
           <div className="grid gap-20 lg:grid-cols-2 items-center">
             <motion.div
               initial="hidden"
-              whileInView="animate"
+              whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
               variants={float}
               className="relative"
