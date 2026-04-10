@@ -15,10 +15,12 @@ import PageWrapper from "./components/PageWrapper";
 import BackToTop from "./components/BackToTop";
 import BookNowFAB from "./components/BookNowFAB";
 import ScrollToTop from "./components/ScrollToTop";
+import Seo from "./components/Seo";
 function App() {
   const location = useLocation();
   return (
     <div className="app-shell">
+      <Seo />
       <Navbar />
       <ScrollToTop />
       <main className="app-content">
