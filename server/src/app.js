@@ -27,9 +27,12 @@ app.use(cors({
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
-app.get("/health", (_req, res) => {
+const healthHandler = (_req, res) => {
   res.status(200).json({ status: "ok", uptime: process.uptime() });
-});
+};
+
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
 
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
