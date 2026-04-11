@@ -90,14 +90,15 @@ function WhyUsPage() {
                   transition={{
                     duration: 6.5,
                     ease: "easeInOut",
-                    repeat: 0,
+                    repeat: Infinity,
+                    repeatDelay: 0.4,
                     times: [0, 0.25, 0.75, 1]
                   }}
                 >
                   
                   <svg width="68" height="26" viewBox="0 0 68 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
-                    <motion.line x1="4" y1="4" x2="22" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: 0 }} />
-                    <motion.line x1="46" y1="4" x2="64" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: 0, delay: 0.05 }} />
+                    <motion.line x1="4" y1="4" x2="22" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: Infinity, repeatDelay: 6.8 }} />
+                    <motion.line x1="46" y1="4" x2="64" y2="4" stroke="#18241c" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 0.1, repeat: Infinity, repeatDelay: 6.8, delay: 0.05 }} />
                     <path d="M12 9 L56 9 C58.2 9 60 10.8 60 13 L52 19 L16 19 L8 13 C8 10.8 9.8 9 12 9 Z" fill="#28593b" />
                     <path d="M28 19 L40 19 L38 23 L30 23 Z" fill="#18241c" />
                     <circle cx="34" cy="13" r="2" fill="#4ade80" />
@@ -113,7 +114,8 @@ function WhyUsPage() {
                     transition={{
                       duration: 6.5,
                       ease: "easeInOut",
-                      repeat: 0,
+                      repeat: Infinity,
+                      repeatDelay: 0.4,
                       times: [0, 0.2, 0.25, 0.7, 0.75, 1]
                     }}
                     style={{ originY: 0 }}
@@ -123,7 +125,7 @@ function WhyUsPage() {
                         key={i} 
                         className="w-[2px] h-14 bg-emerald-400/80 rounded-full" 
                         animate={{ y: [0, 12, 0], opacity: [0.4, 1, 0.4] }}
-                        transition={{ duration: 0.25 + (i * 0.05), repeat: 0, delay: i * 0.1 }}
+                        transition={{ duration: 0.25 + (i * 0.05), repeat: Infinity, repeatDelay: 6.2 - (i * 0.05), delay: i * 0.1 }}
                       />
                     ))}
                   </motion.div>
@@ -143,7 +145,8 @@ function WhyUsPage() {
                       }}
                       transition={{
                         duration: 6.5,
-                        repeat: 0,
+                        repeat: Infinity,
+                        repeatDelay: 0.4,
                         times: [0, 0.2 + (i * 0.06), 0.3 + (i * 0.06), 0.85, 1]
                       }}
                     >
@@ -171,7 +174,8 @@ function WhyUsPage() {
                         animate={{ opacity: [0, 0, 1, 1, 0] }}
                         transition={{
                           duration: 6.5,
-                          repeat: 0,
+                          repeat: Infinity,
+                          repeatDelay: 0.4,
                           times: [0, 0.2 + (i * 0.06), 0.3 + (i * 0.06), 0.85, 1]
                         }}
                       />
